@@ -6,6 +6,7 @@ public class MapMaker : MonoBehaviour {
 
     Texture2D Level;
     public Transform TilePrefab;
+    public Transform WallPrefab;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
 	// Use this for initialization
@@ -37,6 +38,11 @@ public class MapMaker : MonoBehaviour {
                         tempTile.GetComponent<TileType>().SetTileType(1);
                     }
 
+                }
+                //let's assume this is a possible wall
+                else
+                {
+                    Transform tempTile = Instantiate(WallPrefab, new Vector3(posx, posy, 0), transform.rotation);
                 }
                 blacktile = !blacktile;
             }

@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class TileType : MonoBehaviour {
 
-    public Sprite WhiteGround;
-    public Sprite BlackGround;
+    public Color WhiteGround;
+    public Color BlackGround;
+    public Color Background;
    
 
     //Function to set the tile type
@@ -14,12 +15,12 @@ public class TileType : MonoBehaviour {
         //type 0 : WhiteGround
         if(type == 0)
         {
-            GetComponent<SpriteRenderer>().sprite = WhiteGround;
+            GetComponent<Renderer>().material.color = WhiteGround;
         }
         //type 1 : BlackGround
         if (type == 1)
         {
-            GetComponent<SpriteRenderer>().sprite = BlackGround;
+            GetComponent<Renderer>().material.color = BlackGround;
         }
     }
 
