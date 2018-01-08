@@ -7,11 +7,14 @@ public class TileType : MonoBehaviour {
     public Color WhiteGround;
     public Color BlackGround;
     public Color Background;
-   
+    public Color HighlightColor;
+    public int Type = 0;
+    public float DistanceToPiece = 1000000;
 
     //Function to set the tile type
     public void SetTileType(int type)
     {
+        Type = type;
         //type 0 : WhiteGround
         if(type == 0)
         {
@@ -22,6 +25,26 @@ public class TileType : MonoBehaviour {
         {
             GetComponent<Renderer>().material.color = BlackGround;
         }
+        // type 2 : Wall
+    }
+
+    public void Highlight(bool OnOrOff)
+    {
+        if (OnOrOff)
+        {
+            GetComponent<Renderer>().material.color = (GetComponent<Renderer>().material.color + HighlightColor) / 2;
+        }
+        else
+        {
+            SetTileType(Type);
+        }
+
+    }
+
+    public void GetDistanceTo(Transform piece)
+    {
+        DistanceToPiece = Vector3.Distance(transform.position, piece.position);
+        //Debug.Log("Distance to piece is " + DistanceToPiece);
     }
 
 	// Use this for initialization
