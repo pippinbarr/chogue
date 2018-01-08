@@ -10,6 +10,7 @@ public class TileType : MonoBehaviour {
     public Color HighlightColor;
     public int Type = 0;
     public float DistanceToPiece = 1000000;
+    public bool AvailableDestination = false;
 
     //Function to set the tile type
     public void SetTileType(int type)
@@ -33,10 +34,12 @@ public class TileType : MonoBehaviour {
         if (OnOrOff)
         {
             GetComponent<Renderer>().material.color = (GetComponent<Renderer>().material.color + HighlightColor) / 2;
+            AvailableDestination = true;
         }
         else
         {
             SetTileType(Type);
+            AvailableDestination = false;
         }
 
     }

@@ -28,4 +28,12 @@ public class GetCollidingThings : MonoBehaviour {
             CollidingTileList.Add(other.GetComponent<TileType>());
         }
     }
+    private void OnTriggerExit(Collider other)
+    {
+
+        if (CollidingTileList.Contains(other.GetComponent<TileType>()))
+        {
+            CollidingTileList.Remove(other.GetComponent<TileType>());
+        }
+    }
 }

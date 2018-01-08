@@ -59,13 +59,16 @@ public class Piece : MonoBehaviour {
 
     public void ShowDestinations()
     {
-        
-
-
-
         foreach (TileType tile in TileList)
         {
             tile.Highlight(true);
+        }
+    }
+    public void HideDestinations()
+    {
+        foreach (TileType tile in TileList)
+        {
+            tile.Highlight(false);
         }
     }
 
