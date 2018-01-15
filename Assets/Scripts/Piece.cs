@@ -6,11 +6,16 @@ using System.Linq;
 public class Piece : MonoBehaviour {
 
     public bool human = true; //is this a human controlled piece or not?
-    
+    public string PieceType = "rook";
+    public string PieceColor = "white";
+    public Transform PieceWhiteModel;
+    public Transform PieceBlackModel;
+
     //Array of colliders
     public Collider[] Colliders;
 
-    public List<TileType> TileList = new List<TileType>();
+    Transform PieceModel;
+    List<TileType> TileList = new List<TileType>();
 
 	// Use this for initialization
 	void Start () {
@@ -21,6 +26,20 @@ public class Piece : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void CreateModel(string PieceColor)
+    {
+        if (PieceColor == "white") {
+            PieceModel = Instantiate(PieceWhiteModel, transform.position, PieceWhiteModel.rotation);
+            PieceModel.parent = transform;
+        }
+        else
+        {
+            PieceModel = Instantiate(PieceBlackModel, transform.position, PieceBlackModel.rotation);
+            PieceModel.parent = transform;
+        }
+        
+    }
 
     public void FindAvailableDestinations()
     {

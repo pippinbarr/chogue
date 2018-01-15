@@ -7,6 +7,7 @@ public class MainManager : MonoBehaviour {
     //The current active piece, currently manually assigned
     public Piece CurrentActivePiece;
     public bool WaitingForPlayerMove = false;
+    public List<Piece> PieceList = new List<Piece>();
 
 	// Use this for initialization
 	void Start () {
