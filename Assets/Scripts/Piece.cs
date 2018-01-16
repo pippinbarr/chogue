@@ -6,11 +6,17 @@ using System.Linq;
 public class Piece : MonoBehaviour {
 
     public bool human = true; //is this a human controlled piece or not?
-    
+    public string PieceType = "rook";
+    public string PieceColor = "white";
+    public Transform PieceWhiteModel;
+    public Transform PieceBlackModel;
+
     //Array of colliders
     public Collider[] Colliders;
 
-    public List<TileType> TileList = new List<TileType>();
+    Transform PieceModel;
+    List<TileType> TileList = new List<TileType>();
+
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +28,20 @@ public class Piece : MonoBehaviour {
 		
 	}
 
+    public void CreateModel(string PieceColor)
+    {
+        if (PieceColor == "white") {
+            PieceModel = Instantiate(PieceWhiteModel, transform.position, PieceWhiteModel.rotation);
+            PieceModel.parent = transform;
+        }
+        else
+        {
+            PieceModel = Instantiate(PieceBlackModel, transform.position, PieceBlackModel.rotation);
+            PieceModel.parent = transform;
+        }
+        
+    }
+
     public void FindAvailableDestinations()
     {
         TileList.Clear();
@@ -30,9 +50,20 @@ public class Piece : MonoBehaviour {
         {
             List<TileType> TempTileList = col.transform.GetComponent<GetCollidingThings>().CollidingTileList;
             //for each tile, find out the distance to this piece
-            foreach(TileType tile in TempTileList)
+            foreach(TileType tile in TempTileList.ToList<TileType>())
             {
-                tile.GetDistanceTo(transform);
+                //in case it was a piece that was eaten
+                if (tile == null)
+                {
+                    TileList.Remove(tile);
+                    TempTileList.Remove(tile);
+
+                }
+                else
+                {
+                    tile.GetDistanceTo(transform);
+                }
+                
             }
 
             //sort this list by distance
@@ -48,6 +79,11 @@ public class Piece : MonoBehaviour {
                 }
                 else if(tile.transform.tag =="wall")
                 {
+                    break;
+                }
+                else if(tile.transform.tag == "piece")
+                {
+                    TileList.Add(tile);
                     break;
                 }
             }
@@ -70,6 +106,41 @@ public class Piece : MonoBehaviour {
         {
             tile.Highlight(false);
         }
+    }
+    public void DecideMove()
+    {
+        //Find available destinations
+        FindAvailableDestinations();
+        
+        //See if the human is there
+        foreach(TileType tile in TileList)
+        {
+            if (tile.transform.tag == "piece")
+            {
+                if (tile.GetComponent<Piece>().human)
+                {
+                    GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(tile);
+                }
+            }
+        }
+
+        //Get the human coordinates
+        //******Currently this is hard coded... the player is always first in this list
+        Piece HumanPlayer = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
+
+        //Find distance of all available tiles to human
+        foreach (TileType tile in TileList)
+        {
+            tile.GetDistanceTo(HumanPlayer.transform);
+        }
+
+
+        //Sort them
+        TileList = TileList.OrderBy(tile => tile.DistanceToPiece).ToList();
+        
+        //go to first one
+        GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(TileList[0]);
+
     }
 
 

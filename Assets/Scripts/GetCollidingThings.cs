@@ -6,10 +6,11 @@ public class GetCollidingThings : MonoBehaviour {
 
     public List<TileType> CollidingTileList = new List<TileType>();
 
-    
+
+
 
     // Use this for initialization
-	void Start () {
+    void Start () {
 
 	}
 	
@@ -23,10 +24,11 @@ public class GetCollidingThings : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         
-        if (((other.transform.tag == "tile")|| other.transform.tag == "wall") &&(!CollidingTileList.Contains(other.GetComponent<TileType>())))
+        if (((other.transform.tag == "tile")|| other.transform.tag == "wall" || other.transform.tag == "piece") &&(!CollidingTileList.Contains(other.GetComponent<TileType>())))
         {
             CollidingTileList.Add(other.GetComponent<TileType>());
         }
+
     }
     private void OnTriggerExit(Collider other)
     {
@@ -35,5 +37,6 @@ public class GetCollidingThings : MonoBehaviour {
         {
             CollidingTileList.Remove(other.GetComponent<TileType>());
         }
+
     }
 }

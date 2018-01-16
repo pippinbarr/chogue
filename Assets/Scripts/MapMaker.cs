@@ -7,10 +7,16 @@ public class MapMaker : MonoBehaviour {
     Texture2D Level;
     public Transform TilePrefab;
     public Transform WallPrefab;
+    public Transform Rook;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
 	// Use this for initialization
 	public void CreateLevel () {
+
+        //get MainManage to update Piece List
+        MainManager mm = GetComponent<MainManager>();
+        bool PlayerCreated = false; //set true when a player piece has been created
+
         //Get the generated level
         Level = GetComponent<levelgen>().level;
         int sizeX = GetComponent<levelgen>().sizeX;
@@ -37,6 +43,30 @@ public class MapMaker : MonoBehaviour {
                         //Debug.Log("black tile");
                         tempTile.GetComponent<TileType>().SetTileType(1);
                     }
+
+                    //Here we add some pieces
+                    if (Random.value < 0.05)
+                    {
+                        if (!PlayerCreated)
+                        {
+                            Transform TempPiece = Instantiate(Rook, tempTile.position+new Vector3(0,0,-.2f), Rook.rotation);
+                            TempPiece.GetComponent<Piece>().CreateModel("white");
+                            TempPiece.GetComponent<Piece>().human = true;
+                            PlayerCreated = true;
+                            mm.PieceList.Add(TempPiece.GetComponent<Piece>());
+                            mm.CurrentActivePiece = TempPiece.GetComponent<Piece>();
+                        }
+                        else
+                        {
+                            Transform TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            TempPiece.GetComponent<Piece>().CreateModel("black");
+                            TempPiece.GetComponent<Piece>().human = false;
+                            mm.PieceList.Add(TempPiece.GetComponent<Piece>());
+
+                        }
+                        
+                    }
+
 
                 }
                 //let's assume this is a possible wall
