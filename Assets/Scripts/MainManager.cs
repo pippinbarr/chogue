@@ -42,17 +42,7 @@ public class MainManager : MonoBehaviour {
                     //if this is an available destination, move!
                     if (hit.transform.GetComponent<TileType>().AvailableDestination)
                     {
-                        CurrentActivePiece.transform.position = new Vector3(hit.transform.position.x,hit.transform.position.y,CurrentActivePiece.transform.position.z);
-                        CurrentActivePiece.HideDestinations();
-                        WaitingForPlayerMove = false;
-
-                        //was this a piece? then eat it!
-                        if (hit.transform.tag == "piece")
-                        {
-                            PieceList.Remove(hit.transform.GetComponent<Piece>());
-                            Destroy(hit.transform.gameObject);
-                            GetComponent<AudioSource>().Play();
-                        }
+                        MoveToTile(hit.transform.GetComponent<TileType>());
 
                     }
                 }
@@ -90,5 +80,26 @@ public class MainManager : MonoBehaviour {
             }
         }
 
+    }
+
+    public void MoveToTile(TileType tile)
+    {
+        CurrentActivePiece.transform.position = new Vector3(tile.transform.position.x, tile.transform.position.y, CurrentActivePiece.transform.position.z);
+        CurrentActivePiece.HideDestinations();
+        WaitingForPlayerMove = false;
+
+        //was this a piece? then eat it!
+        if (tile.transform.tag == "piece")
+        {
+            //was it the player??
+            if (tile.transform.GetComponent<Piece>().human)
+            {
+                gameover = true;
+            }
+
+            PieceList.Remove(tile.transform.GetComponent<Piece>());
+            Destroy(tile.transform.gameObject);
+            GetComponent<AudioSource>().Play();
+        }
     }
 }

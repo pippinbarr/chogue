@@ -109,6 +109,37 @@ public class Piece : MonoBehaviour {
     }
     public void DecideMove()
     {
+        //Find available destinations
+        FindAvailableDestinations();
+        
+        //See if the human is there
+        foreach(TileType tile in TileList)
+        {
+            if (tile.transform.tag == "piece")
+            {
+                if (tile.GetComponent<Piece>().human)
+                {
+                    GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(tile);
+                }
+            }
+        }
+
+        //Get the human coordinates
+        //******Currently this is hard coded... the player is always first in this list
+        Piece HumanPlayer = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
+
+        //Find distance of all available tiles to human
+        foreach (TileType tile in TileList)
+        {
+            tile.GetDistanceTo(HumanPlayer.transform);
+        }
+
+
+        //Sort them
+        TileList = TileList.OrderBy(tile => tile.DistanceToPiece).ToList();
+        
+        //go to first one
+        GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(TileList[0]);
 
     }
 
