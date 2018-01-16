@@ -8,10 +8,12 @@ public class MainManager : MonoBehaviour {
     public Piece CurrentActivePiece;
     public bool WaitingForPlayerMove = false;
     public List<Piece> PieceList = new List<Piece>();
+    int CurrentPieceIndex = 0;
+    bool gameover = false;
 
 	// Use this for initialization
 	void Start () {
-		
+        StartCoroutine(PlayGame());
 	}
 	
 	// Update is called once per frame
@@ -42,6 +44,15 @@ public class MainManager : MonoBehaviour {
                     {
                         CurrentActivePiece.transform.position = new Vector3(hit.transform.position.x,hit.transform.position.y,CurrentActivePiece.transform.position.z);
                         CurrentActivePiece.HideDestinations();
+                        WaitingForPlayerMove = false;
+
+                        //was this a piece? then eat it!
+                        if (hit.transform.tag == "piece")
+                        {
+                            PieceList.Remove(hit.transform.GetComponent<Piece>());
+                            Destroy(hit.transform.gameObject);
+                            GetComponent<AudioSource>().Play();
+                        }
 
                     }
                 }
@@ -49,4 +60,35 @@ public class MainManager : MonoBehaviour {
         }
 
 	}
+
+    IEnumerator PlayGame()
+    {
+        while (!gameover) {
+            Debug.Log("Playing piece " + CurrentPieceIndex);
+            yield return new WaitForSeconds(0.5f);
+            CurrentActivePiece = PieceList[CurrentPieceIndex];
+            if (CurrentActivePiece.human)
+            {
+                CurrentActivePiece.FindAvailableDestinations();
+                CurrentActivePiece.ShowDestinations();
+                WaitingForPlayerMove = true;
+                while (WaitingForPlayerMove)
+                {
+                    yield return new WaitForSeconds(0.1f);
+                }
+            
+            }
+            else
+            {
+                CurrentActivePiece.DecideMove();
+            }
+            //next piece
+            CurrentPieceIndex++;
+            if (CurrentPieceIndex > (PieceList.Count-1))
+            {
+                CurrentPieceIndex = 0;
+            }
+        }
+
+    }
 }

@@ -17,6 +17,7 @@ public class Piece : MonoBehaviour {
     Transform PieceModel;
     List<TileType> TileList = new List<TileType>();
 
+
 	// Use this for initialization
 	void Start () {
 		
@@ -49,9 +50,20 @@ public class Piece : MonoBehaviour {
         {
             List<TileType> TempTileList = col.transform.GetComponent<GetCollidingThings>().CollidingTileList;
             //for each tile, find out the distance to this piece
-            foreach(TileType tile in TempTileList)
+            foreach(TileType tile in TempTileList.ToList<TileType>())
             {
-                tile.GetDistanceTo(transform);
+                //in case it was a piece that was eaten
+                if (tile == null)
+                {
+                    TileList.Remove(tile);
+                    TempTileList.Remove(tile);
+
+                }
+                else
+                {
+                    tile.GetDistanceTo(transform);
+                }
+                
             }
 
             //sort this list by distance
@@ -67,6 +79,11 @@ public class Piece : MonoBehaviour {
                 }
                 else if(tile.transform.tag =="wall")
                 {
+                    break;
+                }
+                else if(tile.transform.tag == "piece")
+                {
+                    TileList.Add(tile);
                     break;
                 }
             }
@@ -89,6 +106,10 @@ public class Piece : MonoBehaviour {
         {
             tile.Highlight(false);
         }
+    }
+    public void DecideMove()
+    {
+
     }
 
 
