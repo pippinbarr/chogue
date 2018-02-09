@@ -9,6 +9,7 @@ public class MapMaker : MonoBehaviour {
     public Transform WallPrefab;
     public Transform Rook;
     public Transform Bishop;
+    public Transform Queen;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
 	// Use this for initialization
@@ -51,7 +52,7 @@ public class MapMaker : MonoBehaviour {
                         //create the player first
                         if (!PlayerCreated)
                         {
-                            Transform TempPiece = Instantiate(Rook, tempTile.position+new Vector3(0,0,-.2f), Rook.rotation);
+                            Transform TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             TempPiece.GetComponent<Piece>().CreateModel("white");
                             TempPiece.GetComponent<Piece>().human = true;
                             PlayerCreated = true;
@@ -63,13 +64,18 @@ public class MapMaker : MonoBehaviour {
                         {
                             Transform TempPiece;
                             //select randomly between available pieces
-                            if (Random.value > 0.5)
+                            float random = Random.value;
+                            if (random > 0.66)
                             {
                                 TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             }
+                            else if (random > 0.33)
+                            {
+                                TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
+                            }
                             else
                             {
-                                TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                                TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
                             }
                             
                             TempPiece.GetComponent<Piece>().CreateModel("black");

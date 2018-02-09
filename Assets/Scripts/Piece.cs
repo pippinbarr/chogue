@@ -109,6 +109,8 @@ public class Piece : MonoBehaviour {
     }
     public void DecideMove()
     {
+       
+        
         //Find available destinations
         FindAvailableDestinations();
         
@@ -119,7 +121,9 @@ public class Piece : MonoBehaviour {
             {
                 if (tile.GetComponent<Piece>().human)
                 {
+                    Debug.Log("eat human");
                     GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(tile);
+                    return;
                 }
             }
         }
@@ -140,6 +144,8 @@ public class Piece : MonoBehaviour {
         
         //go to first one
         GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(TileList[0]);
+
+
 
     }
 
