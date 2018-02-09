@@ -10,6 +10,7 @@ public class MapMaker : MonoBehaviour {
     public Transform Rook;
     public Transform Bishop;
     public Transform Queen;
+    public Transform Knight;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
 	// Use this for initialization
@@ -65,17 +66,21 @@ public class MapMaker : MonoBehaviour {
                             Transform TempPiece;
                             //select randomly between available pieces
                             float random = Random.value;
-                            if (random > 0.66)
+                            if (random > 0.75)
                             {
                                 TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             }
-                            else if (random > 0.33)
+                            else if (random > 0.50)
                             {
                                 TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
                             }
-                            else
+                            else if(random > 0.25)
                             {
                                 TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
+                            }
+                            else
+                            {
+                                TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                             }
                             
                             TempPiece.GetComponent<Piece>().CreateModel("black");
