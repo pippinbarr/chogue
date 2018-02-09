@@ -8,6 +8,7 @@ public class MapMaker : MonoBehaviour {
     public Transform TilePrefab;
     public Transform WallPrefab;
     public Transform Rook;
+    public Transform Bishop;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
 	// Use this for initialization
@@ -44,9 +45,10 @@ public class MapMaker : MonoBehaviour {
                         tempTile.GetComponent<TileType>().SetTileType(1);
                     }
 
-                    //Here we add some pieces
+                    //Here we add some pieces give a threshold chance
                     if (Random.value < 0.05)
                     {
+                        //create the player first
                         if (!PlayerCreated)
                         {
                             Transform TempPiece = Instantiate(Rook, tempTile.position+new Vector3(0,0,-.2f), Rook.rotation);
@@ -56,9 +58,20 @@ public class MapMaker : MonoBehaviour {
                             mm.PieceList.Add(TempPiece.GetComponent<Piece>());
                             mm.CurrentActivePiece = TempPiece.GetComponent<Piece>();
                         }
+                        //if we have a player, create some other piece
                         else
                         {
-                            Transform TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            Transform TempPiece;
+                            //select randomly between available pieces
+                            if (Random.value > 0.5)
+                            {
+                                TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            }
+                            else
+                            {
+                                TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            }
+                            
                             TempPiece.GetComponent<Piece>().CreateModel("black");
                             TempPiece.GetComponent<Piece>().human = false;
                             mm.PieceList.Add(TempPiece.GetComponent<Piece>());
