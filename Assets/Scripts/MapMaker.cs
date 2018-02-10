@@ -11,6 +11,8 @@ public class MapMaker : MonoBehaviour {
     public Transform Bishop;
     public Transform Queen;
     public Transform Knight;
+    public Transform King;
+    public Transform Pawn;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
 	// Use this for initialization
@@ -53,7 +55,7 @@ public class MapMaker : MonoBehaviour {
                         //create the player first
                         if (!PlayerCreated)
                         {
-                            Transform TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            Transform TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), King.rotation);
                             TempPiece.GetComponent<Piece>().CreateModel("white");
                             TempPiece.GetComponent<Piece>().human = true;
                             PlayerCreated = true;
@@ -66,21 +68,25 @@ public class MapMaker : MonoBehaviour {
                             Transform TempPiece;
                             //select randomly between available pieces
                             float random = Random.value;
-                            if (random > 0.75)
+                            if (random > 0.80)
                             {
                                 TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             }
-                            else if (random > 0.50)
+                            else if (random > 0.60)
                             {
                                 TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
                             }
-                            else if(random > 0.25)
+                            else if(random > 0.40)
                             {
                                 TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
                             }
-                            else
+                            else if (random > 0.20)
                             {
                                 TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
+                            }
+                            else
+                            {
+                                TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
                             }
                             
                             TempPiece.GetComponent<Piece>().CreateModel("black");

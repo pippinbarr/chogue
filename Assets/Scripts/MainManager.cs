@@ -54,7 +54,7 @@ public class MainManager : MonoBehaviour {
     IEnumerator PlayGame()
     {
         while (!gameover) {
-            Debug.Log("Playing piece " + CurrentPieceIndex);
+            //Debug.Log("Playing piece " + CurrentPieceIndex);
             yield return new WaitForSeconds(0.5f);
             CurrentActivePiece = PieceList[CurrentPieceIndex];
             if (CurrentActivePiece.human)
@@ -70,7 +70,15 @@ public class MainManager : MonoBehaviour {
             }
             else
             {
-                CurrentActivePiece.DecideMove();
+                if (!CurrentActivePiece.NewQueen)
+                {
+                    CurrentActivePiece.DecideMove();
+                }
+                else
+                {
+                    CurrentActivePiece.NewQueen = false;
+                }
+                    
             }
             //next piece
             CurrentPieceIndex++;

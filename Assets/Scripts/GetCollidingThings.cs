@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GetCollidingThings : MonoBehaviour {
 
+    public bool PawnWallCheck = false;
     public List<TileType> CollidingTileList = new List<TileType>();
 
 
@@ -27,6 +28,12 @@ public class GetCollidingThings : MonoBehaviour {
         if (((other.transform.tag == "tile")|| other.transform.tag == "wall" || other.transform.tag == "piece") &&(!CollidingTileList.Contains(other.GetComponent<TileType>())))
         {
             CollidingTileList.Add(other.GetComponent<TileType>());
+            //Has the pawn touched a wall?
+            if(PawnWallCheck && (other.transform.tag == "wall"))
+            {
+                Debug.Log("queen");
+                transform.parent.GetComponent<Piece>().Queen();
+            }
         }
 
     }
