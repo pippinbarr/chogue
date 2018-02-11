@@ -39,6 +39,7 @@ public class MainManager : MonoBehaviour {
 
                 if (Physics.Raycast(ray, out hit, 100))
                 {
+                    Debug.Log("hit something ");
                     //if this is an available destination, move!
                     if (hit.transform.GetComponent<TileType>().AvailableDestination)
                     {

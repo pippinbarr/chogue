@@ -14,6 +14,7 @@ public class Piece : MonoBehaviour {
     public Transform PieceBlackModel;
     public Transform QueenPrefab;
     public bool NewQueen = false;
+    public TileType CurrentTile;
 
 
     //Array of colliders
@@ -181,14 +182,32 @@ public class Piece : MonoBehaviour {
     {
         foreach (TileType tile in TileList)
         {
-            tile.Highlight(true);
+            if (tile.gameObject.tag == "tile")
+            {
+                tile.Highlight(true);
+            }
+            else if(tile.gameObject.tag == "piece")
+            {
+                tile.Highlight(true);
+                tile.GetComponent<Piece>().CurrentTile.Highlight(true);
+            }
+            
         }
     }
     public void HideDestinations()
     {
         foreach (TileType tile in TileList)
         {
-            tile.Highlight(false);
+            if (tile.gameObject.tag == "tile")
+            {
+                tile.Highlight(false);
+            }
+            else if (tile.gameObject.tag == "piece")
+            {
+                tile.Highlight(false);
+                tile.GetComponent<Piece>().CurrentTile.Highlight(false);
+            }
+
         }
     }
     public void DecideMove()
@@ -232,9 +251,13 @@ public class Piece : MonoBehaviour {
             GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(TileList[0]);
         }
         
-
-
-
+    }
+    private void OnTriggerStay(Collider collision)
+    {
+        if (collision.transform.tag == "tile")
+        {
+            CurrentTile = collision.transform.GetComponent<TileType>();
+        }
     }
 
 
