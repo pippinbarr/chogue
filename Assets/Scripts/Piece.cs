@@ -20,7 +20,7 @@ public class Piece : MonoBehaviour {
     public Collider[] Colliders;
 
     Transform PieceModel;
-    List<TileType> TileList = new List<TileType>();
+    public List<TileType> TileList = new List<TileType>();
 
 
 	// Use this for initialization

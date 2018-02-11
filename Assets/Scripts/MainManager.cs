@@ -61,7 +61,11 @@ public class MainManager : MonoBehaviour {
             {
                 CurrentActivePiece.FindAvailableDestinations();
                 CurrentActivePiece.ShowDestinations();
-                WaitingForPlayerMove = true;
+                if (CurrentActivePiece.TileList.Count > 0)
+                {
+                    WaitingForPlayerMove = true;
+                }
+                
                 while (WaitingForPlayerMove)
                 {
                     yield return new WaitForSeconds(0.1f);
@@ -81,6 +85,7 @@ public class MainManager : MonoBehaviour {
                     
             }
             //next piece
+            Debug.Log("next piece");
             CurrentPieceIndex++;
             if (CurrentPieceIndex > (PieceList.Count-1))
             {
@@ -99,9 +104,10 @@ public class MainManager : MonoBehaviour {
         //was this a piece? then eat it!
         if (tile.transform.tag == "piece")
         {
-            //was it the player??
-            if (tile.transform.GetComponent<Piece>().human)
+            //was it the player's king?
+            if ((tile.transform.GetComponent<Piece>().human)&&(tile.transform.GetComponent<Piece>().PieceType=="king"))
             {
+                Debug.Log("game over");
                 gameover = true;
             }
 
