@@ -55,7 +55,7 @@ public class MapMaker : MonoBehaviour {
                         //create the player first
                         if (!PlayerCreated)
                         {
-                            Transform TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), King.rotation);
+                            Transform TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
                             TempPiece.GetComponent<Piece>().CreateModel("white");
                             TempPiece.GetComponent<Piece>().human = true;
                             PlayerCreated = true;

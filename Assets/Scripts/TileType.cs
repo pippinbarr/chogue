@@ -11,6 +11,7 @@ public class TileType : MonoBehaviour {
     public int Type = 0;
     public float DistanceToPiece = 1000000;
     public bool AvailableDestination = false;
+    public bool manual = false;
 
     //Function to set the tile type
     public void SetTileType(int type)
@@ -53,7 +54,10 @@ public class TileType : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        if (manual)
+        {
+            SetTileType(Type);
+        }
 	}
 	
 	// Update is called once per frame

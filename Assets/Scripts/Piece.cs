@@ -6,6 +6,7 @@ using System.Linq;
 public class Piece : MonoBehaviour {
 
     public bool human = true; //is this a human controlled piece or not?
+    public bool manual = false; //turn on if it creates itself
     public int turn = 0; //a priori seulement pour le pion, pour savoir s'il peut avancer deux fois
     public string PieceType = "rook";
     public string PieceColor = "white";
@@ -24,7 +25,10 @@ public class Piece : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        if (manual)
+        {
+            CreateModel(PieceColor);
+        }
 	}
 	
 	// Update is called once per frame
