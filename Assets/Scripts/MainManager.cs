@@ -42,7 +42,7 @@ public class MainManager : MonoBehaviour {
 
                 if (Physics.Raycast(ray, out hit, 100))
                 {
-                    Debug.Log("hit something ");
+                    //Debug.Log("hit something ");
                     //if this is an available destination, move!
                     if ((hit.transform.GetComponent<TileType>()!=null)&&(hit.transform.GetComponent<TileType>().AvailableDestination))
                     {
@@ -93,12 +93,30 @@ public class MainManager : MonoBehaviour {
                 // break;
             }
         }
+        Debug.Log("best move is " + bestmove);
+        //we can only move, select the one that can move closest to king
+
+        if (bestmove < 2)
+
+        {
+            float leastdist = 1000000;
+            Debug.Log("Can only move, get closest to king");
+            foreach (Piece piece in PieceList)
+            {
+                if (!piece.human)
+                {
+                    if (piece.LeastDistanceToKing < leastdist)
+                    {
+                        leastdist = piece.LeastDistanceToKing;
+                        Debug.Log("Least distance is " + leastdist);
+                        bestpiece = piece;
+                    }
+                    // break;
+                }
+            }
+        }
         CurrentActivePiece = bestpiece;
-        Debug.Log("pause");
-        
-        
-        
-        Debug.Log("ok go");
+
         CurrentActivePiece.MakeMove();
         yield return new WaitForSeconds(0.1f);
         WaitingForCPUMove = false;
@@ -148,6 +166,29 @@ public class MainManager : MonoBehaviour {
                        // break;
                     }
                 }
+                Debug.Log("best move is " + bestmove);
+                //we can only move, select the one that can move closest to king
+                
+                if (bestmove < 2)
+
+                {
+                    float leastdist = 1000000;
+                    Debug.Log("Can only move, get closest to king");
+                    foreach (Piece piece in PieceList)
+                    {
+                        if (!piece.human)
+                        {
+                            if (piece.LeastDistanceToKing < leastdist)
+                            {
+                                leastdist = piece.LeastDistanceToKing;
+                                Debug.Log("Least distance is "+leastdist);
+                                bestpiece = piece;
+                            }
+                            // break;
+                        }
+                    }
+                }
+            
                 CurrentActivePiece = bestpiece;
 
                 CurrentActivePiece.MakeMove();

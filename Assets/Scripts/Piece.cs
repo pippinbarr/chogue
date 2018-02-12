@@ -16,7 +16,8 @@ public class Piece : MonoBehaviour {
     public bool NewQueen = false;
     public Transform CurrentTile;
     public int BestMove = 0; //0 : can't move, 1: can move, 2: can eat, 3: can eat white king
-    Transform BestMoveTarget; //
+    public Transform BestMoveTarget; //
+    public float LeastDistanceToKing = 1000000000;//
 
 
     //Array of colliders
@@ -192,7 +193,7 @@ public class Piece : MonoBehaviour {
             foreach (TileType tile in TempTileList)
             {
 
-                if ((tile.transform.tag == "piece") || (tile.transform.tag == "wall"))
+                if (tile.transform.tag == "piece")
                 {
                     if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
                     {
@@ -200,7 +201,11 @@ public class Piece : MonoBehaviour {
                     }
                     nope = true;
                 }
+                if (tile.transform.tag == "wall")
+                {
 
+                    nope = true;
+                }
             }
             if  ((!nope) && (TempTileList.Count > 0))
                 {
@@ -293,6 +298,7 @@ public class Piece : MonoBehaviour {
         else
         {
             BestMove = 0;
+            LeastDistanceToKing = 10000000;
         }
         //See if the human is there
         foreach(TileType tile in TileList)
@@ -320,7 +326,7 @@ public class Piece : MonoBehaviour {
         {
             //Get the human coordinates
             Piece HumanKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
-            //******Currently this is hard coded... the player is always first in this list
+            
             foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
             {
                 if (piece.human && (piece.PieceType == "king"))
@@ -344,6 +350,7 @@ public class Piece : MonoBehaviour {
             if (TileList.Count > 0)
             {
                 BestMoveTarget = TileList[0].transform ;
+                LeastDistanceToKing = TileList[0].DistanceToPiece;
             }
 
         }
