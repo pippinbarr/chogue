@@ -14,9 +14,9 @@ public class Piece : MonoBehaviour {
     public Transform PieceBlackModel;
     public Transform QueenPrefab;
     public bool NewQueen = false;
-    public TileType CurrentTile;
+    public Transform CurrentTile;
     public int BestMove = 0; //0 : can't move, 1: can move, 2: can eat, 3: can eat white king
-    TileType BestMoveTarget; //
+    Transform BestMoveTarget; //
 
 
     //Array of colliders
@@ -106,9 +106,9 @@ public class Piece : MonoBehaviour {
                             //did we add the tile underneath the piece?
 
                         }
-                        if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile))
+                        if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
                         {
-                            TileList.Remove(tile.GetComponent<Piece>().CurrentTile);
+                            TileList.Remove(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>());
                         }
                         break;
 
@@ -129,6 +129,21 @@ public class Piece : MonoBehaviour {
 
         //can I move forward 1? The first collider is the move forward 1.
         List<TileType> TempTileList = Colliders[0].transform.GetComponent<GetCollidingThings>().CollidingTileList;
+        foreach (TileType tile in TempTileList.ToList<TileType>())
+        {
+            //in case it was a piece that was eaten
+            if (tile == null)
+            {
+                TileList.Remove(tile);
+                TempTileList.Remove(tile);
+
+            }
+            else
+            {
+                tile.GetDistanceTo(transform);
+            }
+
+        }
         TempTileList = TempTileList.OrderBy(tile => tile.DistanceToPiece).ToList();
         bool nope = false;
         foreach (TileType tile in TempTileList)
@@ -149,6 +164,21 @@ public class Piece : MonoBehaviour {
         if ((turn == 0) && (TileList.Count > 0))
         {
             TempTileList = Colliders[3].transform.GetComponent<GetCollidingThings>().CollidingTileList;
+            foreach (TileType tile in TempTileList.ToList<TileType>())
+            {
+                //in case it was a piece that was eaten
+                if (tile == null)
+                {
+                    TileList.Remove(tile);
+                    TempTileList.Remove(tile);
+
+                }
+                else
+                {
+                    tile.GetDistanceTo(transform);
+                }
+
+            }
             TempTileList = TempTileList.OrderBy(tile => tile.DistanceToPiece).ToList();
             nope = false;
             foreach (TileType tile in TempTileList)
@@ -171,8 +201,8 @@ public class Piece : MonoBehaviour {
         TempTileList.AddRange(Colliders[2].transform.GetComponent<GetCollidingThings>().CollidingTileList);
         foreach (TileType tile in TempTileList)
         {
- 
-           if (tile.transform.tag == "piece")
+            
+           if ((tile!=null)&&(tile.transform.tag == "piece"))
             {
                 if (tile.GetComponent<Piece>().human != human)
                 {
@@ -206,7 +236,7 @@ public class Piece : MonoBehaviour {
             else if(tile.gameObject.tag == "piece")
             {
                 tile.Highlight(true);
-                tile.GetComponent<Piece>().CurrentTile.Highlight(true);
+                tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().Highlight(true);
             }
             
         }
@@ -225,7 +255,7 @@ public class Piece : MonoBehaviour {
                 {
                     tile.Highlight(false);
                     tile.Highlight(false);
-                    tile.GetComponent<Piece>().CurrentTile.Highlight(false);
+                    tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().Highlight(false);
 
                 }
             }
@@ -235,7 +265,7 @@ public class Piece : MonoBehaviour {
     }
    public void MakeMove()
     {
-        GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget);
+        GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>());
     }
    public void DecideMove()
     {
@@ -260,7 +290,7 @@ public class Piece : MonoBehaviour {
                 {
                     //Debug.Log("eat human");
                     BestMove = 2;
-                    BestMoveTarget = tile;
+                    BestMoveTarget = tile.transform;
                     if (tile.GetComponent<Piece>().PieceType == "king")
                     {
                         BestMove = 3;
@@ -276,7 +306,7 @@ public class Piece : MonoBehaviour {
         if (BestMove == 1)
         {
             //Get the human coordinates
-            Piece HumanKing = new Piece();
+            Piece HumanKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
             //******Currently this is hard coded... the player is always first in this list
             foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
             {
@@ -300,7 +330,7 @@ public class Piece : MonoBehaviour {
             //go to first one if not zéro
             if (TileList.Count > 0)
             {
-                BestMoveTarget = TileList[0];
+                BestMoveTarget = TileList[0].transform ;
             }
 
         }
@@ -312,7 +342,7 @@ public class Piece : MonoBehaviour {
     {
         if (collision.transform.tag == "tile")
         {
-            CurrentTile = collision.transform.GetComponent<TileType>();
+            CurrentTile = collision.transform;
         }
     }
 

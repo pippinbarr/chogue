@@ -44,7 +44,7 @@ public class MainManager : MonoBehaviour {
                 {
                     Debug.Log("hit something ");
                     //if this is an available destination, move!
-                    if (hit.transform.GetComponent<TileType>().AvailableDestination)
+                    if ((hit.transform.GetComponent<TileType>()!=null)&&(hit.transform.GetComponent<TileType>().AvailableDestination))
                     {
 
                         MoveToTile(hit.transform.GetComponent<TileType>());
@@ -52,7 +52,7 @@ public class MainManager : MonoBehaviour {
 
                     }
                     //if this is a human piece, select it
-                    if(hit.transform.GetComponent<Piece>().human)
+                    if((hit.transform.GetComponent<Piece>()!=null) &&(hit.transform.GetComponent<Piece>().human))
                     {
                         CurrentActivePiece.HideDestinations();
                         CurrentActivePiece = hit.transform.GetComponent<Piece>();
@@ -76,7 +76,7 @@ public class MainManager : MonoBehaviour {
         //select a black piece to move
         //first ask every piece what is its best move
         int bestmove = 0;
-        Piece bestpiece = new Piece();
+        Piece bestpiece = PieceList[0];
         foreach (Piece piece in PieceList)
         {
             if (!piece.human)
@@ -130,7 +130,7 @@ public class MainManager : MonoBehaviour {
                 //select a black piece to move
                 //first ask every piece what is its best move
                 int bestmove = 0;
-                Piece bestpiece = new Piece();
+                Piece bestpiece = PieceList[0];
                 foreach(Piece piece in PieceList)
                 {
                     if (!piece.human)
