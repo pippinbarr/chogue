@@ -64,4 +64,19 @@ public class TileType : MonoBehaviour {
 	void Update () {
 		
 	}
+    private void OnTriggerEnter(Collider other)
+    {
+        //when a piece comes in, disable collider to let interactions happen with the piece
+        if (other.transform.tag == "piece")
+        {
+            //GetComponent<Collider>().enabled = false;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.transform.tag == "piece")
+        {
+            //GetComponent<Collider>().enabled = true;
+        }
+    }
 }

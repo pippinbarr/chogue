@@ -17,6 +17,14 @@ public class GetCollidingThings : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        foreach(TileType tile in CollidingTileList)
+        {
+            if (tile == null)
+            {
+                CollidingTileList.Remove(tile);
+            }
+        }
 		
 	}
 

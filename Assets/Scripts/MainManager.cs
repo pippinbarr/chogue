@@ -7,25 +7,28 @@ public class MainManager : MonoBehaviour {
     //The current active piece, currently manually assigned
     public Piece CurrentActivePiece;
     public bool WaitingForPlayerMove = false;
+    public bool WaitingForCPUMove = false;
     public List<Piece> PieceList = new List<Piece>();
     int CurrentPieceIndex = 0;
     bool gameover = false;
+    public bool HumanTurn = false;
 
 	// Use this for initialization
 	void Start () {
-        StartCoroutine(PlayGame());
-	}
+        //select a default human piece
+        foreach (Piece piece in PieceList)
+        {
+            if (piece.human)
+            {
+                CurrentActivePiece = piece;
+                break;
+            }
+        }
+        WaitingForPlayerMove = true;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-
-        //Debug code: wait for space key to check destinations
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            CurrentActivePiece.FindAvailableDestinations();
-            CurrentActivePiece.ShowDestinations();
-            WaitingForPlayerMove = true;
-        }
 
         //Get click on destination (only if in "move" mode)
         if (WaitingForPlayerMove)
@@ -43,64 +46,120 @@ public class MainManager : MonoBehaviour {
                     //if this is an available destination, move!
                     if (hit.transform.GetComponent<TileType>().AvailableDestination)
                     {
+
                         MoveToTile(hit.transform.GetComponent<TileType>());
+                        WaitingForPlayerMove = false;
 
                     }
+                    //if this is a human piece, select it
+                    if(hit.transform.GetComponent<Piece>().human)
+                    {
+                        CurrentActivePiece.HideDestinations();
+                        CurrentActivePiece = hit.transform.GetComponent<Piece>();
+                        CurrentActivePiece.FindAvailableDestinations();
+                        CurrentActivePiece.ShowDestinations();
+                    }
+
                 }
             }
         }
+        else if(!WaitingForCPUMove)
+        {
+            Debug.Log("calling play black");
+            PlayBlack();
+
+        }
 
 	}
-
+    void PlayBlack()
+    {
+        //select a black piece to move
+        //first ask every piece what is its best move
+        int bestmove = 0;
+        Piece bestpiece = new Piece();
+        foreach (Piece piece in PieceList)
+        {
+            if (!piece.human)
+            {
+                piece.DecideMove();
+                if (piece.BestMove > bestmove)
+                {
+                    bestmove = piece.BestMove;
+                    bestpiece = piece;
+                }
+                // break;
+            }
+        }
+        CurrentActivePiece = bestpiece;
+        Debug.Log("pause");
+        WaitingForCPUMove = true;
+        //yield return new WaitForSeconds(0.5f);
+        WaitingForCPUMove = false;
+        Debug.Log("ok go");
+        CurrentActivePiece.MakeMove();
+        
+        WaitingForPlayerMove = true;
+    }
     IEnumerator PlayGame()
     {
         while (!gameover) {
             //Debug.Log("Playing piece " + CurrentPieceIndex);
             yield return new WaitForSeconds(0.5f);
-            CurrentActivePiece = PieceList[CurrentPieceIndex];
-            if (CurrentActivePiece.human)
+            //select a default white pieace
+
+            if (HumanTurn)
             {
-                CurrentActivePiece.FindAvailableDestinations();
-                CurrentActivePiece.ShowDestinations();
-                if (CurrentActivePiece.TileList.Count > 0)
+                foreach (Piece piece in PieceList)
                 {
-                    WaitingForPlayerMove = true;
+                    if (piece.human)
+                    {
+                        CurrentActivePiece = piece;
+                        break;
+                    }
                 }
+                WaitingForPlayerMove = true;
                 
                 while (WaitingForPlayerMove)
                 {
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.01f);
                 }
             
             }
             else
             {
-                if (!CurrentActivePiece.NewQueen)
+                //select a black piece to move
+                //first ask every piece what is its best move
+                int bestmove = 0;
+                Piece bestpiece = new Piece();
+                foreach(Piece piece in PieceList)
                 {
-                    CurrentActivePiece.DecideMove();
+                    if (!piece.human)
+                    {
+                        piece.DecideMove();
+                        if (piece.BestMove > bestmove)
+                        {
+                            bestmove = piece.BestMove;
+                            bestpiece = piece;
+                        }
+                       // break;
+                    }
                 }
-                else
-                {
-                    CurrentActivePiece.NewQueen = false;
-                }
+                CurrentActivePiece = bestpiece;
+
+                CurrentActivePiece.MakeMove();
                     
             }
-            //next piece
-            Debug.Log("next piece");
-            CurrentPieceIndex++;
-            if (CurrentPieceIndex > (PieceList.Count-1))
-            {
-                CurrentPieceIndex = 0;
-            }
+
         }
 
     }
 
     public void MoveToTile(TileType tile)
     {
+        CurrentActivePiece.turn++;
         CurrentActivePiece.transform.position = new Vector3(tile.transform.position.x, tile.transform.position.y, CurrentActivePiece.transform.position.z);
         CurrentActivePiece.HideDestinations();
-        WaitingForPlayerMove = false;
+        
 
         //was this a piece? then eat it!
         if (tile.transform.tag == "piece")
