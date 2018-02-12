@@ -151,12 +151,17 @@ public class Piece : MonoBehaviour {
 
             if ((tile.transform.tag == "piece")|| (tile.transform.tag == "wall"))
             {
+                if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
+                {
+                    TileList.Remove(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>());
+                }
                 nope = true;
             }
            
         }
         if ((!nope)&&(TempTileList.Count>0))
         {
+            //Debug.Log("how many tiles: " + TempTileList.Count);
             TileList.Add(TempTileList[0]);
         }
 
@@ -186,6 +191,10 @@ public class Piece : MonoBehaviour {
 
                 if ((tile.transform.tag == "piece") || (tile.transform.tag == "wall"))
                 {
+                    if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
+                    {
+                        TileList.Remove(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>());
+                    }
                     nope = true;
                 }
 

@@ -66,12 +66,12 @@ public class MainManager : MonoBehaviour {
         else if(!WaitingForCPUMove)
         {
             Debug.Log("calling play black");
-            PlayBlack();
+           StartCoroutine( PlayBlack());
 
         }
 
 	}
-    void PlayBlack()
+    IEnumerator PlayBlack()
     {
         //select a black piece to move
         //first ask every piece what is its best move
@@ -93,7 +93,7 @@ public class MainManager : MonoBehaviour {
         CurrentActivePiece = bestpiece;
         Debug.Log("pause");
         WaitingForCPUMove = true;
-        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f);
         WaitingForCPUMove = false;
         Debug.Log("ok go");
         CurrentActivePiece.MakeMove();
