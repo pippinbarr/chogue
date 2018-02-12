@@ -36,8 +36,11 @@ public class Piece : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        if (NewQueen)
+        {
+            Queen();
+        }
+    }
 
     public void CreateModel(string pieceColor)
     {
@@ -229,7 +232,7 @@ public class Piece : MonoBehaviour {
         Transform TempPiece = Instantiate(QueenPrefab, transform.position, transform.rotation);
         TempPiece.GetComponent<Piece>().CreateModel(PieceColor);
         TempPiece.GetComponent<Piece>().human = human;
-        TempPiece.GetComponent<Piece>().NewQueen = true;
+        TempPiece.GetComponent<Piece>().NewQueen = false;
         GameObject.Find("MainManager").GetComponent<MainManager>().PieceList.Insert(0,TempPiece.GetComponent<Piece>());
         GameObject.Find("MainManager").GetComponent<MainManager>().PieceList.Remove(this);
         Destroy(gameObject);
@@ -275,6 +278,7 @@ public class Piece : MonoBehaviour {
    public void MakeMove()
     {
         GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>());
+
     }
    public void DecideMove()
     {

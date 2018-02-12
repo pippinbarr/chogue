@@ -73,6 +73,9 @@ public class MainManager : MonoBehaviour {
 	}
     IEnumerator PlayBlack()
     {
+        //give a few seconds
+        WaitingForCPUMove = true;
+        yield return new WaitForSeconds(0.5f);
         //select a black piece to move
         //first ask every piece what is its best move
         int bestmove = 0;
@@ -92,12 +95,13 @@ public class MainManager : MonoBehaviour {
         }
         CurrentActivePiece = bestpiece;
         Debug.Log("pause");
-        WaitingForCPUMove = true;
-        yield return new WaitForSeconds(0.5f);
-        WaitingForCPUMove = false;
+        
+        
+        
         Debug.Log("ok go");
         CurrentActivePiece.MakeMove();
-        
+        yield return new WaitForSeconds(0.1f);
+        WaitingForCPUMove = false;
         WaitingForPlayerMove = true;
     }
     IEnumerator PlayGame()

@@ -40,7 +40,7 @@ public class GetCollidingThings : MonoBehaviour {
             if(PawnWallCheck && (other.transform.tag == "wall"))
             {
                 Debug.Log("queen");
-                transform.parent.GetComponent<Piece>().Queen();
+                transform.parent.GetComponent<Piece>().NewQueen = true;
             }
         }
 
