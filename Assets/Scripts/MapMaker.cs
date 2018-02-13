@@ -88,9 +88,19 @@ public class MapMaker : MonoBehaviour {
                             {
                                 TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
                             }
-                            
-                            TempPiece.GetComponent<Piece>().CreateModel("black");
-                            TempPiece.GetComponent<Piece>().human = false;
+
+                            //black or white?
+                            if (Random.value < 0.25)
+                            {
+                                TempPiece.GetComponent<Piece>().CreateModel("white");
+                                TempPiece.GetComponent<Piece>().human = true;
+                            }
+                            else
+                            {
+                                TempPiece.GetComponent<Piece>().CreateModel("black");
+                                TempPiece.GetComponent<Piece>().human = false;
+                            }
+
                             mm.PieceList.Add(TempPiece.GetComponent<Piece>());
 
                         }
