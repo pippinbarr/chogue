@@ -23,9 +23,9 @@ public class MapMaker : MonoBehaviour {
         bool PlayerCreated = false; //set true when a player piece has been created
 
         //Get the generated level
-        Level = GetComponent<levelgen>().level;
-        int sizeX = GetComponent<levelgen>().sizeX;
-        int sizeY = GetComponent<levelgen>().sizeY;
+        Level = GetComponent<RoomGen>().m_Level;
+        int sizeX = GetComponent<RoomGen>().m_LevelWidth;
+        int sizeY = GetComponent<RoomGen>().m_LevelHeight;
 
         bool blacktile = true; //used to alternate colors
 
@@ -123,7 +123,7 @@ public class MapMaker : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if ((GetComponent<levelgen>().level != null)&&!LevelDone)
+        if ((GetComponent<RoomGen>().m_Level != null)&&!LevelDone)
         {
             CreateLevel();
             LevelDone = true;
