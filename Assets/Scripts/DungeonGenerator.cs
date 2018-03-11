@@ -8,15 +8,15 @@ public class DungeonGenerator : MonoBehaviour
 
     // Width and height of dungeon (in tiles)
     // (Making these divisible by three)
-    private int m_DungeonWidth = 3*20;
-    private int m_DungeonHeight = 3*15;
+    private int m_DungeonWidth = 3 * 20;
+    private int m_DungeonHeight = 3 * 15;
 
     private int m_RoomCellWidth;
     private int m_RoomCellHeight;
 
-    private int m_MinRoomWidth = 6;
+    private int m_MinRoomWidth = 4;
     private int m_MaxRoomWidth;
-    private int m_MinRoomHeight = 6;
+    private int m_MinRoomHeight = 4;
     private int m_MaxRoomHeight;
 
     private int m_HallWidth = 2;
@@ -24,6 +24,7 @@ public class DungeonGenerator : MonoBehaviour
     private int m_RoomPadding = 1;
 
     private Room[][] m_Rooms;
+    private ArrayList m_AllRooms = new ArrayList();
 
     // Colors of different pixels
     private Color[] m_RoomColors = new Color[9];
@@ -71,7 +72,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             for (int y = 0; y < m_DungeonImage.height; y++)
             {
-                m_DungeonImage.SetPixel(x, y, new Color(Random.Range(0.7f, 0.8f), Random.Range(0.7f, 0.8f), Random.Range(0.7f, 0.8f)));
+                m_DungeonImage.SetPixel(x, y, Color.white);
             }
         }
 
@@ -96,6 +97,7 @@ public class DungeonGenerator : MonoBehaviour
 
     void CreateRoom(int row, int col)
     {
+
         int width = m_MinRoomWidth + Mathf.FloorToInt(Random.value * (m_MaxRoomWidth - m_MinRoomWidth));
         int height = m_MinRoomHeight + Mathf.FloorToInt(Random.value * (m_MaxRoomHeight - m_MinRoomHeight));
 
@@ -105,15 +107,11 @@ public class DungeonGenerator : MonoBehaviour
         int xOffset = col * m_RoomCellWidth + m_RoomPadding;
         int yOffset = row * m_RoomCellHeight + m_RoomPadding;
 
-        Debug.Log("Max:" + m_MaxRoomHeight);
-        Debug.Log("Actual:" + height);
-
         int x = xOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomWidth - width));
         int y = yOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomHeight - height));
 
-        Debug.Log("y:" + y);
-
-        m_Rooms[col][row] = new Room(row, col, x, y, width, height, m_RoomColors[col + row * col]);
+        m_Rooms[col][row] = new Room(row, col, x, y, width, height, m_RoomColors[col + row * col], m_HallColor);
+        m_AllRooms.Add(m_Rooms[col][row]);
     }
 
     void DrawRooms()
@@ -129,14 +127,171 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawHalls()
     {
+        ArrayList unconnected = new ArrayList();
         for (int col = 0; col < 3; col++)
         {
             for (int row = 0; row < 3; row++)
             {
-                if (col + 1 < 3) DrawHall(m_Rooms[col][row], m_Rooms[col + 1][row]);
-                if (row + 1 < 3) DrawHall(m_Rooms[col][row], m_Rooms[col][row + 1]);
+                unconnected.Add(m_Rooms[col][row]);
             }
         }
+
+        Room start = m_Rooms[Random.Range(0, 2)][Random.Range(0, 2)];
+        start.connected = true;
+
+        Debug.Log("Creating initial connections...");
+        Room toConnect = start;
+        while (toConnect != null)
+        {
+            unconnected.Remove(toConnect);
+            toConnect = ConnectToUnconnected(toConnect);
+        }
+
+        Debug.Log(unconnected.Count + " unconnected rooms remaining.");
+        Debug.Log("Connecting remaining unconnected rooms...");
+        while (unconnected.Count > 0)
+        {
+            toConnect = (Room)unconnected[Random.Range(0, unconnected.Count - 1)];
+            bool success = ConnectToConnected(toConnect);
+            if (success) {
+                unconnected.Remove(toConnect);
+            }
+        }
+
+        int extraConnections = Random.Range(0, 2);
+        Debug.Log("Adding " + extraConnections + " extra connections");
+        for (int i = 0; i < extraConnections; i++)
+        {
+            toConnect = (Room)m_AllRooms[Random.Range(0, m_AllRooms.Count - 1)];
+            ConnectToRandomNeighbour(toConnect);
+        }
+
+
+        //for (int col = 0; col < 3; col++)
+        //{
+        //    for (int row = 0; row < 3; row++)
+        //    {
+        //        if (col + 1 < 3) DrawHall(m_Rooms[col][row], m_Rooms[col + 1][row]);
+        //        if (row + 1 < 3) DrawHall(m_Rooms[col][row], m_Rooms[col][row + 1]);
+        //    }
+        //}
+    }
+
+    void ConnectToRandomNeighbour(Room room)
+    {
+        ArrayList neighbours = new ArrayList();
+        if (room.col - 1 >= 0)
+        {
+            neighbours.Add(m_Rooms[room.col - 1][room.row]);
+        }
+        if (room.col + 1 < 3)
+        {
+            neighbours.Add(m_Rooms[room.col + 1][room.row]);
+        }
+        if (room.row - 1 >= 0)
+        {
+                neighbours.Add(m_Rooms[room.col][room.row - 1]);
+        }
+        if (room.row + 1 < 3)
+        {
+            neighbours.Add(m_Rooms[room.col][room.row + 1]);
+        }
+
+        Room randomNeighbour = (Room)neighbours[Random.Range(0, neighbours.Count - 1)];
+        Debug.Log("Connecting " + room.row + "," + room.col + " to " + randomNeighbour.row + "," + randomNeighbour.col);
+        DrawHall(room, randomNeighbour);
+    }
+
+    bool ConnectToConnected(Room room)
+    {
+        Debug.Log("Connecting " + room.row + "," + room.col + "...");
+                  
+        ArrayList connectedNeighbours = new ArrayList();
+
+        if (room.col - 1 >= 0)
+        {
+            if (m_Rooms[room.col - 1][room.row].connected)
+            {
+                connectedNeighbours.Add(m_Rooms[room.col - 1][room.row]);
+            }
+        }
+        if (room.col + 1 < 3)
+        {
+            if (m_Rooms[room.col + 1][room.row].connected)
+            {
+                connectedNeighbours.Add(m_Rooms[room.col + 1][room.row]);
+            }
+        }
+        if (room.row - 1 >= 0)
+        {
+            if (m_Rooms[room.col][room.row - 1].connected)
+            {
+                connectedNeighbours.Add(m_Rooms[room.col][room.row - 1]);
+            }
+        }
+        if (room.row + 1 < 3)
+        {
+            if (m_Rooms[room.col][room.row + 1].connected)
+            {
+                connectedNeighbours.Add(m_Rooms[room.col][room.row + 1]);
+            }
+        }
+
+        Debug.Log("Found " + connectedNeighbours.Count + " connected neighbours.");
+        if (connectedNeighbours.Count == 0) return false;
+
+        Room randomConnectedNeighbour = (Room)connectedNeighbours[Random.Range(0, connectedNeighbours.Count - 1)];
+        Debug.Log("Connecting " + room.row + "," + room.col + " to " + randomConnectedNeighbour.row + "," + randomConnectedNeighbour.col);
+        DrawHall(room, randomConnectedNeighbour);
+        room.connected = true;
+
+
+        return true;
+    }
+
+    Room ConnectToUnconnected(Room room)
+    {
+        ArrayList unconnectedNeighbours = new ArrayList();
+
+        if (room.col - 1 >= 0)
+        {
+            if (!m_Rooms[room.col - 1][room.row].connected)
+            {
+                unconnectedNeighbours.Add(m_Rooms[room.col - 1][room.row]);
+            }
+        }
+        if (room.col + 1 < 3)
+        {
+            if (!m_Rooms[room.col + 1][room.row].connected)
+            {
+                unconnectedNeighbours.Add(m_Rooms[room.col + 1][room.row]);
+            }
+        } 
+        if (room.row - 1 >= 0)
+        {
+            if (!m_Rooms[room.col][room.row - 1].connected)
+            {
+                unconnectedNeighbours.Add(m_Rooms[room.col][room.row - 1]);
+            }
+        } 
+        if (room.row + 1 < 3)
+        {
+            if (!m_Rooms[room.col][room.row + 1].connected)
+            {
+                unconnectedNeighbours.Add(m_Rooms[room.col][room.row + 1]);
+            }
+        }
+
+        //Debug.Log(room.row + "," + room.col + ": " + unconnectedNeighbours.Count);
+
+        if (unconnectedNeighbours.Count == 0) return null;
+
+        Room randomUnconnectedNeighbour = (Room)unconnectedNeighbours[Random.Range(0, unconnectedNeighbours.Count-1)];
+        Debug.Log("Connecting " + room.row + "," + room.col + " to " + randomUnconnectedNeighbour.row + "," + randomUnconnectedNeighbour.col);
+        DrawHall(room,randomUnconnectedNeighbour);
+        randomUnconnectedNeighbour.connected = true;
+
+        return randomUnconnectedNeighbour;
     }
 
 
@@ -204,9 +359,9 @@ public class DungeonGenerator : MonoBehaviour
                         while (x != endX)
                         {
                             m_DungeonImage.SetPixel(x, y, m_HallColor);
-                            m_DungeonImage.SetPixel(x, y+1, m_HallColor);
-                            m_DungeonImage.SetPixel(x+1, y, m_HallColor);
-                            m_DungeonImage.SetPixel(x+1, y + 1, m_HallColor);
+                            m_DungeonImage.SetPixel(x, y + 1, m_HallColor);
+                            m_DungeonImage.SetPixel(x + 1, y, m_HallColor);
+                            m_DungeonImage.SetPixel(x + 1, y + 1, m_HallColor);
 
                             x += xInc;
                         }
@@ -214,7 +369,7 @@ public class DungeonGenerator : MonoBehaviour
                 }
 
                 m_DungeonImage.SetPixel(x, y, m_HallColor);
-                m_DungeonImage.SetPixel(x+1, y, m_HallColor);
+                m_DungeonImage.SetPixel(x + 1, y, m_HallColor);
                 y += yInc;
                 progress++;
             }
@@ -231,8 +386,8 @@ public class DungeonGenerator : MonoBehaviour
                         {
                             m_DungeonImage.SetPixel(x, y, m_HallColor);
                             m_DungeonImage.SetPixel(x + 1, y, m_HallColor);
-                            m_DungeonImage.SetPixel(x, y+1, m_HallColor);
-                            m_DungeonImage.SetPixel(x + 1, y+1, m_HallColor);
+                            m_DungeonImage.SetPixel(x, y + 1, m_HallColor);
+                            m_DungeonImage.SetPixel(x + 1, y + 1, m_HallColor);
                             y += yInc;
                         }
                     }
@@ -240,7 +395,7 @@ public class DungeonGenerator : MonoBehaviour
                 }
 
                 m_DungeonImage.SetPixel(x, y, m_HallColor);
-                m_DungeonImage.SetPixel(x, y+1, m_HallColor);
+                m_DungeonImage.SetPixel(x, y + 1, m_HallColor);
                 x += xInc;
                 progress++;
             }
@@ -259,15 +414,19 @@ class Room
     public int width;
     public int height;
     public Color color;
+    public Color hallColor;
+    public bool connected = false;
 
     public int WEST = 0;
     public int EAST = 1;
     public int NORTH = 2;
     public int SOUTH = 3;
 
+    private bool gone = false;
+
     public Room[] doors;
 
-    public Room(int _row, int _col, int _x, int _y, int _width, int _height, Color _color)
+    public Room(int _row, int _col, int _x, int _y, int _width, int _height, Color _color, Color _hallColor)
     {
         row = _row;
         col = _col;
@@ -276,8 +435,18 @@ class Room
         width = _width;
         height = _height;
         color = _color;
+        hallColor = _hallColor;
 
-        doors = new Room[4];
+        if (Random.value < 0.15f)
+        {
+            gone = true;
+            x = x + width / 2;
+            y = y + height / 2;
+            width = 2;
+            height = 2;
+        }
+
+        //doors = new Room[4];
     }
 
     public void Draw(Texture2D image)
@@ -286,7 +455,14 @@ class Room
         {
             for (int xx = x; xx < x + width; xx++)
             {
-                image.SetPixel(xx, yy, color);
+                if (!gone)
+                {
+                    image.SetPixel(xx, yy, color);
+                }
+                else
+                {
+                    image.SetPixel(xx, yy, hallColor);
+                }
             }
         }
     }
