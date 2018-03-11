@@ -89,7 +89,7 @@ public class RoomGen : MonoBehaviour
         //height = maxRoomHeight;
         int x = col * (roomZoneWidth + hallSize) + padding;
         int y = row * (roomZoneHeight + hallSize) + padding;
-        rooms[col][row] = new Room(row, col, x, y, width, height);
+        //rooms[col][row] = new Room(row, col, x, y, width, height);
     }
 
     private void AddDoors(Room room)
@@ -148,30 +148,3 @@ public class RoomGen : MonoBehaviour
 
 }
 
-class Room
-{
-    public int row;
-    public int col;
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-
-    public int WEST = 0;
-    public int EAST = 1;
-    public int NORTH = 2;
-    public int SOUTH = 3;
-
-    public Room[] doors;
-
-    public Room(int _row, int _col, int _x, int _y, int _width, int _height)
-    {
-        row = _row;
-        col = _col;
-        x = _x;
-        y = _y;
-        width = _width;
-        height = _height;
-        doors = new Room[4];
-    }
-}
