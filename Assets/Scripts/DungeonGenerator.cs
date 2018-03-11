@@ -8,15 +8,15 @@ public class DungeonGenerator : MonoBehaviour
 
     // Width and height of dungeon (in tiles)
     // (Making these divisible by three)
-    private int m_DungeonWidth = 42;
-    private int m_DungeonHeight = 27;
+    private int m_DungeonWidth = 3*20;
+    private int m_DungeonHeight = 3*15;
 
     private int m_RoomCellWidth;
     private int m_RoomCellHeight;
 
-    private int m_MinRoomWidth = 4;
+    private int m_MinRoomWidth = 6;
     private int m_MaxRoomWidth;
-    private int m_MinRoomHeight = 3;
+    private int m_MinRoomHeight = 6;
     private int m_MaxRoomHeight;
 
     private int m_HallWidth = 2;
@@ -164,8 +164,8 @@ public class DungeonGenerator : MonoBehaviour
 
         if (from.col == to.col)
         {
-            startX = Mathf.FloorToInt(Random.Range(start.x, start.x + start.width - 1));
-            endX = Mathf.FloorToInt(Random.Range(end.x, end.x + end.width - 1));
+            startX = Mathf.FloorToInt(Random.Range(start.x, start.x + start.width - 2));
+            endX = Mathf.FloorToInt(Random.Range(end.x, end.x + end.width - 2));
             startY = start.y + start.height;
             endY = end.y;
         }
@@ -174,8 +174,8 @@ public class DungeonGenerator : MonoBehaviour
         {
             startX = start.x + start.width;
             endX = end.x;
-            startY = Mathf.FloorToInt(Random.Range(start.y, start.y + start.height - 1));
-            endY = Mathf.FloorToInt(Random.Range(end.y, end.y + end.height - 1));
+            startY = Mathf.FloorToInt(Random.Range(start.y, start.y + start.height - 2));
+            endY = Mathf.FloorToInt(Random.Range(end.y, end.y + end.height - 2));
         }
         else
         {
@@ -191,37 +191,58 @@ public class DungeonGenerator : MonoBehaviour
         int xInc = startX < endX ? 1 : -1;
         int yInc = startY < endY ? 1 : -1;
 
+        int progress = 0;
 
         if (from.col == to.col)
         {
             while (y != endY)
             {
-                if (y == startY + yInc * (endY - startY) / 2)
+                if (x != endX && progress > 1)
                 {
-                    while (x != endX)
+                    if (y == endY - 3 || y == endY + 3 || Random.value < 0.33)
                     {
-                        m_DungeonImage.SetPixel(x, y, m_HallColor);
-                        x += xInc;
+                        while (x != endX)
+                        {
+                            m_DungeonImage.SetPixel(x, y, m_HallColor);
+                            m_DungeonImage.SetPixel(x, y+1, m_HallColor);
+                            m_DungeonImage.SetPixel(x+1, y, m_HallColor);
+                            m_DungeonImage.SetPixel(x+1, y + 1, m_HallColor);
+
+                            x += xInc;
+                        }
                     }
                 }
+
                 m_DungeonImage.SetPixel(x, y, m_HallColor);
+                m_DungeonImage.SetPixel(x+1, y, m_HallColor);
                 y += yInc;
+                progress++;
             }
         }
         else if (from.row == to.row)
         {
             while (x != endX)
             {
-                if (x == startX + xInc * (endX - startX) / 2)
+                if (y != endY && progress > 1)
                 {
-                    while (y != endY)
+                    if (x == endX - 3 || x == endX + 3 || Random.value < 0.33)
                     {
-                        m_DungeonImage.SetPixel(x, y, m_HallColor);
-                        y += yInc;
+                        while (y != endY)
+                        {
+                            m_DungeonImage.SetPixel(x, y, m_HallColor);
+                            m_DungeonImage.SetPixel(x + 1, y, m_HallColor);
+                            m_DungeonImage.SetPixel(x, y+1, m_HallColor);
+                            m_DungeonImage.SetPixel(x + 1, y+1, m_HallColor);
+                            y += yInc;
+                        }
                     }
+
                 }
+
                 m_DungeonImage.SetPixel(x, y, m_HallColor);
+                m_DungeonImage.SetPixel(x, y+1, m_HallColor);
                 x += xInc;
+                progress++;
             }
         }
     }
