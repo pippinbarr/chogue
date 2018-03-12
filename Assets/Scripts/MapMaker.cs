@@ -23,19 +23,19 @@ public class MapMaker : MonoBehaviour {
         bool PlayerCreated = false; //set true when a player piece has been created
 
         //Get the generated level
-        Level = GetComponent<RoomGen>().m_Level;
-        int sizeX = GetComponent<RoomGen>().m_LevelWidth;
-        int sizeY = GetComponent<RoomGen>().m_LevelHeight;
+        Level = GetComponent<DungeonGenerator>().m_DungeonImage;
+        int sizeX = GetComponent<DungeonGenerator>().m_DungeonWidth;
+        int sizeY = GetComponent<DungeonGenerator>().m_DungeonHeight;
 
         bool blacktile = true; //used to alternate colors
 
-        //Go through all the pixels, if it is white, create a tile from tile prefab
+        //Go through all the pixels, if it is non-white, create a tile from tile prefab
         //The type of tile is not defined yet (checkered, etc)
         for (int posy = 0;  posy<sizeY; posy++)
         {
             for(int posx = 0; posx < sizeX; posx++)
             {
-                if(Level.GetPixel(posx, posy).r == 1)
+                if(Level.GetPixel(posx, posy) != Color.white)
                 {
                     Transform tempTile = Instantiate(TilePrefab, new Vector3(posx, posy, 0), transform.rotation);
                     if (blacktile)
@@ -123,7 +123,7 @@ public class MapMaker : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if ((GetComponent<RoomGen>().m_Level != null)&&!LevelDone)
+        if ((GetComponent<DungeonGenerator>().m_DungeonImage != null) && !LevelDone)
         {
             CreateLevel();
             LevelDone = true;

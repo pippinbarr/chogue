@@ -9,8 +9,9 @@ public class DungeonGenerator : MonoBehaviour
 
     // Width and height of dungeon (in tiles)
     // (Making these divisible by three)
-    private int m_DungeonWidth = 3 * 20;
-    private int m_DungeonHeight = 3 * 15;
+
+    public int m_DungeonWidth = 3 * 20;
+    public int m_DungeonHeight = 3 * 15;
 
     private int m_RoomCellWidth;
     private int m_RoomCellHeight;
@@ -24,7 +25,7 @@ public class DungeonGenerator : MonoBehaviour
 
     private int m_RoomPadding = 1;
 
-    private Room[][] m_Rooms;
+    private ArrayList m_Rooms;
     private ArrayList m_AllRooms = new ArrayList();
 
     // Colors of different pixels
@@ -89,25 +90,41 @@ public class DungeonGenerator : MonoBehaviour
 
     void CreateRooms()
     {
-        m_Rooms = new Room[][] { new Room[3], new Room[3], new Room[3] };
+        m_Rooms = new ArrayList();
 
+        // Temporary room grid for adding neighbours because I'm too dumb
+        // to figure out something more elegant?
+        Room[][] tempRoomGrid = { new Room[3], new Room[3], new Room[3] };
+
+        // Create the rooms
         for (int col = 0; col < 3; col++)
         {
             for (int row = 0; row < 3; row++)
             {
                 CreateRoom(row, col);
+                tempRoomGrid[col][row] = CreateRoom(row, col);
+                m_Rooms.Add(tempRoomGrid[col][row]);
+            }
+        }
+
+        // Add every room's neighbours for later using the grid
+        for (int col = 0; col < 3; col++)
+        {
+            for (int row = 0; row < 3; row++)
+            {
+                if (row - 1 > 0) tempRoomGrid[col][row].AddNeighbour(tempRoomGrid[col][row - 1]);
+                if (row + 1 < 3) tempRoomGrid[col][row].AddNeighbour(tempRoomGrid[col][row + 1]);
+                if (col - 1 > 0) tempRoomGrid[col][row].AddNeighbour(tempRoomGrid[col - 1][row]);
+                if (col + 1 < 3) tempRoomGrid[col][row].AddNeighbour(tempRoomGrid[col + 1][row]);
             }
         }
     }
 
-    void CreateRoom(int row, int col)
+    Room CreateRoom(int row, int col)
     {
 
         int width = m_MinRoomWidth + Mathf.FloorToInt(Random.value * (m_MaxRoomWidth - m_MinRoomWidth));
         int height = m_MinRoomHeight + Mathf.FloorToInt(Random.value * (m_MaxRoomHeight - m_MinRoomHeight));
-
-        //width = m_MaxRoomWidth;
-        //height = m_MaxRoomHeight;
 
         int xOffset = col * m_RoomCellWidth + m_RoomPadding;
         int yOffset = row * m_RoomCellHeight + m_RoomPadding;
@@ -115,145 +132,94 @@ public class DungeonGenerator : MonoBehaviour
         int x = xOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomWidth - width));
         int y = yOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomHeight - height));
 
-        m_Rooms[col][row] = new Room(row, col, x, y, width, height, m_RoomColors[col + row * col], m_HallColor);
-        m_AllRooms.Add(m_Rooms[col][row]);
+        return new Room(row, col, x, y, width, height, m_RoomColors[col + row * col], m_HallColor);
     }
+
 
     void DrawRooms()
     {
-        for (int col = 0; col < 3; col++)
+        for (int i = 0; i < m_Rooms.Count; i++)
         {
-            for (int row = 0; row < 3; row++)
-            {
-                m_Rooms[col][row].Draw(m_DungeonImage);
-            }
+            Room room = (Room)m_Rooms[i];
+            room.Draw(m_DungeonImage);
         }
     }
 
+
     void DrawHalls()
     {
-        ArrayList unconnected = new ArrayList();
-        for (int col = 0; col < 3; col++)
-        {
-            for (int row = 0; row < 3; row++)
-            {
-                unconnected.Add(m_Rooms[col][row]);
-            }
-        }
+        ArrayList unconnected = new ArrayList(m_Rooms);
 
-        Room start = m_Rooms[Random.Range(0, 2)][Random.Range(0, 2)];
+        // Choose a starting room (making sure it's not a "gone" room
+        // (e.g. just a hallway junction)
+        Room start = (Room)m_Rooms[Random.Range(0, m_Rooms.Count - 1)];
+        while (start.gone)
+        {
+            start = (Room)m_Rooms[Random.Range(0, m_Rooms.Count - 1)];
+        }
         start.connected = true;
 
         // Remember the color of the starting room for placing the chess pieces
         // (Oh god, what if the room is too small for your team?!)
         m_StartRoomColor = start.color;
 
-        Debug.Log("Creating initial connections...");
         Room toConnect = start;
         while (toConnect != null)
         {
             unconnected.Remove(toConnect);
+            // Repeatedly set the stairs room colour so it will end up as
+            // the last room joined (in case there are no unconnected rooms
+            // at this point
+            // Make sure it's not a gone room through!
+            if (!toConnect.gone) m_StairsRoomColor = toConnect.color;
             toConnect = ConnectToUnconnected(toConnect);
         }
 
-        Debug.Log(unconnected.Count + " unconnected rooms remaining.");
-        Debug.Log("Connecting remaining unconnected rooms...");
         while (unconnected.Count > 0)
         {
             toConnect = (Room)unconnected[Random.Range(0, unconnected.Count - 1)];
             bool success = ConnectToConnected(toConnect);
             if (success) {
                 unconnected.Remove(toConnect);
+                // Repeatedly set the stairs room colour to the most recently connected
+                // non-gone room!
+                if (!toConnect.gone) m_StairsRoomColor = toConnect.color;
             }
         }
-        // At this point toConnect is the last connected room, so this is where we
-        // will put the stairs down to the next level
-        m_StairsRoomColor = toConnect.color;
 
         int extraConnections = Random.Range(0, 2);
-        Debug.Log("Adding " + extraConnections + " extra connections");
         for (int i = 0; i < extraConnections; i++)
         {
-            toConnect = (Room)m_AllRooms[Random.Range(0, m_AllRooms.Count - 1)];
+            toConnect = (Room)m_Rooms[Random.Range(0, m_Rooms.Count - 1)];
             ConnectToRandomNeighbour(toConnect);
         }
 
-
-        //for (int col = 0; col < 3; col++)
-        //{
-        //    for (int row = 0; row < 3; row++)
-        //    {
-        //        if (col + 1 < 3) DrawHall(m_Rooms[col][row], m_Rooms[col + 1][row]);
-        //        if (row + 1 < 3) DrawHall(m_Rooms[col][row], m_Rooms[col][row + 1]);
-        //    }
-        //}
     }
 
     void ConnectToRandomNeighbour(Room room)
     {
-        ArrayList neighbours = new ArrayList();
-        if (room.col - 1 >= 0)
+        Room randomNeighbour = (Room)room.neighbours[Random.Range(0, room.neighbours.Count - 1)];
+        if (room.connections.IndexOf(randomNeighbour) == -1)
         {
-            neighbours.Add(m_Rooms[room.col - 1][room.row]);
+            DrawHall(room, randomNeighbour);
         }
-        if (room.col + 1 < 3)
-        {
-            neighbours.Add(m_Rooms[room.col + 1][room.row]);
-        }
-        if (room.row - 1 >= 0)
-        {
-                neighbours.Add(m_Rooms[room.col][room.row - 1]);
-        }
-        if (room.row + 1 < 3)
-        {
-            neighbours.Add(m_Rooms[room.col][room.row + 1]);
-        }
-
-        Room randomNeighbour = (Room)neighbours[Random.Range(0, neighbours.Count - 1)];
-        Debug.Log("Connecting " + room.row + "," + room.col + " to " + randomNeighbour.row + "," + randomNeighbour.col);
-        DrawHall(room, randomNeighbour);
     }
 
     bool ConnectToConnected(Room room)
     {
-        Debug.Log("Connecting " + room.row + "," + room.col + "...");
-                  
         ArrayList connectedNeighbours = new ArrayList();
-
-        if (room.col - 1 >= 0)
+        for (int i = 0; i < room.neighbours.Count; i++)
         {
-            if (m_Rooms[room.col - 1][room.row].connected)
+            Room neighbour = (Room)room.neighbours[i];
+            if (neighbour.connected)
             {
-                connectedNeighbours.Add(m_Rooms[room.col - 1][room.row]);
-            }
-        }
-        if (room.col + 1 < 3)
-        {
-            if (m_Rooms[room.col + 1][room.row].connected)
-            {
-                connectedNeighbours.Add(m_Rooms[room.col + 1][room.row]);
-            }
-        }
-        if (room.row - 1 >= 0)
-        {
-            if (m_Rooms[room.col][room.row - 1].connected)
-            {
-                connectedNeighbours.Add(m_Rooms[room.col][room.row - 1]);
-            }
-        }
-        if (room.row + 1 < 3)
-        {
-            if (m_Rooms[room.col][room.row + 1].connected)
-            {
-                connectedNeighbours.Add(m_Rooms[room.col][room.row + 1]);
+                connectedNeighbours.Add(neighbour);
             }
         }
 
-        Debug.Log("Found " + connectedNeighbours.Count + " connected neighbours.");
         if (connectedNeighbours.Count == 0) return false;
 
         Room randomConnectedNeighbour = (Room)connectedNeighbours[Random.Range(0, connectedNeighbours.Count - 1)];
-        Debug.Log("Connecting " + room.row + "," + room.col + " to " + randomConnectedNeighbour.row + "," + randomConnectedNeighbour.col);
         DrawHall(room, randomConnectedNeighbour);
         room.connected = true;
 
@@ -264,42 +230,18 @@ public class DungeonGenerator : MonoBehaviour
     Room ConnectToUnconnected(Room room)
     {
         ArrayList unconnectedNeighbours = new ArrayList();
-
-        if (room.col - 1 >= 0)
+        for (int i = 0; i < room.neighbours.Count; i++)
         {
-            if (!m_Rooms[room.col - 1][room.row].connected)
+            Room neighbour = (Room)room.neighbours[i];
+            if (!neighbour.connected)
             {
-                unconnectedNeighbours.Add(m_Rooms[room.col - 1][room.row]);
+                unconnectedNeighbours.Add(neighbour);
             }
         }
-        if (room.col + 1 < 3)
-        {
-            if (!m_Rooms[room.col + 1][room.row].connected)
-            {
-                unconnectedNeighbours.Add(m_Rooms[room.col + 1][room.row]);
-            }
-        } 
-        if (room.row - 1 >= 0)
-        {
-            if (!m_Rooms[room.col][room.row - 1].connected)
-            {
-                unconnectedNeighbours.Add(m_Rooms[room.col][room.row - 1]);
-            }
-        } 
-        if (room.row + 1 < 3)
-        {
-            if (!m_Rooms[room.col][room.row + 1].connected)
-            {
-                unconnectedNeighbours.Add(m_Rooms[room.col][room.row + 1]);
-            }
-        }
-
-        //Debug.Log(room.row + "," + room.col + ": " + unconnectedNeighbours.Count);
 
         if (unconnectedNeighbours.Count == 0) return null;
 
         Room randomUnconnectedNeighbour = (Room)unconnectedNeighbours[Random.Range(0, unconnectedNeighbours.Count-1)];
-        Debug.Log("Connecting " + room.row + "," + room.col + " to " + randomUnconnectedNeighbour.row + "," + randomUnconnectedNeighbour.col);
         DrawHall(room,randomUnconnectedNeighbour);
         randomUnconnectedNeighbour.connected = true;
 
@@ -309,8 +251,14 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawHall(Room from, Room to)
     {
+
+        // Note that the rooms are connected (for the algorithm later on)
+        from.connections.Add(to);
+        to.connections.Add(from);
+
         Room start;
         Room end;
+
 
         if ((from.col == to.col && from.row < to.row) || (from.row == to.row && from.col < to.col))
         {
@@ -434,9 +382,12 @@ class Room
     public int NORTH = 2;
     public int SOUTH = 3;
 
-    private bool gone = false;
+    public bool gone = false;
 
-    public Room[] doors;
+    // Track the rooms this room is connected to
+    public ArrayList connections;
+    // Track the rooms this room is adjascent to
+    public ArrayList neighbours;
 
     public Room(int _row, int _col, int _x, int _y, int _width, int _height, Color _color, Color _hallColor)
     {
@@ -448,6 +399,8 @@ class Room
         height = _height;
         color = _color;
         hallColor = _hallColor;
+        connections = new ArrayList();
+        neighbours = new ArrayList();
 
         if (Random.value < 0.15f)
         {
@@ -477,5 +430,10 @@ class Room
                 }
             }
         }
+    }
+
+    public void AddNeighbour(Room room)
+    {
+        neighbours.Add(room);
     }
 }
