@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class DungeonGenerator : MonoBehaviour
 {
 
+
     // Width and height of dungeon (in tiles)
     // (Making these divisible by three)
     private int m_DungeonWidth = 3 * 20;
@@ -34,7 +35,11 @@ public class DungeonGenerator : MonoBehaviour
     // The image we will generate
     public Texture2D m_DungeonImage;
 
+    // An image in the scene to check if this stupid thing works
     public RawImage m_RawImage;
+
+    public Color m_StartRoomColor;
+    public Color m_StairsRoomColor;
 
 
     void Start()
@@ -139,6 +144,10 @@ public class DungeonGenerator : MonoBehaviour
         Room start = m_Rooms[Random.Range(0, 2)][Random.Range(0, 2)];
         start.connected = true;
 
+        // Remember the color of the starting room for placing the chess pieces
+        // (Oh god, what if the room is too small for your team?!)
+        m_StartRoomColor = start.color;
+
         Debug.Log("Creating initial connections...");
         Room toConnect = start;
         while (toConnect != null)
@@ -157,6 +166,9 @@ public class DungeonGenerator : MonoBehaviour
                 unconnected.Remove(toConnect);
             }
         }
+        // At this point toConnect is the last connected room, so this is where we
+        // will put the stairs down to the next level
+        m_StairsRoomColor = toConnect.color;
 
         int extraConnections = Random.Range(0, 2);
         Debug.Log("Adding " + extraConnections + " extra connections");
