@@ -42,6 +42,7 @@ public class GetCollidingThings : MonoBehaviour {
                 Debug.Log("queen");
                 transform.parent.GetComponent<Piece>().NewQueen = true;
             }
+
         }
 
     }

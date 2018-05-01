@@ -300,7 +300,8 @@ public class Piece : MonoBehaviour {
             BestMove = 0;
             LeastDistanceToKing = 10000000;
         }
-        //See if the human is there
+        //See if the human is there 
+        //If I'm king I want to go to the stairs
         foreach(TileType tile in TileList)
         {
             if (tile.transform.tag == "piece")
@@ -319,6 +320,13 @@ public class Piece : MonoBehaviour {
                     
                 }
             }
+            //special case for ennemy king, looking for an exit
+            else if ((PieceType == "king") && (tile.Type == 3))
+            {
+                BestMove = 2;
+                BestMoveTarget = tile.transform;
+            }
+
         }
 
         //if we haven't found a piece to eat, find closest place
@@ -364,6 +372,17 @@ public class Piece : MonoBehaviour {
         {
             CurrentTile = collision.transform;
         }
+        //piece has landed on stairs?
+        if ((collision.transform.tag == "tile") && (collision.GetComponent<TileType>().Type == 3))
+        {
+            GoToNextLevel();
+        }
+    }
+
+    public void GoToNextLevel()
+    {
+        gameObject.active = false;
+        //do something more about this!
     }
 
 

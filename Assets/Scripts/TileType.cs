@@ -8,6 +8,7 @@ public class TileType : MonoBehaviour {
     public Color BlackGround;
     public Color Background;
     public Color HighlightColor;
+    public Color StairColor;
     public int Type = 0;
     public float DistanceToPiece = 1000000;
     public bool AvailableDestination = false;
@@ -28,6 +29,11 @@ public class TileType : MonoBehaviour {
             GetComponent<Renderer>().material.color = BlackGround;
         }
         // type 2 : Wall
+        // type 3 : Stairs
+        if (type == 3)
+        {
+            GetComponent<Renderer>().material.color = StairColor;
+        }
     }
 
     public void Highlight(bool OnOrOff)
