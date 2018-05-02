@@ -14,6 +14,7 @@ public class TileType : MonoBehaviour {
     public bool AvailableDestination = false;
     public bool manual = false;
     public bool visible = false;
+    public bool visited = false;
     public bool corridor = false;
     public Color RoomColor;
 
@@ -50,7 +51,7 @@ public class TileType : MonoBehaviour {
             GetComponent<Renderer>().material.color = StairColor;
             
         }
-        if (!visible)
+        if (!visited)
         {
             GetComponent<Renderer>().material.color = Color.black;
         }
@@ -94,6 +95,7 @@ public class TileType : MonoBehaviour {
                     //Debug.Log("Tile is visible");
                     visible = true;
                     //break;
+                    visited = true;
                 }
             }
         }

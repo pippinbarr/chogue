@@ -121,6 +121,19 @@ public class Piece : MonoBehaviour {
                     else if (tile.transform.tag == "tile")
                     {
                         TileList.Add(tile);
+                        //if we are white, set visibility around
+                        if (PieceColor == "white")
+                        {
+                            tile.GetDistanceTo(transform);
+                            if (tile.DistanceToPiece < 3)
+                            {
+                                tile.visited = true;
+                                tile.visible = true;
+                                tile.SetVisibility();
+
+                            }
+                        }
+
                     }
                 }
 
@@ -376,6 +389,7 @@ public class Piece : MonoBehaviour {
         //if I'm player piece and stumble upon corridor for the first time, make it visible
         if ((CurrentTile.GetComponent<TileType>().corridor) && (PieceColor == "white"))
         {
+            CurrentTile.GetComponent<TileType>().visited = true;
             CurrentTile.GetComponent<TileType>().visible = true;
             CurrentTile.GetComponent<TileType>().SetVisibility();
         }
@@ -413,6 +427,20 @@ public class Piece : MonoBehaviour {
         {
             GoToNextLevel();
         }
+    }
+    private void OnTriggerExit(Collider collision)
+    {
+        if (collision.transform.tag == "tile")
+        {
+            CurrentTile = collision.transform;
+            if (collision.GetComponent<TileType>().corridor)
+            {
+                collision.GetComponent<TileType>().visible = false;
+            }
+            //SetVisibility();
+
+        }
+
     }
 
     public void GoToNextLevel()
