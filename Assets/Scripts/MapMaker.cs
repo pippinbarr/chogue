@@ -7,6 +7,7 @@ public class MapMaker : MonoBehaviour {
     Texture2D Level;
     public Transform TilePrefab;
     public Transform WallPrefab;
+    public Transform StairsPrefab;
     public Transform Rook;
     public Transform Bishop;
     public Transform Queen;
@@ -37,15 +38,23 @@ public class MapMaker : MonoBehaviour {
             {
                 if(Level.GetPixel(posx, posy) != Color.white)
                 {
-                    Transform tempTile = Instantiate(TilePrefab, new Vector3(posx, posy, 0), transform.rotation);
-                    if (blacktile)
+                    Transform tempTile;
+                    //is this a stairs?
+                    if (Level.GetPixel(posx, posy) == new Color(0f, 1f, 0f))
                     {
-                       // Debug.Log("white tile");
+                        Debug.Log("instantiating stairs");
+                        tempTile = Instantiate(StairsPrefab, new Vector3(posx, posy, 0), transform.rotation);
+                        tempTile.Rotate(new Vector3(180,0,0));
+                        tempTile.GetComponent<TileType>().SetTileType(3);
+                    }
+                    else if (blacktile)
+                    {
+                        tempTile = Instantiate(TilePrefab, new Vector3(posx, posy, 0), transform.rotation);
                         tempTile.GetComponent<TileType>().SetTileType(0);
                     }
                     else
                     {
-                        //Debug.Log("black tile");
+                        tempTile = Instantiate(TilePrefab, new Vector3(posx, posy, 0), transform.rotation);
                         tempTile.GetComponent<TileType>().SetTileType(1);
                     }
 

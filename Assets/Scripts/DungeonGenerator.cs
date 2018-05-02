@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class DungeonGenerator : MonoBehaviour
 
     public Color m_StartRoomColor;
     public Color m_StairsRoomColor;
+    public Color m_StairsTileColor;
 
 
     void Start()
@@ -63,6 +65,8 @@ public class DungeonGenerator : MonoBehaviour
 
         m_DungeonImage.Apply();
         m_RawImage.texture = m_DungeonImage;
+        byte[] bytes = m_DungeonImage.EncodeToPNG();
+        File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);	
     }
 
     void GenerateDungeon()
@@ -164,6 +168,11 @@ public class DungeonGenerator : MonoBehaviour
         for (int i = 0; i < m_Rooms.Count; i++)
         {
             Room room = (Room)m_Rooms[i];
+            //if this is the last one, tell it to be the stairs room
+            if (i == (m_Rooms.Count - 1))
+            {
+                room.stairsroom = true;
+            }
             room.Draw(m_DungeonImage);
         }
     }
@@ -426,6 +435,9 @@ class Room
     public Color hallColor;
     public bool connected = false;
 
+    //Setting stairs stuff
+    public bool stairsroom = false;
+
     public int WEST = 0;
     public int EAST = 1;
     public int NORTH = 2;
@@ -478,6 +490,13 @@ class Room
                     image.SetPixel(xx, yy, hallColor);
                 }
             }
+        }
+        //If this is the stairs room, let's draw a stairs pixel (full green, hard coded)
+        if (stairsroom)
+        {
+            int xx = x + (int)(Random.value * width);
+            int yy = y + (int)(Random.value * height);
+            image.SetPixel(xx, yy, new Color(0f, 1f, 0f));
         }
     }
 
