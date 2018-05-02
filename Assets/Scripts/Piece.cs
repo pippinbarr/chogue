@@ -282,7 +282,11 @@ public class Piece : MonoBehaviour {
     }
    public void MakeMove()
     {
-        GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>());
+        if (BestMoveTarget != null)
+        {
+            GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>());
+        }
+        
 
     }
    public void DecideMove()

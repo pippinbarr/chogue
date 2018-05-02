@@ -16,8 +16,15 @@ public class MapMaker : MonoBehaviour {
     public Transform Pawn;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
-	// Use this for initialization
-	public void CreateLevel () {
+    private void Start()
+    {
+        //manually set Playerprefs right now
+        PlayerPrefs.SetString("IncomingPieces", "kqcbtppp");
+        //knight is chevalier to distinguish and rook is tour
+    }
+
+    // Use this for initialization
+    public void CreateLevel () {
 
         //get MainManage to update Piece List
         MainManager mm = GetComponent<MainManager>();
@@ -58,62 +65,83 @@ public class MapMaker : MonoBehaviour {
                         tempTile.GetComponent<TileType>().SetTileType(1);
                     }
 
-                    //Here we add some pieces give a threshold chance
-                    if (Random.value < 0.05)
+                    //Is this the first room? if so add incoming pieces
+                    string incomingpieces = PlayerPrefs.GetString("IncomingPieces");
+
+                    //all this shit is because the image pixel colors are not EXACT! so looking for a minor difference
+                    Color startroomcolor = GameObject.Find("MainManager").GetComponent<DungeonGenerator>().m_StartRoomColor;
+                    Color currentcolor = Level.GetPixel(posx, posy);
+                    float difcolor = Mathf.Abs((startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r));
+                   // Debug.Log("color difference : " + difcolor);
+                    if ((incomingpieces!="")&&(difcolor<0.01))
                     {
-                        //create the player first
-                        if (!PlayerCreated)
+                        Debug.Log("incoming pieces : " + incomingpieces);
+                        Transform TempPiece;
+                        if (incomingpieces[0].ToString() == "k")
                         {
-                            Transform TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), King.rotation);
-                            TempPiece.GetComponent<Piece>().CreateModel("white");
-                            TempPiece.GetComponent<Piece>().human = true;
+                            TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), King.rotation);
                             PlayerCreated = true;
-                            mm.PieceList.Add(TempPiece.GetComponent<Piece>());
                             mm.CurrentActivePiece = TempPiece.GetComponent<Piece>();
                         }
-                        //if we have a player, create some other piece
+                        else if (incomingpieces[0].ToString() == "t")
+                        {
+                            TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                        }
+                        else if (incomingpieces[0].ToString() == "b")
+                        {
+                            TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
+                        }
+                        else if (incomingpieces[0].ToString() == "q")
+                        {
+                            TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
+                        }
+                        else if (incomingpieces[0].ToString() == "c")
+                        {
+                            TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
+                        }
+                        else 
+                        {
+                            TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
+                        }
+                        TempPiece.GetComponent<Piece>().CreateModel("white");
+                        TempPiece.GetComponent<Piece>().human = true;
+                        mm.PieceList.Add(TempPiece.GetComponent<Piece>());
+                        incomingpieces = incomingpieces.Substring(1,(incomingpieces.Length-1));
+                        Debug.Log("incoming pieces : " + incomingpieces);
+                        PlayerPrefs.SetString("IncomingPieces", incomingpieces);
+                    }
+                    //Here we add the ennemies
+                    if (Random.value < 0.03)
+                    {
+                        Transform TempPiece;
+                        //select randomly between available pieces
+                        float random = Random.value;
+                        if (random > 0.80)
+                        {
+                            TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                        }
+                        else if (random > 0.60)
+                        {
+                            TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
+                        }
+                        else if(random > 0.40)
+                        {
+                            TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
+                        }
+                        else if (random > 0.20)
+                        {
+                            TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
+                        }
                         else
                         {
-                            Transform TempPiece;
-                            //select randomly between available pieces
-                            float random = Random.value;
-                            if (random > 0.80)
-                            {
-                                TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
-                            }
-                            else if (random > 0.60)
-                            {
-                                TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
-                            }
-                            else if(random > 0.40)
-                            {
-                                TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
-                            }
-                            else if (random > 0.20)
-                            {
-                                TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
-                            }
-                            else
-                            {
-                                TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
-                            }
-
-                            //black or white?
-                            if (Random.value < 0.25)
-                            {
-                                TempPiece.GetComponent<Piece>().CreateModel("white");
-                                TempPiece.GetComponent<Piece>().human = true;
-                            }
-                            else
-                            {
-                                TempPiece.GetComponent<Piece>().CreateModel("black");
-                                TempPiece.GetComponent<Piece>().human = false;
-                            }
-
-                            mm.PieceList.Add(TempPiece.GetComponent<Piece>());
-
+                            TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
                         }
-                        
+
+                        TempPiece.GetComponent<Piece>().CreateModel("black");
+                        TempPiece.GetComponent<Piece>().human = false;
+                        mm.PieceList.Add(TempPiece.GetComponent<Piece>());
+
+                                                
                     }
 
 

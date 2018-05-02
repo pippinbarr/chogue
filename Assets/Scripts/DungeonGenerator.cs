@@ -165,11 +165,12 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawRooms()
     {
+        int stairsroom = 1+ (int)(Random.value * (m_Rooms.Count-1));
         for (int i = 0; i < m_Rooms.Count; i++)
         {
             Room room = (Room)m_Rooms[i];
-            //if this is the last one, tell it to be the stairs room
-            if (i == (m_Rooms.Count - 1))
+            //if this is the stairs room, say it!
+            if (i == stairsroom)
             {
                 room.stairsroom = true;
             }
@@ -198,6 +199,7 @@ public class DungeonGenerator : MonoBehaviour
 
         // Remember the color of the starting room for placing the chess pieces
         // (Oh god, what if the room is too small for your team?!)
+        Debug.Log("start room color " + start.color);
         m_StartRoomColor = start.color;
 
         Room toConnect = start;
