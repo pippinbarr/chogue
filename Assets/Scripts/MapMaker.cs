@@ -18,9 +18,8 @@ public class MapMaker : MonoBehaviour {
 
     private void Start()
     {
-        //manually set Playerprefs right now
-        PlayerPrefs.SetString("IncomingPieces", "kqcbtppp");
-        //knight is chevalier to distinguish and rook is tour
+
+        
     }
 
     // Use this for initialization
@@ -64,7 +63,12 @@ public class MapMaker : MonoBehaviour {
                         tempTile = Instantiate(TilePrefab, new Vector3(posx, posy, 0), transform.rotation);
                         tempTile.GetComponent<TileType>().SetTileType(1);
                     }
-
+                    tempTile.GetComponent<TileType>().RoomColor = Level.GetPixel(posx, posy);
+                    if(Level.GetPixel(posx, posy)==new Color(1f, 0, 0))
+                    {
+                        tempTile.GetComponent<TileType>().corridor = true;
+                    }
+                    mm.TileList.Add(tempTile.GetComponent<TileType>());
                     //Is this the first room? if so add incoming pieces
                     string incomingpieces = PlayerPrefs.GetString("IncomingPieces");
 
@@ -155,15 +159,18 @@ public class MapMaker : MonoBehaviour {
             }
             blacktile = !blacktile;
         }
-		
+
+        //update visibility
+        
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if ((GetComponent<DungeonGenerator>().m_DungeonImage != null) && !LevelDone)
+        /*if ((GetComponent<DungeonGenerator>().m_DungeonImage != null) && !LevelDone)
         {
             CreateLevel();
             LevelDone = true;
-        }
+        }*/
 	}
 }

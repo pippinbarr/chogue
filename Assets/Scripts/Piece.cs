@@ -18,6 +18,7 @@ public class Piece : MonoBehaviour {
     public int BestMove = 0; //0 : can't move, 1: can move, 2: can eat, 3: can eat white king
     public Transform BestMoveTarget; //
     public float LeastDistanceToKing = 1000000000;//
+    public Color CurrentTileRoomColor;
 
 
     //Array of colliders
@@ -370,11 +371,42 @@ public class Piece : MonoBehaviour {
 
         
     }
+    public void SetVisibility()
+    {
+        //if I'm player piece and stumble upon corridor for the first time, make it visible
+        if ((CurrentTile.GetComponent<TileType>().corridor) && (PieceColor == "white"))
+        {
+            CurrentTile.GetComponent<TileType>().visible = true;
+            CurrentTile.GetComponent<TileType>().SetVisibility();
+        }
+        Renderer[] allChildren = GetComponentsInChildren<Renderer>();
+        foreach (Renderer child in allChildren)
+        {
+            if (CurrentTile.GetComponent<TileType>().visible)
+            {
+                if ((!child.transform.name.Contains("Cube"))&& (!child.transform.name.Contains("ollider")))
+                {
+                    child.enabled = true;
+                }
+                    
+            }
+            else
+            {
+                child.enabled = false;
+            }
+        }
+
+
+    }
+
     private void OnTriggerStay(Collider collision)
     {
         if (collision.transform.tag == "tile")
         {
             CurrentTile = collision.transform;
+            CurrentTileRoomColor = CurrentTile.GetComponent<TileType>().RoomColor;
+            //SetVisibility();
+            
         }
         //piece has landed on stairs?
         if ((collision.transform.tag == "tile") && (collision.GetComponent<TileType>().Type == 3))

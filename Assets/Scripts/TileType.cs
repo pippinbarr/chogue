@@ -13,6 +13,21 @@ public class TileType : MonoBehaviour {
     public float DistanceToPiece = 1000000;
     public bool AvailableDestination = false;
     public bool manual = false;
+    public bool visible = false;
+    public bool corridor = false;
+    public Color RoomColor;
+
+    private MainManager MM;
+
+    // Use this for initialization
+    void Start()
+    {
+        MM = GameObject.Find("MainManager").GetComponent<MainManager>();
+        if (manual)
+        {
+            SetTileType(Type);
+        }
+    }
 
     //Function to set the tile type
     public void SetTileType(int type)
@@ -33,7 +48,13 @@ public class TileType : MonoBehaviour {
         if (type == 3)
         {
             GetComponent<Renderer>().material.color = StairColor;
+            
         }
+        if (!visible)
+        {
+            GetComponent<Renderer>().material.color = Color.black;
+        }
+
     }
 
     public void Highlight(bool OnOrOff)
@@ -58,13 +79,29 @@ public class TileType : MonoBehaviour {
         //Debug.Log("Distance to piece is " + DistanceToPiece);
     }
 
-	// Use this for initialization
-	void Start () {
-        if (manual)
+    public void SetVisibility()
+    {
+        //Debug.Log("setting visibility");
+        
+        MM = GameObject.Find("MainManager").GetComponent<MainManager>();
+        if (!corridor)
         {
-            SetTileType(Type);
+            visible = false;
+            foreach (Piece piece in MM.PieceList)
+            {
+                if ((RoomColor == piece.CurrentTileRoomColor) && (piece.PieceColor == "white"))
+                {
+                    //Debug.Log("Tile is visible");
+                    visible = true;
+                    //break;
+                }
+            }
         }
-	}
+
+        SetTileType(Type);
+    }
+
+
 	
 	// Update is called once per frame
 	void Update () {
