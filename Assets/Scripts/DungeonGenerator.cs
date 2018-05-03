@@ -11,6 +11,9 @@ public class DungeonGenerator : MonoBehaviour
     // Width and height of dungeon (in tiles)
     // (Making these divisible by three)
 
+    private int COLS = 3;
+    private int ROWS = 3;
+
     public int m_DungeonWidth = 3 * 20;
     public int m_DungeonHeight = 3 * 15;
     public float m_OmitRoomProbability = 0.05f;
@@ -47,8 +50,8 @@ public class DungeonGenerator : MonoBehaviour
 
     void Start()
     {
-        m_RoomCellWidth = m_DungeonWidth / 3;
-        m_RoomCellHeight = m_DungeonHeight / 3;
+        m_RoomCellWidth = m_DungeonWidth / COLS;
+        m_RoomCellHeight = m_DungeonHeight / ROWS;
 
         m_MaxRoomWidth = m_RoomCellWidth - (m_RoomPadding * 2) - m_HallWidth;
         m_MaxRoomHeight = m_RoomCellHeight - (m_RoomPadding * 2) - m_HallWidth;
@@ -66,7 +69,7 @@ public class DungeonGenerator : MonoBehaviour
         m_DungeonImage.Apply();
         m_RawImage.texture = m_DungeonImage;
         byte[] bytes = m_DungeonImage.EncodeToPNG();
-        File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);	
+        File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);
     }
 
     void GenerateDungeon()
@@ -98,15 +101,15 @@ public class DungeonGenerator : MonoBehaviour
 
         // Temporary room grid for adding neighbours because I'm too dumb
         // to figure out something more elegant?
-        Room[][] tempRoomGrid = { new Room[3], new Room[3], new Room[3] };
+        Room[][] tempRoomGrid = { new Room[COLS], new Room[COLS], new Room[COLS] };
 
         // Create the rooms (keep generating until you don't accidentally
         // generate a dungeon with no rooms!
         while (m_Rooms.Count == 0)
         {
-            for (int col = 0; col < 3; col++)
+            for (int col = 0; col < COLS; col++)
             {
-                for (int row = 0; row < 3; row++)
+                for (int row = 0; row < ROWS; row++)
                 {
                     if (Random.value > m_OmitRoomProbability)
                     {
@@ -118,9 +121,9 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         // Add every room's neighbours for later using the grid
-        for (int col = 0; col < 3; col++)
+        for (int col = 0; col < COLS; col++)
         {
-            for (int row = 0; row < 3; row++)
+            for (int row = 0; row < ROWS; row++)
             {
                 Room room = tempRoomGrid[col][row];
                 if (room == null) continue;
@@ -137,9 +140,9 @@ public class DungeonGenerator : MonoBehaviour
                 {
                     room.AddNeighbour(tempRoomGrid[col - 1][row]);
                 }
-                if (col + 1 < 3) 
-                { 
-                    room.AddNeighbour(tempRoomGrid[col + 1][row]); 
+                if (col + 1 < 3)
+                {
+                    room.AddNeighbour(tempRoomGrid[col + 1][row]);
                 }
 
                 Debug.Log("Added " + room.neighbours.Count + " neighbours for room " + room.row + "," + room.col);
@@ -159,13 +162,13 @@ public class DungeonGenerator : MonoBehaviour
         int x = xOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomWidth - width));
         int y = yOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomHeight - height));
 
-        return new Room(row, col, x, y, width, height, m_RoomColors[col + row * col], m_HallColor);
+        return new Room(row, col, x, y, width, height, m_RoomColors[(COLS * row) + col], m_HallColor);
     }
 
 
     void DrawRooms()
     {
-        int stairsroom = 1+ (int)(Random.value * (m_Rooms.Count-1));
+        int stairsroom = 1 + (int)(Random.value * (m_Rooms.Count - 1));
         for (int i = 0; i < m_Rooms.Count; i++)
         {
             Room room = (Room)m_Rooms[i];
@@ -218,7 +221,8 @@ public class DungeonGenerator : MonoBehaviour
         {
             toConnect = (Room)unconnected[Random.Range(0, unconnected.Count)];
             bool success = ConnectToConnected(toConnect);
-            if (success) {
+            if (success)
+            {
                 unconnected.Remove(toConnect);
                 // Repeatedly set the stairs room colour to the most recently connected
                 // non-gone room!
@@ -237,12 +241,14 @@ public class DungeonGenerator : MonoBehaviour
             {
                 connectionsMade++;
             }
-            else {
+            else
+            {
                 attempts++;
             }
             // We need to give up if it's not working out, because there are
             // dungeon configurations where you just can't add connections.
-            if (attempts > 20) {
+            if (attempts > 20)
+            {
                 Debug.Log("Tried adding extra connections for too long!");
                 break;
             }
@@ -301,7 +307,7 @@ public class DungeonGenerator : MonoBehaviour
         if (unconnectedNeighbours.Count == 0) return null;
 
         Room randomUnconnectedNeighbour = (Room)unconnectedNeighbours[Random.Range(0, unconnectedNeighbours.Count)];
-        DrawHall(room,randomUnconnectedNeighbour);
+        DrawHall(room, randomUnconnectedNeighbour);
         randomUnconnectedNeighbour.connected = true;
 
         return randomUnconnectedNeighbour;
@@ -509,7 +515,7 @@ class Room
             Debug.Log("Adding " + room.row + "," + room.col + " as neighbour of " + row + "," + col);
             neighbours.Add(room);
         }
-        else 
+        else
         {
             Debug.Log("NOT adding null room as neighbour of " + row + "," + col);
         }
