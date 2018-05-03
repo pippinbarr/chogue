@@ -47,6 +47,8 @@ public class DungeonGenerator : MonoBehaviour
     public Color m_StairsRoomColor;
     public Color m_StairsTileColor;
 
+    private Room stairsRoom;
+
 
     void Start()
     {
@@ -90,8 +92,8 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         CreateRooms();
-        DrawRooms();
         DrawHalls();
+        DrawRooms();
 
     }
 
@@ -166,21 +168,6 @@ public class DungeonGenerator : MonoBehaviour
     }
 
 
-    void DrawRooms()
-    {
-        int stairsroom = 1 + (int)(Random.value * (m_Rooms.Count - 1));
-        for (int i = 0; i < m_Rooms.Count; i++)
-        {
-            Room room = (Room)m_Rooms[i];
-            //if this is the stairs room, say it!
-            if (i == stairsroom)
-            {
-                room.stairsroom = true;
-            }
-            room.Draw(m_DungeonImage);
-        }
-    }
-
 
     void DrawHalls()
     {
@@ -213,7 +200,10 @@ public class DungeonGenerator : MonoBehaviour
             // the last room joined (in case there are no unconnected rooms
             // at this point
             // Make sure it's not a gone room through!
-            if (!toConnect.gone) m_StairsRoomColor = toConnect.color;
+            if (!toConnect.gone) {
+                m_StairsRoomColor = toConnect.color;
+                stairsRoom = toConnect;
+            }
             toConnect = ConnectToUnconnected(toConnect);
         }
 
@@ -226,7 +216,10 @@ public class DungeonGenerator : MonoBehaviour
                 unconnected.Remove(toConnect);
                 // Repeatedly set the stairs room colour to the most recently connected
                 // non-gone room!
-                if (!toConnect.gone) m_StairsRoomColor = toConnect.color;
+                if (!toConnect.gone) {
+                    stairsRoom = toConnect;
+                    m_StairsRoomColor = toConnect.color;
+                }
             }
         }
 
@@ -254,7 +247,26 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
 
+        stairsRoom.stairsroom = true;
     }
+
+
+
+    void DrawRooms()
+    {
+        //int stairsroom = 1 + (int)(Random.value * (m_Rooms.Count - 1));
+        for (int i = 0; i < m_Rooms.Count; i++)
+        {
+            Room room = (Room)m_Rooms[i];
+            //if this is the stairs room, say it!
+            //if (room == stairsRoom)
+            //{
+            //    room.stairsroom = true;
+            //}
+            room.Draw(m_DungeonImage);
+        }
+    }
+
 
     bool ConnectToRandomNeighbour(Room room)
     {
