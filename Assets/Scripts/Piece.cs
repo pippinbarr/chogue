@@ -428,7 +428,7 @@ public class Piece : MonoBehaviour {
 
     }
 
-    private void OnTriggerStay(Collider collision)
+    private void OnTriggerEnter(Collider collision)
     {
         if (collision.transform.tag == "tile")
         {
@@ -453,7 +453,7 @@ public class Piece : MonoBehaviour {
     }
     private void OnTriggerExit(Collider collision)
     {
-        if (collision.transform.tag == "tile")
+        /*if (collision.transform.tag == "tile")
         {
             CurrentTile = collision.transform;
             if (collision.GetComponent<TileType>().corridor)
@@ -462,7 +462,7 @@ public class Piece : MonoBehaviour {
             }
             //SetVisibility();
 
-        }
+        }*/
 
     }
 

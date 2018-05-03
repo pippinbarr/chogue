@@ -129,14 +129,14 @@ public class MainManager : MonoBehaviour {
         else if((!WaitingForCPUMove)&&(!WaitingForMove))
         {
             Debug.Log("calling play black");
-            StartCoroutine( PlayBlack());
+            PlayBlack();
            
 
 
         }
 
     }
-    IEnumerator PlayBlack()
+    void  PlayBlack()
     {
         //give a few seconds
         WaitingForCPUMove = true;
@@ -183,7 +183,7 @@ public class MainManager : MonoBehaviour {
         CurrentActivePiece = bestpiece;
         WaitingForCPUMove = false;
         CurrentActivePiece.MakeMove();
-        yield return new WaitForSeconds(0.1f);
+        //yield return new WaitForSeconds(0.1f);
 
 
 
@@ -226,7 +226,7 @@ public class MainManager : MonoBehaviour {
             //Debug.Log("distance: "+Vector3.Distance(destination, CurrentActivePiece.transform.position));
             CurrentActivePiece.transform.position = CurrentActivePiece.transform.position + movestep;
             yield return new WaitForSeconds(0.01f);
-            UpdateVisibility();
+            //UpdateVisibility();
         }
 
         GetComponent<AudioSource>().clip = putdown;
