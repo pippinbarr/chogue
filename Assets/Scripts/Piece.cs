@@ -437,7 +437,7 @@ public class Piece : MonoBehaviour {
             //SetVisibility();
             
         }
-        if(collision.transform.tag == "piece")
+        if((collision.transform.tag == "piece")&&(!MM.WaitingForMove))
         {
             //who ate who?
             if (MM.WaitingForCPUMove && human)
