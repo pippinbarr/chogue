@@ -437,11 +437,19 @@ public class Piece : MonoBehaviour {
             //SetVisibility();
             
         }
-        //piece has landed on stairs?
-        if ((collision.transform.tag == "tile") && (collision.GetComponent<TileType>().Type == 3))
+        if(collision.transform.tag == "piece")
         {
-            GoToNextLevel();
+            //who ate who?
+            if (MM.WaitingForCPUMove && human)
+            {
+                MM.EatPiece(this);
+            }
+            else if(MM.WaitingForPlayerMove && !human)
+            {
+                MM.EatPiece(this);
+            }
         }
+
     }
     private void OnTriggerExit(Collider collision)
     {

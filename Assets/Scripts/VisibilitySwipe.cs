@@ -23,5 +23,9 @@ public class VisibilitySwipe : MonoBehaviour {
             other.GetComponent<TileType>().visible = true;
             other.GetComponent<TileType>().SetVisibility();
         }
+        if(other.tag == "wall")
+        {
+            other.GetComponent<Renderer>().enabled = true;
+        }
     }
 }

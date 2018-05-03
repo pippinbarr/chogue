@@ -49,11 +49,16 @@ public class TileType : MonoBehaviour {
         if (type == 3)
         {
             GetComponent<Renderer>().material.color = StairColor;
-            
+            GetComponent<Renderer>().enabled = true;
         }
         if (!visited)
         {
             GetComponent<Renderer>().material.color = Color.black;
+            if (type == 3)
+            {
+                GetComponent<Renderer>().enabled = false;
+            }
+
         }
 
     }

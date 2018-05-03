@@ -52,6 +52,24 @@ public class MapMaker : MonoBehaviour {
                         tempTile = Instantiate(StairsPrefab, new Vector3(posx, posy, 0), transform.rotation);
                         tempTile.Rotate(new Vector3(180,0,0));
                         tempTile.GetComponent<TileType>().SetTileType(3);
+                        //reset the pixel for right room color
+                        if (Level.GetPixel(posx+1, posy) != Color.white)
+                        {
+                            Level.SetPixel(posx, posy, Level.GetPixel(posx + 1, posy));
+                        }
+                        else if (Level.GetPixel(posx - 1, posy) != Color.white)
+                        {
+                            Level.SetPixel(posx, posy, Level.GetPixel(posx - 1, posy)) ;
+                        }
+                        else if (Level.GetPixel(posx, posy+1) != Color.white)
+                        {
+                            Level.SetPixel(posx, posy, Level.GetPixel(posx, posy + 1));
+                        }
+                        else if (Level.GetPixel(posx, posy - 1) != Color.white)
+                        {
+                            Level.SetPixel(posx, posy, Level.GetPixel(posx, posy - 1));
+                        }
+
                     }
                     else if (blacktile)
                     {
@@ -115,7 +133,7 @@ public class MapMaker : MonoBehaviour {
                         PlayerPrefs.SetString("IncomingPieces", incomingpieces);
                     }
                     //Here we add the ennemies
-                    if (Random.value < 0.03)
+                    if ((Random.value < 0.03)&&(!(difcolor<0.01)))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
