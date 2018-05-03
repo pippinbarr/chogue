@@ -20,6 +20,8 @@ public class Piece : MonoBehaviour {
     public float LeastDistanceToKing = 1000000000;//
     public Color CurrentTileRoomColor;
 
+    private MainManager MM;
+
 
     //Array of colliders
     public Collider[] Colliders;
@@ -30,6 +32,7 @@ public class Piece : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        MM = GameObject.Find("MainManager").GetComponent<MainManager>();
         if (manual)
         {
             CreateModel(PieceColor);
@@ -38,7 +41,7 @@ public class Piece : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (NewQueen)
+        if( (NewQueen)&&(!MM.WaitingForMove))
         {
             Queen();
         }
@@ -50,12 +53,19 @@ public class Piece : MonoBehaviour {
             PieceModel = Instantiate(PieceWhiteModel, transform.position, PieceWhiteModel.rotation);
             PieceModel.parent = transform;
             PieceColor = "white";
+            if (GetComponentInChildren<VisibilitySwipe>() != null)
+            {
+                Debug.Log("set swipe active");
+                GetComponentInChildren<VisibilitySwipe>().gameObject.GetComponent<Collider>().enabled = true ;
+            }
+           
         }
         else
         {
             PieceModel = Instantiate(PieceBlackModel, transform.position, PieceBlackModel.rotation);
             PieceModel.parent = transform;
             PieceColor = "black";
+            
         }
         
     }
@@ -252,6 +262,7 @@ public class Piece : MonoBehaviour {
         TempPiece.GetComponent<Piece>().CreateModel(PieceColor);
         TempPiece.GetComponent<Piece>().human = human;
         TempPiece.GetComponent<Piece>().NewQueen = false;
+        TempPiece.GetComponent<Piece>().CurrentTile = CurrentTile;
         GameObject.Find("MainManager").GetComponent<MainManager>().PieceList.Insert(0,TempPiece.GetComponent<Piece>());
         GameObject.Find("MainManager").GetComponent<MainManager>().PieceList.Remove(this);
         Destroy(gameObject);
@@ -298,7 +309,7 @@ public class Piece : MonoBehaviour {
     {
         if (BestMoveTarget != null)
         {
-            GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>());
+            StartCoroutine(GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>()));
         }
         
 
@@ -387,12 +398,16 @@ public class Piece : MonoBehaviour {
     public void SetVisibility()
     {
         //if I'm player piece and stumble upon corridor for the first time, make it visible
-        if ((CurrentTile.GetComponent<TileType>().corridor) && (PieceColor == "white"))
+        if (CurrentTile != null)
         {
-            CurrentTile.GetComponent<TileType>().visited = true;
-            CurrentTile.GetComponent<TileType>().visible = true;
-            CurrentTile.GetComponent<TileType>().SetVisibility();
+            if ((CurrentTile.GetComponent<TileType>().corridor) && (PieceColor == "white"))
+            {
+                CurrentTile.GetComponent<TileType>().visited = true;
+                CurrentTile.GetComponent<TileType>().visible = true;
+                CurrentTile.GetComponent<TileType>().SetVisibility();
+            }
         }
+
         Renderer[] allChildren = GetComponentsInChildren<Renderer>();
         foreach (Renderer child in allChildren)
         {

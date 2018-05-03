@@ -8,11 +8,13 @@ public class MainManager : MonoBehaviour {
     public Piece CurrentActivePiece;
     public bool WaitingForPlayerMove = false;
     public bool WaitingForCPUMove = false;
+    public bool WaitingForMove = false;
     public List<Piece> PieceList = new List<Piece>();
     public List<TileType> TileList = new List<TileType>();
     int CurrentPieceIndex = 0;
     bool gameover = false;
     public bool HumanTurn = false;
+
 
     private bool dothisonce = true; //hack
 
@@ -52,7 +54,7 @@ public class MainManager : MonoBehaviour {
         }
 
         //Get click on destination (only if in "move" mode)
-        if (WaitingForPlayerMove)
+        if ((WaitingForPlayerMove)&&(!WaitingForMove))
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -67,9 +69,9 @@ public class MainManager : MonoBehaviour {
                     //if this is an available destination, move!
                     if ((hit.transform.GetComponent<TileType>()!=null)&&(hit.transform.GetComponent<TileType>().AvailableDestination))
                     {
-
-                        MoveToTile(hit.transform.GetComponent<TileType>());
                         WaitingForPlayerMove = false;
+                        StartCoroutine(MoveToTile(hit.transform.GetComponent<TileType>()));
+                        
                         UpdateVisibility();
 
                     }
@@ -85,7 +87,7 @@ public class MainManager : MonoBehaviour {
                 }
             }
         }
-        else if(!WaitingForCPUMove)
+        else if((!WaitingForCPUMove)&&(!WaitingForMove))
         {
             Debug.Log("calling play black");
             StartCoroutine( PlayBlack());
@@ -99,7 +101,7 @@ public class MainManager : MonoBehaviour {
     {
         //give a few seconds
         WaitingForCPUMove = true;
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
         //first ask every piece what is its best move
         int bestmove = 0;
@@ -140,10 +142,10 @@ public class MainManager : MonoBehaviour {
             }
         }
         CurrentActivePiece = bestpiece;
-
+        WaitingForCPUMove = false;
         CurrentActivePiece.MakeMove();
         yield return new WaitForSeconds(0.1f);
-        WaitingForCPUMove = false;
+
         WaitingForPlayerMove = true;
     }
 
@@ -161,12 +163,24 @@ public class MainManager : MonoBehaviour {
     } 
 
    
-
-    public void MoveToTile(TileType tile)
+    //make this a coroutine with actual movement, will collide with tiles and make them visible (maybe?!)
+   public  IEnumerator MoveToTile(TileType tile)
     {
         CurrentActivePiece.turn++;
-        CurrentActivePiece.transform.position = new Vector3(tile.transform.position.x, tile.transform.position.y, CurrentActivePiece.transform.position.z);
+        Vector3 destination = new Vector3(tile.transform.position.x, tile.transform.position.y, CurrentActivePiece.transform.position.z);
         CurrentActivePiece.HideDestinations();
+        Vector3 movestep = (destination - CurrentActivePiece.transform.position) / (Vector3.Distance(destination, CurrentActivePiece.transform.position)*3);
+        WaitingForMove = true;
+        while ( Vector3.Distance(destination, CurrentActivePiece.transform.position)>0.2f)
+        {
+            //Debug.Log("distance: "+Vector3.Distance(destination, CurrentActivePiece.transform.position));
+            CurrentActivePiece.transform.position = CurrentActivePiece.transform.position + movestep;
+            yield return new WaitForSeconds(0.05f);
+            UpdateVisibility();
+        }
+        CurrentActivePiece.transform.position = destination;
+        WaitingForMove = false;
+        
         
 
         //was this a piece? then eat it!
