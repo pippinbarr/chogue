@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainManager : MonoBehaviour {
 
@@ -19,16 +21,34 @@ public class MainManager : MonoBehaviour {
     public AudioClip gulp;
     public AudioClip sliding;
     public AudioClip putdown;
+    public Text statusline;
 
 
     private bool dothisonce = true; //hack
+    public bool restartgame = false;
 
 	// Use this for initialization
 	void Start () {
 
-        //manually set Playerprefs right now
-        PlayerPrefs.SetString("IncomingPieces", "kqcbtppp");
-        //knight is chevalier to distinguish and rook is tour
+        if (restartgame)
+        {
+            PlayerPrefs.DeleteAll();
+        }
+        //if this is the first time, setup basic vars if not load them from playerprefs
+        if (PlayerPrefs.GetInt("maxlevel",0) == 0)
+        {
+            Debug.Log("new game");
+            PlayerPrefs.SetInt("maxlevel", 1);
+            PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+            //knight is chevalier to distinguish and rook is tour
+            
+        }
+
+        statusline.text = "level " + PlayerPrefs.GetInt("level") + "| High Score: " + PlayerPrefs.GetInt("maxlevel");
+
+
+        
 
         //create a level
         GetComponent<MapMaker>().CreateLevel();    
@@ -153,7 +173,7 @@ public class MainManager : MonoBehaviour {
                     if (piece.LeastDistanceToKing < leastdist)
                     {
                         leastdist = piece.LeastDistanceToKing;
-                        Debug.Log("Least distance is " + leastdist);
+                        //Debug.Log("Least distance is " + leastdist);
                         bestpiece = piece;
                     }
                     // break;
@@ -205,7 +225,7 @@ public class MainManager : MonoBehaviour {
         {
             //Debug.Log("distance: "+Vector3.Distance(destination, CurrentActivePiece.transform.position));
             CurrentActivePiece.transform.position = CurrentActivePiece.transform.position + movestep;
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.01f);
             UpdateVisibility();
         }
 
@@ -217,8 +237,12 @@ public class MainManager : MonoBehaviour {
         {
             Debug.Log("landed on stairs");
             CurrentActivePiece.gameObject.SetActive(false);
-            LastSelectedPiece = null;
-            ChangeLevel();
+            if(CurrentActivePiece.PieceColor == "white")
+            {
+                LastSelectedPiece = null;
+                ChangeLevel();
+            }
+
         }
         WaitingForMove = false;
         
@@ -239,6 +263,7 @@ public class MainManager : MonoBehaviour {
         {
             Debug.Log("game over");
             gameover = true;
+            GameOver();
         }
 
         PieceList.Remove(piece);
@@ -249,7 +274,47 @@ public class MainManager : MonoBehaviour {
 
     private void ChangeLevel()
     {
+        string outgoingpieces = "";
+        foreach(Piece piece in PieceList)
+        {
+            if (piece.PieceColor == "white")
+            {
+                if (piece.PieceType == "pawn")
+                {
+                    outgoingpieces = outgoingpieces + "p";
+                }
+                else if (piece.PieceType == "bishop")
+                {
+                    outgoingpieces = outgoingpieces + "b";
+                }
+                else if (piece.PieceType == "knight")
+                {
+                    outgoingpieces = outgoingpieces + "c";
+                }
+                else if (piece.PieceType == "rook")
+                {
+                    outgoingpieces = outgoingpieces + "t";
+                }
+                else if (piece.PieceType == "king")
+                {
+                    outgoingpieces = outgoingpieces + "k";
+                }
+                else if (piece.PieceType == "queen")
+                {
+                    outgoingpieces = outgoingpieces + "q";
+                }
+            }
+
+        }
+        PlayerPrefs.SetString("IncomingPieces", outgoingpieces);
+        PlayerPrefs.SetInt("level", PlayerPrefs.GetInt("level") + 1);
+        
+        SceneManager.LoadScene("LevelGen"); 
+    }
+    public void GameOver()
+    {
+        
+        SceneManager.LoadScene("GameOver");
 
     }
-
 }

@@ -27,5 +27,6 @@ public class VisibilitySwipe : MonoBehaviour {
         {
             other.GetComponent<Renderer>().enabled = true;
         }
+
     }
 }

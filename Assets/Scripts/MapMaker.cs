@@ -38,6 +38,10 @@ public class MapMaker : MonoBehaviour {
 
         //Go through all the pixels, if it is non-white, create a tile from tile prefab
         //The type of tile is not defined yet (checkered, etc)
+
+        //get the incoming player pieces
+        string incomingpieces = PlayerPrefs.GetString("IncomingPieces");
+
         for (int posy = 0;  posy<sizeY; posy++)
         {
             for(int posx = 0; posx < sizeX; posx++)
@@ -88,7 +92,7 @@ public class MapMaker : MonoBehaviour {
                     }
                     mm.TileList.Add(tempTile.GetComponent<TileType>());
                     //Is this the first room? if so add incoming pieces
-                    string incomingpieces = PlayerPrefs.GetString("IncomingPieces");
+                    
 
                     //all this shit is because the image pixel colors are not EXACT! so looking for a minor difference
                     Color startroomcolor = GameObject.Find("MainManager").GetComponent<DungeonGenerator>().m_StartRoomColor;
@@ -130,7 +134,7 @@ public class MapMaker : MonoBehaviour {
                         mm.PieceList.Add(TempPiece.GetComponent<Piece>());
                         incomingpieces = incomingpieces.Substring(1,(incomingpieces.Length-1));
                         Debug.Log("incoming pieces : " + incomingpieces);
-                        PlayerPrefs.SetString("IncomingPieces", incomingpieces);
+                       // PlayerPrefs.SetString("IncomingPieces", incomingpieces);
                     }
                     //Here we add the ennemies
                     if ((Random.value < 0.03)&&(!(difcolor<0.01)))
