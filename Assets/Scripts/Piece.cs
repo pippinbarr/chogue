@@ -428,7 +428,7 @@ public class Piece : MonoBehaviour {
 
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerStay(Collider collision)
     {
         if (collision.transform.tag == "tile")
         {
