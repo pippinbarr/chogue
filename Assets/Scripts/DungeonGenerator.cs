@@ -113,11 +113,11 @@ public class DungeonGenerator : MonoBehaviour
             {
                 for (int row = 0; row < ROWS; row++)
                 {
-                    if (Random.value > m_OmitRoomProbability)
-                    {
+                    //if (Random.value > m_OmitRoomProbability)
+                    //{
                         tempRoomGrid[col][row] = CreateRoom(row, col);
                         m_Rooms.Add(tempRoomGrid[col][row]);
-                    }
+                    //}
                 }
             }
         }
