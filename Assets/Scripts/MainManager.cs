@@ -136,12 +136,31 @@ public class MainManager : MonoBehaviour {
         }
 
     }
+
+    public void UpdateThreats()
+    {
+        //clear all tiles of their "covered and threatened"
+        foreach (TileType tile in TileList)
+        {
+            tile.covered = false;
+            tile.threatened = false;
+        }
+        //first, find available destinations for all pieces to updated "protected" and "covered" statuses
+        foreach (Piece piece in PieceList)
+        {
+            piece.FindAvailableDestinations();
+        }
+    }
+
     void  PlayBlack()
     {
         //give a few seconds
         WaitingForCPUMove = true;
         //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
+
+        UpdateThreats();
+
         //first ask every piece what is its best move
         int bestmove = 0;
         Piece bestpiece = PieceList[0];
@@ -181,14 +200,16 @@ public class MainManager : MonoBehaviour {
             }
         }
         CurrentActivePiece = bestpiece;
-        WaitingForCPUMove = false;
+        
         CurrentActivePiece.MakeMove();
+        WaitingForCPUMove = false;
         //yield return new WaitForSeconds(0.1f);
 
 
 
         WaitingForPlayerMove = true;
         PieceSelected = false;
+
 
     }
 
@@ -254,6 +275,7 @@ public class MainManager : MonoBehaviour {
             EatPiece(tile.GetComponent<Piece>());
         }
         UpdateVisibility();
+        UpdateThreats();
     }
 
     public void EatPiece(Piece piece)

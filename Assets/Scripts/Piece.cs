@@ -19,6 +19,8 @@ public class Piece : MonoBehaviour {
     public Transform BestMoveTarget; //
     public float LeastDistanceToKing = 1000000000;//
     public Color CurrentTileRoomColor;
+    public bool threatened = false;
+    public bool covered = false;
 
     private MainManager MM;
 
@@ -147,6 +149,29 @@ public class Piece : MonoBehaviour {
                     }
                 }
 
+            }
+        }
+        if (TileList.Count > 0)
+        {
+            //update covered and threatened
+            foreach(TileType tile in TileList)
+            {
+                if (PieceColor == "white")
+                {
+                    tile.threatened = true;
+                    if (tile.GetComponent<Piece>() != null)
+                    {
+                        tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().threatened = true;
+                    }
+                }
+                else
+                {
+                    tile.covered = true;
+                    if (tile.GetComponent<Piece>() != null)
+                    {
+                        tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().covered = true;
+                    }
+                }
             }
         }
     }
@@ -319,7 +344,7 @@ public class Piece : MonoBehaviour {
         
         
         //Find available destinations
-        FindAvailableDestinations();
+        
         if (TileList.Count > 0)
         {
             BestMove = 1;
@@ -338,11 +363,11 @@ public class Piece : MonoBehaviour {
                 if (tile.GetComponent<Piece>().human)
                 {
                     //Debug.Log("eat human");
-                    BestMove = 2;
+                    BestMove = 3;
                     BestMoveTarget = tile.transform;
                     if (tile.GetComponent<Piece>().PieceType == "king")
                     {
-                        BestMove = 3;
+                        BestMove = 4;
                         return;
                     }
                     
@@ -357,7 +382,31 @@ public class Piece : MonoBehaviour {
             }
 
         }
+        //am I threatened and uncovered?
+        threatened = CurrentTile.GetComponent<TileType>().threatened;
+        covered = CurrentTile.GetComponent<TileType>().covered;
+        if ( (BestMove == 1)&&(threatened)&&(!covered))
+        {
+            Debug.Log("I'm threatened");
+            //can I find a place where I'll be protected?
+            foreach(TileType tile in TileList)
+            {
+                if (!tile.threatened)
+                {
+                    Debug.Log("not threatened");
+                    BestMove = 2;
+                    BestMoveTarget = tile.transform;
+                    break;
+                }
+                else if(tile.covered)
+                {
+                    Debug.Log("covered ");
+                    BestMove = 2;
+                    BestMoveTarget = tile.transform;
+                }
 
+            }
+        }
         //if we haven't found a piece to eat, find closest place
         if (BestMove == 1)
         {
@@ -430,6 +479,7 @@ public class Piece : MonoBehaviour {
 
     private void OnTriggerStay(Collider collision)
     {
+        //update my tile
         if (collision.transform.tag == "tile")
         {
             CurrentTile = collision.transform;
@@ -437,6 +487,7 @@ public class Piece : MonoBehaviour {
             //SetVisibility();
             
         }
+        //was I eaten?
         if((collision.transform.tag == "piece")&&(!MM.WaitingForMove))
         {
             //who ate who?
@@ -449,22 +500,9 @@ public class Piece : MonoBehaviour {
                 MM.EatPiece(this);
             }
         }
-
     }
-    private void OnTriggerExit(Collider collision)
-    {
-        /*if (collision.transform.tag == "tile")
-        {
-            CurrentTile = collision.transform;
-            if (collision.GetComponent<TileType>().corridor)
-            {
-                collision.GetComponent<TileType>().visible = false;
-            }
-            //SetVisibility();
 
-        }*/
 
-    }
 
     public void GoToNextLevel()
     {

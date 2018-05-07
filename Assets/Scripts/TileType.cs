@@ -17,6 +17,8 @@ public class TileType : MonoBehaviour {
     public bool visited = false;
     public bool corridor = false;
     public Color RoomColor;
+    public bool threatened = false;
+    public bool covered = false;
 
     private MainManager MM;
 
@@ -92,7 +94,7 @@ public class TileType : MonoBehaviour {
         MM = GameObject.Find("MainManager").GetComponent<MainManager>();
         if (!corridor)
         {
-            visible = false;
+            //visible = false;
             foreach (Piece piece in MM.PieceList)
             {
                 if ((RoomColor == piece.CurrentTileRoomColor) && (piece.PieceColor == "white"))
@@ -108,11 +110,5 @@ public class TileType : MonoBehaviour {
         SetTileType(Type);
     }
 
-
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 }
