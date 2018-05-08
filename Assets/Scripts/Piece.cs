@@ -464,7 +464,15 @@ public class Piece : MonoBehaviour {
             }
 
         }
-        
+        if (PieceColor == "red")
+        {
+            if (TileList.Count > 0)
+            {
+                BestMove = 5;
+                BestMoveTarget = TileList[0].transform;
+
+            }
+        }
 
         
     }

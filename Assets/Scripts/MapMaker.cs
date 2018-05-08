@@ -171,7 +171,7 @@ public class MapMaker : MonoBehaviour {
                         }
 
                         //chances that it is a powerup
-                        if (Random.value < 0.05)
+                        if (Random.value < (0.1f + PlayerPrefs.GetInt("level")/100))
                         {
                             TempPiece.GetComponent<Piece>().CreateModel("red");
                         }

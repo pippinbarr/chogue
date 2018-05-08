@@ -256,6 +256,7 @@ public class MainManager : MonoBehaviour {
         GetComponent<AudioSource>().Play();
         CurrentActivePiece.transform.position = destination;
         //did we land on stairs?
+
         if (tile.GetComponent<TileType>().Type == 3)
         {
             Debug.Log("landed on stairs");
