@@ -12,6 +12,7 @@ public class Piece : MonoBehaviour {
     public string PieceColor = "white";
     public Transform PieceWhiteModel;
     public Transform PieceBlackModel;
+    public Transform PieceRedModel;
     public Transform QueenPrefab;
     public bool NewQueen = false;
     public Transform CurrentTile;
@@ -62,13 +63,21 @@ public class Piece : MonoBehaviour {
             }
            
         }
-        else
+        else if(pieceColor=="black")
         {
             PieceModel = Instantiate(PieceBlackModel, transform.position, PieceBlackModel.rotation);
             PieceModel.parent = transform;
             PieceColor = "black";
             
         }
+        //this is a powerup
+        else
+        {
+            PieceModel = Instantiate(PieceRedModel, transform.position, PieceRedModel.rotation);
+            PieceModel.parent = transform;
+            PieceColor = "red";
+        }
+
         
     }
 
@@ -117,7 +126,7 @@ public class Piece : MonoBehaviour {
                     }
                     else if (tile.transform.tag == "piece")
                     {
-                        if (tile.GetComponent<Piece>().human != human)
+                        if ((tile.GetComponent<Piece>().human != human))
                         {
                             TileList.Add(tile);
                             //did we add the tile underneath the piece?
@@ -503,7 +512,7 @@ public class Piece : MonoBehaviour {
             
         }
         //was I eaten?
-        if((collision.transform.tag == "piece")&&(!MM.WaitingForMove))
+        if((collision.transform.tag == "piece")&&(!MM.WaitingForMove)&&(PieceColor!="red"))
         {
             //who ate who?
             if (MM.WaitingForCPUMove && human)
@@ -517,7 +526,20 @@ public class Piece : MonoBehaviour {
         }
     }
 
+    public void PowerUp()
+    {
+        //destroy current model
+        foreach (Transform child in transform)
+        {
+            if (child.name.Contains("lone"))
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        CreateModel("white");
+        human = true;
 
+    }
 
     public void GoToNextLevel()
     {

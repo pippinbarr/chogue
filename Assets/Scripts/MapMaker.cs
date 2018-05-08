@@ -144,6 +144,7 @@ public class MapMaker : MonoBehaviour {
                         //select randomly between available pieces
                         float random = Random.value;
                         random += PlayerPrefs.GetInt("level") / 50;
+                        
                         if (random > 0.95)
                         {
                             TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
@@ -169,7 +170,16 @@ public class MapMaker : MonoBehaviour {
                             TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
 
-                        TempPiece.GetComponent<Piece>().CreateModel("black");
+                        //chances that it is a powerup
+                        if (Random.value < 0.05)
+                        {
+                            TempPiece.GetComponent<Piece>().CreateModel("red");
+                        }
+                        else
+                        {
+                            TempPiece.GetComponent<Piece>().CreateModel("black");
+                        }
+                        
                         TempPiece.GetComponent<Piece>().human = false;
                         mm.PieceList.Add(TempPiece.GetComponent<Piece>());
 

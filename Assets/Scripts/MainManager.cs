@@ -129,7 +129,7 @@ public class MainManager : MonoBehaviour {
         else if((!WaitingForCPUMove)&&(!WaitingForMove))
         {
             Debug.Log("calling play black");
-            PlayBlack();
+            StartCoroutine( PlayBlack());
            
 
 
@@ -152,7 +152,7 @@ public class MainManager : MonoBehaviour {
         }
     }
 
-    void  PlayBlack()
+    IEnumerator  PlayBlack()
     {
         //give a few seconds
         WaitingForCPUMove = true;
@@ -166,7 +166,7 @@ public class MainManager : MonoBehaviour {
         Piece bestpiece = PieceList[0];
         foreach (Piece piece in PieceList)
         {
-           if ((!piece.human)&&(piece.CurrentTile.GetComponent<TileType>().visible))
+           if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
            // if (!piece.human) 
             {
                 piece.DecideMove();
@@ -203,8 +203,9 @@ public class MainManager : MonoBehaviour {
         CurrentActivePiece = bestpiece;
         
         CurrentActivePiece.MakeMove();
+        yield return new WaitForSeconds(0.1f);
         WaitingForCPUMove = false;
-        //yield return new WaitForSeconds(0.1f);
+        
 
 
 
@@ -288,11 +289,27 @@ public class MainManager : MonoBehaviour {
             gameover = true;
             GameOver();
         }
+        if (piece.PieceColor == "red")
+        {
+           // WaitingForCPUMove = false;
+            piece.human = true;
+            //piece.PieceColor = "white";
+            //WaitingForPlayerMove = false;
+            CurrentActivePiece = piece;
+            piece.DecideMove();
+            piece.MakeMove();
+            piece.PowerUp();
+           // WaitingForCPUMove = true;
 
-        PieceList.Remove(piece);
-        Destroy(piece.gameObject);
-        GetComponent<AudioSource>().clip = gulp;
-        GetComponent<AudioSource>().Play();
+        }
+        else if (piece.human!=CurrentActivePiece.human)
+        {
+            PieceList.Remove(piece);
+            Destroy(piece.gameObject);
+            GetComponent<AudioSource>().clip = gulp;
+            GetComponent<AudioSource>().Play();
+        }
+
     }
 
     private void ChangeLevel()
