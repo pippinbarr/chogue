@@ -432,11 +432,26 @@ public class Piece : MonoBehaviour {
             //Sort them
             TileList = TileList.OrderBy(tile => tile.DistanceToPiece).ToList();
 
-            //go to first one if not zéro
-            if (TileList.Count > 0)
+            //try to find a tile that isn't threatened
+            if ((TileList.Count > 0)&&(PieceType!="pawn"))
             {
-                BestMoveTarget = TileList[0].transform ;
-                LeastDistanceToKing = TileList[0].DistanceToPiece;
+                BestMove = 0;
+                LeastDistanceToKing = 1000000000;
+                foreach (TileType tile in TileList)
+                {
+                    if (!tile.threatened)
+                    {
+                        BestMoveTarget = TileList[0].transform;
+                        LeastDistanceToKing = TileList[0].DistanceToPiece;
+                    }
+
+                }
+                
+            }
+            else
+            {
+                BestMove = 0;
+                LeastDistanceToKing = 1000000000;
             }
 
         }

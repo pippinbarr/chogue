@@ -166,7 +166,8 @@ public class MainManager : MonoBehaviour {
         Piece bestpiece = PieceList[0];
         foreach (Piece piece in PieceList)
         {
-            if (!piece.human)
+           if ((!piece.human)&&(piece.CurrentTile.GetComponent<TileType>().visible))
+           // if (!piece.human) 
             {
                 piece.DecideMove();
                 if (piece.BestMove > bestmove)

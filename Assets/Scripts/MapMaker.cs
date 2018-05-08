@@ -136,25 +136,27 @@ public class MapMaker : MonoBehaviour {
                         Debug.Log("incoming pieces : " + incomingpieces);
                        // PlayerPrefs.SetString("IncomingPieces", incomingpieces);
                     }
-                    //Here we add the ennemies
-                    if ((Random.value < 0.03)&&(!(difcolor<0.01)))
+                    //Here we add the ennemies0
+                    float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100);
+                    if ((Random.value < enemythreshold) &&(!(difcolor<0.01))&&(Level.GetPixel(posx, posy)!=Color.red))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
                         float random = Random.value;
-                        if (random > 0.80)
+                        random += PlayerPrefs.GetInt("level") / 50;
+                        if (random > 0.95)
                         {
-                            TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                         }
-                        else if (random > 0.60)
+                        else if (random > 0.85)
                         {
-                            TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
+                            TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
                         }
-                        else if(random > 0.40)
+                        else if(random > 0.65)
                         {
-                            TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
+                            TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
                         }
-                        else if (random > 0.20)
+                        else if (random > 0.45)
                         {
                             TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
