@@ -37,9 +37,9 @@ public class GetCollidingThings : MonoBehaviour {
         {
             CollidingTileList.Add(other.GetComponent<TileType>());
             //Has the pawn touched a wall?
-            if(PawnWallCheck && (other.transform.tag == "wall"))
+            if(PawnWallCheck && (other.transform.tag == "wall") &&(!transform.parent.GetComponent<Piece>().NewQueen))
             {
-                Debug.Log("queen");
+                Debug.Log("prepare for new queen");
                 transform.parent.GetComponent<Piece>().NewQueen = true;
             }
 

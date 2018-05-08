@@ -44,10 +44,11 @@ public class Piece : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if( (NewQueen)&&(!MM.WaitingForMove))
+        /*if( (NewQueen)&&(!MM.WaitingForMove))
         {
             Queen();
-        }
+            MM.PieceSelected = false;
+        }*/
     }
 
     public void CreateModel(string pieceColor)
@@ -58,7 +59,7 @@ public class Piece : MonoBehaviour {
             PieceColor = "white";
             if (GetComponentInChildren<VisibilitySwipe>() != null)
             {
-                Debug.Log("set swipe active");
+               // Debug.Log("set swipe active");
                 GetComponentInChildren<VisibilitySwipe>().gameObject.GetComponent<Collider>().enabled = true ;
             }
            
@@ -120,7 +121,7 @@ public class Piece : MonoBehaviour {
                 foreach (TileType tile in TempTileList)
                 {
 
-                    if (tile.transform.tag == "wall")
+                    if ((tile.transform.tag == "wall")|| ((tile.Type == 3)&&(PieceColor=="black")))
                     {
                         break;
                     }
@@ -211,15 +212,28 @@ public class Piece : MonoBehaviour {
         foreach (TileType tile in TempTileList)
         {
 
-            if ((tile.transform.tag == "piece")|| (tile.transform.tag == "wall"))
+            if (tile.transform.tag == "piece")
             {
+
                 if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
                 {
                     TileList.Remove(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>());
                 }
+
+
                 nope = true;
             }
-           
+            if (tile.transform.tag == "wall")
+            {
+
+                if (TileList.Contains(tile))
+                {
+                    TileList.Remove(tile);
+                }
+
+
+                nope = true;
+            }
         }
         if ((!nope)&&(TempTileList.Count>0))
         {
@@ -292,13 +306,15 @@ public class Piece : MonoBehaviour {
     public void Queen()
     {
         Debug.Log("queen");
+        NewQueen = false;
         Transform TempPiece = Instantiate(QueenPrefab, transform.position, transform.rotation);
         TempPiece.GetComponent<Piece>().CreateModel(PieceColor);
         TempPiece.GetComponent<Piece>().human = human;
-        TempPiece.GetComponent<Piece>().NewQueen = false;
+        
         TempPiece.GetComponent<Piece>().CurrentTile = CurrentTile;
-        GameObject.Find("MainManager").GetComponent<MainManager>().PieceList.Insert(0,TempPiece.GetComponent<Piece>());
-        GameObject.Find("MainManager").GetComponent<MainManager>().PieceList.Remove(this);
+        CurrentTile.GetComponent<TileType>().CurrentPiece = TempPiece;
+        MM.PieceList.Insert(0,TempPiece.GetComponent<Piece>());
+        MM.PieceList.Remove(this);
         Destroy(gameObject);
     }
     public void ShowDestinations()
@@ -396,20 +412,20 @@ public class Piece : MonoBehaviour {
         covered = CurrentTile.GetComponent<TileType>().covered;
         if ( (BestMove == 1)&&(threatened)&&(!covered))
         {
-            Debug.Log("I'm threatened");
+            //Debug.Log("I'm threatened");
             //can I find a place where I'll be protected?
             foreach(TileType tile in TileList)
             {
                 if (!tile.threatened)
                 {
-                    Debug.Log("not threatened");
+                    //Debug.Log("not threatened");
                     BestMove = 2;
                     BestMoveTarget = tile.transform;
                     break;
                 }
                 else if(tile.covered)
                 {
-                    Debug.Log("covered ");
+                    //Debug.Log("covered ");
                     BestMove = 2;
                     BestMoveTarget = tile.transform;
                 }
@@ -512,16 +528,18 @@ public class Piece : MonoBehaviour {
     private void OnTriggerStay(Collider collision)
     {
         //update my tile
-        if (collision.transform.tag == "tile")
+        if ((collision.transform.tag == "tile"))
         {
             CurrentTile = collision.transform;
             CurrentTileRoomColor = CurrentTile.GetComponent<TileType>().RoomColor;
+            //CurrentTile.GetComponent<Collider>().enabled = false;
             //SetVisibility();
             
         }
         //was I eaten?
-        if((collision.transform.tag == "piece")&&(!MM.WaitingForMove)&&(PieceColor!="red"))
+        if((collision.transform.tag == "piece")&&(!MM.WaitingForMove))
         {
+            Debug.Log("lingering piece was eaten");
             //who ate who?
             if (MM.WaitingForCPUMove && human)
             {

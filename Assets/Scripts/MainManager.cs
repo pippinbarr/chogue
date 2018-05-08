@@ -9,7 +9,7 @@ public class MainManager : MonoBehaviour {
     //The current active piece, currently manually assigned
     public Piece CurrentActivePiece;
     private Piece LastSelectedPiece;
-    private bool PieceSelected = false;
+    public  bool PieceSelected = false;
     public bool WaitingForPlayerMove = false;
     public bool WaitingForCPUMove = false;
     public bool WaitingForMove = false;
@@ -56,10 +56,11 @@ public class MainManager : MonoBehaviour {
         //select a default human piece
         foreach (Piece piece in PieceList)
         {
+
             if (piece.human)
             {
                 CurrentActivePiece = piece;
-                break;
+                
             }
         }
         
@@ -74,6 +75,7 @@ public class MainManager : MonoBehaviour {
 
         if (dothisonce)
         {
+
             UpdateVisibility();
             dothisonce = false;
         }
@@ -85,6 +87,7 @@ public class MainManager : MonoBehaviour {
         {
             if (!PieceSelected)
             {
+                
                 if (LastSelectedPiece != null)
                 {
                     CurrentActivePiece = LastSelectedPiece;
@@ -106,9 +109,10 @@ public class MainManager : MonoBehaviour {
                     //if this is an available destination, move!
                     if ((hit.transform.GetComponent<TileType>()!=null)&&(hit.transform.GetComponent<TileType>().AvailableDestination))
                     {
-                        WaitingForPlayerMove = false;
+                        
                         StartCoroutine(MoveToTile(hit.transform.GetComponent<TileType>()));
                         
+                        WaitingForPlayerMove = false;
                         UpdateVisibility();
 
                     }
@@ -128,8 +132,8 @@ public class MainManager : MonoBehaviour {
         }
         else if((!WaitingForCPUMove)&&(!WaitingForMove))
         {
-            Debug.Log("calling play black");
-            StartCoroutine( PlayBlack());
+           // Debug.Log("calling play black");
+             PlayBlack();
            
 
 
@@ -152,7 +156,7 @@ public class MainManager : MonoBehaviour {
         }
     }
 
-    IEnumerator  PlayBlack()
+    void  PlayBlack()
     {
         //give a few seconds
         WaitingForCPUMove = true;
@@ -178,14 +182,14 @@ public class MainManager : MonoBehaviour {
                 // break;
             }
         }
-        Debug.Log("best move is " + bestmove);
+        //Debug.Log("best move is " + bestmove);
         //we can only move, select the one that can move closest to king
 
         if (bestmove < 2)
 
         {
             float leastdist = 1000000;
-            Debug.Log("Can only move, get closest to king");
+           // Debug.Log("Can only move, get closest to king");
             foreach (Piece piece in PieceList)
             {
                 if (!piece.human)
@@ -203,7 +207,7 @@ public class MainManager : MonoBehaviour {
         CurrentActivePiece = bestpiece;
         
         CurrentActivePiece.MakeMove();
-        yield return new WaitForSeconds(0.1f);
+        
         WaitingForCPUMove = false;
         
 
@@ -232,12 +236,14 @@ public class MainManager : MonoBehaviour {
     //make this a coroutine with actual movement, will collide with tiles and make them visible (maybe?!)
    public  IEnumerator MoveToTile(TileType tile)
     {
-        Debug.Log("destination tile type: "+tile.GetComponent<TileType>().Type);
+        //Debug.Log("destination tile type: "+tile.GetComponent<TileType>().Type);
+        WaitingForMove = true;
+        CurrentActivePiece.CurrentTile.GetComponent<Collider>().enabled = true;
         CurrentActivePiece.turn++;
         Vector3 destination = new Vector3(tile.transform.position.x, tile.transform.position.y, CurrentActivePiece.transform.position.z);
         CurrentActivePiece.HideDestinations();
         Vector3 movestep = (destination - CurrentActivePiece.transform.position) / (Vector3.Distance(destination, CurrentActivePiece.transform.position)*3);
-        WaitingForMove = true;
+        
         if(Vector3.Distance(destination, CurrentActivePiece.transform.position) > 4)
         {
             GetComponent<AudioSource>().clip = sliding;
@@ -276,9 +282,25 @@ public class MainManager : MonoBehaviour {
         if (tile.transform.tag == "piece")
         {
             EatPiece(tile.GetComponent<Piece>());
+            Debug.Log("eat piece at destination");
+        }
+        else if (tile.CurrentPiece != null)
+        {
+            //not eating myself
+            if (tile.CurrentPiece != CurrentActivePiece.transform)
+            {
+                EatPiece(tile.CurrentPiece.GetComponent<Piece>());
+                Debug.Log("found a piece at destination tile");
+            }
+
+        }
+        if (CurrentActivePiece.NewQueen)
+        {
+            CurrentActivePiece.Queen();
         }
         UpdateVisibility();
         UpdateThreats();
+        yield return new WaitForSeconds(0.5f);
     }
 
     public void EatPiece(Piece piece)

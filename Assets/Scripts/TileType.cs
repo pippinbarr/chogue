@@ -19,6 +19,7 @@ public class TileType : MonoBehaviour {
     public Color RoomColor;
     public bool threatened = false;
     public bool covered = false;
+    public Transform CurrentPiece;
 
     private MainManager MM;
 
@@ -109,6 +110,25 @@ public class TileType : MonoBehaviour {
 
         SetTileType(Type);
     }
+    private void OnTriggerEnter(Collider collision)
+    {
+        //update my tile
+        if ((collision.transform.tag == "piece"))
+        {
+            CurrentPiece = collision.transform;
 
+        }
+
+    }
+    private void OnTriggerExit(Collider collision)
+    {
+        //update my tile
+        if ((collision.transform.tag == "piece"))
+        {
+            CurrentPiece = null;
+
+        }
+
+    }
 
 }

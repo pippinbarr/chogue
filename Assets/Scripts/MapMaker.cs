@@ -125,7 +125,11 @@ public class MapMaker : MonoBehaviour {
                         {
                             TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
-                        else 
+                        else if (Level.GetPixel(posx, posy + 1) == Color.white)
+                        {
+                            TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
+                        }
+                        else
                         {
                             TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
                         }
@@ -145,23 +149,23 @@ public class MapMaker : MonoBehaviour {
                         float random = Random.value;
                         random += PlayerPrefs.GetInt("level") / 50;
                         
-                        if (random > 0.95)
+                        if (random > 1)
                         {
                             TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                         }
-                        else if (random > 0.85)
+                        else if (random > 0.90)
                         {
                             TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
                         }
-                        else if(random > 0.65)
+                        else if(random > 0.70)
                         {
                             TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
                         }
-                        else if (random > 0.45)
+                        else if (random > 0.55)
                         {
                             TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
-                        else if (Level.GetPixel(posx, posy-1) != Color.white)
+                        else if (Level.GetPixel(posx, posy+1) != Color.white)
                         {
                             TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
                         }
