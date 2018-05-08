@@ -160,9 +160,13 @@ public class MapMaker : MonoBehaviour {
                         {
                             TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
-                        else
+                        else if (Level.GetPixel(posx, posy-1) != Color.white)
                         {
                             TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
+                        }
+                        else
+                        {
+                            TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
 
                         TempPiece.GetComponent<Piece>().CreateModel("black");
