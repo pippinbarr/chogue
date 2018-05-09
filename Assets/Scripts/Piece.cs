@@ -22,6 +22,7 @@ public class Piece : MonoBehaviour {
     public Color CurrentTileRoomColor;
     public bool threatened = false;
     public bool covered = false;
+    public bool guarding = false;
 
     private MainManager MM;
 
@@ -118,10 +119,11 @@ public class Piece : MonoBehaviour {
                 TempTileList = TempTileList.OrderBy(tile => tile.DistanceToPiece).ToList();
 
                 //then add tiles to main list until you find a wall
+                guarding = false;
                 foreach (TileType tile in TempTileList)
                 {
 
-                    if ((tile.transform.tag == "wall")|| ((tile.Type == 3)&&(PieceColor=="black")))
+                    if ((tile.transform.tag == "wall")|| ((tile.Type == 3)&&(PieceColor=="black")&&(PieceType!="king")))
                     {
                         break;
                     }
@@ -132,6 +134,10 @@ public class Piece : MonoBehaviour {
                             TileList.Add(tile);
                             //did we add the tile underneath the piece?
 
+                        }
+                        if ((tile.GetComponent<Piece>().human == human)|| tile.GetComponent<Piece>().PieceColor=="red")
+                        {
+                            guarding = true;
                         }
                         if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
                         {
@@ -426,14 +432,14 @@ public class Piece : MonoBehaviour {
                 else if(tile.covered)
                 {
                     //Debug.Log("covered ");
-                    BestMove = 2;
+                    BestMove = 1;
                     BestMoveTarget = tile.transform;
                 }
 
             }
         }
         //if we haven't found a piece to eat, find closest place
-        if (BestMove == 1)
+        if ((BestMove == 1)&&(!guarding))
         {
             //Get the human coordinates
             Piece HumanKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
@@ -539,16 +545,21 @@ public class Piece : MonoBehaviour {
         //was I eaten?
         if((collision.transform.tag == "piece")&&(!MM.WaitingForMove))
         {
-            Debug.Log("lingering piece was eaten");
-            //who ate who?
-            if (MM.WaitingForCPUMove && human)
+            //should not be a red piece
+            if ((collision.GetComponent<Piece>().PieceColor != "red")&&(PieceColor!="red"))
             {
-                MM.EatPiece(this);
+                Debug.Log("lingering piece was eaten");
+                //who ate who?
+                if (MM.WaitingForCPUMove && human)
+                {
+                    MM.EatPiece(this);
+                }
+                else if (MM.WaitingForPlayerMove && !human)
+                {
+                    MM.EatPiece(this);
+                }
             }
-            else if(MM.WaitingForPlayerMove && !human)
-            {
-                MM.EatPiece(this);
-            }
+
         }
     }
 

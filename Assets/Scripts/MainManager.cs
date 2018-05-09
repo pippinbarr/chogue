@@ -22,6 +22,7 @@ public class MainManager : MonoBehaviour {
     public AudioClip sliding;
     public AudioClip putdown;
     public Text statusline;
+    public bool firstscene = false;
 
 
     private bool dothisonce = true; //hack
@@ -44,15 +45,14 @@ public class MainManager : MonoBehaviour {
             //knight is chevalier to distinguish and rook is tour
             
         }
+        if (!firstscene)
+        { 
+            statusline.text = "level " + PlayerPrefs.GetInt("level") + "| High Score: " + PlayerPrefs.GetInt("maxlevel");
+    
 
-        statusline.text = "level " + PlayerPrefs.GetInt("level") + "| High Score: " + PlayerPrefs.GetInt("maxlevel");
-
-
-        
-
-        //create a level
-        GetComponent<MapMaker>().CreateLevel();    
-            
+            //create a level
+            GetComponent<MapMaker>().CreateLevel();
+        }
         //select a default human piece
         foreach (Piece piece in PieceList)
         {
@@ -63,8 +63,8 @@ public class MainManager : MonoBehaviour {
                 
             }
         }
-        
-        //update visibility manually
+
+            //update visibility manually
         
 
         WaitingForPlayerMove = true;
@@ -170,9 +170,9 @@ public class MainManager : MonoBehaviour {
         Piece bestpiece = PieceList[0];
         foreach (Piece piece in PieceList)
         {
-           if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
-           // if (!piece.human) 
-            {
+            //if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
+            if (piece.PieceColor == "black")
+             {
                 piece.DecideMove();
                 if (piece.BestMove > bestmove)
                 {
@@ -272,8 +272,16 @@ public class MainManager : MonoBehaviour {
                 LastSelectedPiece = null;
                 ChangeLevel();
             }
-
+            else
+            {
+                //remove king
+                PieceList.Remove(CurrentActivePiece);
+                Destroy(CurrentActivePiece.gameObject);
+                //CurrentActivePiece = PieceList[0];
+            }
         }
+
+        
         WaitingForMove = false;
         
         
@@ -312,6 +320,12 @@ public class MainManager : MonoBehaviour {
             gameover = true;
             GameOver();
         }
+        if ((!piece.human) && (piece.PieceType == "king"))
+        {
+            Debug.Log("game over");
+            gameover = true;
+            Win();
+        }
         if (piece.PieceColor == "red")
         {
            // WaitingForCPUMove = false;
@@ -319,10 +333,12 @@ public class MainManager : MonoBehaviour {
             //piece.PieceColor = "white";
             //WaitingForPlayerMove = false;
             CurrentActivePiece = piece;
+            
             piece.DecideMove();
             piece.MakeMove();
             piece.PowerUp();
-           // WaitingForCPUMove = true;
+
+            // WaitingForCPUMove = true;
 
         }
         else if (piece.human!=CurrentActivePiece.human)
@@ -378,6 +394,12 @@ public class MainManager : MonoBehaviour {
     {
         
         SceneManager.LoadScene("GameOver");
+
+    }
+    public void Win()
+    {
+
+        SceneManager.LoadScene("Victory");
 
     }
 }

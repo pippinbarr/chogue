@@ -132,6 +132,7 @@ public class MapMaker : MonoBehaviour {
                         else
                         {
                             TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
+                            
                         }
                         TempPiece.GetComponent<Piece>().CreateModel("white");
                         TempPiece.GetComponent<Piece>().human = true;
@@ -149,7 +150,11 @@ public class MapMaker : MonoBehaviour {
                         float random = Random.value;
                         random += PlayerPrefs.GetInt("level") / 50;
                         
-                        if (random > 1)
+                        if(random>1.14)
+                        {
+                            TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                        }
+                        else if (random > 1)
                         {
                             TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                         }
@@ -165,9 +170,10 @@ public class MapMaker : MonoBehaviour {
                         {
                             TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
-                        else if (Level.GetPixel(posx, posy+1) != Color.white)
+                        else if (Level.GetPixel(posx, posy-1) != Color.white)
                         {
                             TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
+                            TempPiece.Rotate(new Vector3(180, 0, 0));
                         }
                         else
                         {
@@ -177,6 +183,11 @@ public class MapMaker : MonoBehaviour {
                         //chances that it is a powerup
                         if (Random.value < (0.1f + PlayerPrefs.GetInt("level")/100))
                         {
+                            
+                            if (TempPiece.GetComponent<Piece>().PieceType == "pawn")
+                            {
+                                TempPiece.Rotate(new Vector3(-180, 0, 0));
+                            }
                             TempPiece.GetComponent<Piece>().CreateModel("red");
                         }
                         else
