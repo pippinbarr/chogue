@@ -36,7 +36,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.DeleteAll();
         }
         //if this is the first time, setup basic vars if not load them from playerprefs
-        if (PlayerPrefs.GetInt("maxlevel",0) == 0)
+        if ((PlayerPrefs.GetInt("maxlevel",0) == 0))
         {
             Debug.Log("new game");
             PlayerPrefs.SetInt("maxlevel", 1);
@@ -44,6 +44,11 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             //knight is chevalier to distinguish and rook is tour
             
+        }
+        if (firstscene)
+        {
+            PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
         }
         if (!firstscene)
         { 
@@ -387,7 +392,11 @@ public class MainManager : MonoBehaviour {
         }
         PlayerPrefs.SetString("IncomingPieces", outgoingpieces);
         PlayerPrefs.SetInt("level", PlayerPrefs.GetInt("level") + 1);
-        
+        if (PlayerPrefs.GetInt("level") > PlayerPrefs.GetInt("maxlevel"))
+        {
+            PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
+        }
+
         SceneManager.LoadScene("LevelGen"); 
     }
     public void GameOver()

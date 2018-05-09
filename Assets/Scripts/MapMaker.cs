@@ -28,6 +28,7 @@ public class MapMaker : MonoBehaviour {
         //get MainManage to update Piece List
         MainManager mm = GetComponent<MainManager>();
         bool PlayerCreated = false; //set true when a player piece has been created
+        bool AIKingCreated = false;
 
         //Get the generated level
         Level = GetComponent<DungeonGenerator>().m_DungeonImage;
@@ -150,7 +151,7 @@ public class MapMaker : MonoBehaviour {
                         float random = Random.value;
                         random += PlayerPrefs.GetInt("level") / 50;
                         
-                        if(random>1.14)
+                        if((random>1.14)&&(!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                         }
