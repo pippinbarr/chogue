@@ -531,7 +531,7 @@ public class Piece : MonoBehaviour {
 
     }
 
-    private void OnTriggerStay(Collider collision)
+    private void OnTriggerEnter(Collider collision)
     {
         //update my tile
         if ((collision.transform.tag == "tile"))
@@ -543,7 +543,7 @@ public class Piece : MonoBehaviour {
             
         }
         //was I eaten?
-        if((collision.transform.tag == "piece")&&!MM.WaitingForMove)
+       /* if((collision.transform.tag == "piece")&&!MM.WaitingForMove)
         {
             //should not be a red piece
             if ((collision.GetComponent<Piece>().PieceColor != "red")&&(PieceColor!="red"))
@@ -562,7 +562,7 @@ public class Piece : MonoBehaviour {
                 }
             }
 
-        }
+        }*/
     }
 
     public void PowerUp()

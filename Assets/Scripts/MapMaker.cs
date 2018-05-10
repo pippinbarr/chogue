@@ -143,17 +143,20 @@ public class MapMaker : MonoBehaviour {
                        // PlayerPrefs.SetString("IncomingPieces", incomingpieces);
                     }
                     //Here we add the ennemies0
-                    float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100);
+                    float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100f);
                     if ((Random.value < enemythreshold) &&(!(difcolor<0.01))&&(Level.GetPixel(posx, posy)!=Color.red))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
                         float random = Random.value;
-                        random += PlayerPrefs.GetInt("level") / 50;
-                        
-                        if((random>1.05)&&(!AIKingCreated))
+                       // Debug.Log("random1 : " + random);
+                        random += (float)PlayerPrefs.GetInt("level") / 50f;
+                       // Debug.Log("random2 : " + random);
+                        if((random>1.0)&&(!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            AIKingCreated = true;
+                            Debug.Log("we have a king");
                         }
                         else if (random > 0.95)
                         {
@@ -182,7 +185,7 @@ public class MapMaker : MonoBehaviour {
                         }
 
                         //chances that it is a powerup
-                        if (Random.value < (0.1f + PlayerPrefs.GetInt("level")/50))
+                        if (Random.value < (0.1f + (float)PlayerPrefs.GetInt("level")/50f))
                         {
                             
                             if (TempPiece.GetComponent<Piece>().PieceType == "pawn")

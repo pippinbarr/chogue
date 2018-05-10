@@ -47,7 +47,7 @@ public class MainManager : MonoBehaviour {
         }
         if (firstscene)
         {
-            PlayerPrefs.SetInt("level", 6);
+            PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
         }
         if (!firstscene)
@@ -112,10 +112,24 @@ public class MainManager : MonoBehaviour {
                 {
                     //Debug.Log("hit something ");
                     //if this is an available destination, move!
-                    if ((hit.transform.GetComponent<TileType>()!=null)&&(hit.transform.GetComponent<TileType>().AvailableDestination))
+                    Transform gototile = hit.transform;
+                    if ((gototile.GetComponent<TileType>()!=null)&&(gototile.GetComponent<TileType>().AvailableDestination))
                     {
-                        
-                        StartCoroutine(MoveToTile(hit.transform.GetComponent<TileType>()));
+                        if (gototile.GetComponent<TileType>().CurrentPiece != null)
+                        {
+                            Debug.Log("going to piece instead of tile");
+                            gototile = gototile.GetComponent<TileType>().CurrentPiece;
+
+                        }
+                        if(gototile.tag=="tile")
+                        {
+                            Debug.Log("going to a tile");
+                        }
+                        else if (gototile.tag == "piece")
+                        {
+                            Debug.Log("going to a piece");
+                        }
+                        StartCoroutine(MoveToTile(gototile.GetComponent<TileType>()));
                         
                         WaitingForPlayerMove = false;
                         UpdateVisibility();
@@ -266,7 +280,7 @@ public class MainManager : MonoBehaviour {
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();
         CurrentActivePiece.transform.position = destination;
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.01f);
         //did we land on stairs?
 
         if (tile.GetComponent<TileType>().Type == 3)
@@ -299,7 +313,7 @@ public class MainManager : MonoBehaviour {
             Debug.Log("eat piece at destination");
             
         }
-        else if (tile.CurrentPiece != null)
+        /*else if (tile.CurrentPiece != null)
         {
             //not eating myself
             if (tile.CurrentPiece != CurrentActivePiece.transform)
@@ -309,7 +323,7 @@ public class MainManager : MonoBehaviour {
             }
             
 
-        }
+        }*/
         if (CurrentActivePiece.NewQueen)
         {
             CurrentActivePiece.Queen();
@@ -335,8 +349,8 @@ public class MainManager : MonoBehaviour {
             gameover = true;
             Win();
         }
-        Debug.Log("I am human? : " + CurrentActivePiece.human);
-        Debug.Log("Eaten piece is human ?: " + piece.human);
+        //Debug.Log("I am human? : " + CurrentActivePiece.human);
+       // Debug.Log("Eaten piece is human ?: " + piece.human);
         if (piece.PieceColor == "red")
         {
            // WaitingForCPUMove = false;
