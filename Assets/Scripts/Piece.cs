@@ -543,19 +543,21 @@ public class Piece : MonoBehaviour {
             
         }
         //was I eaten?
-        if((collision.transform.tag == "piece")&&(!MM.WaitingForMove))
+        if((collision.transform.tag == "piece")&&!MM.WaitingForMove)
         {
             //should not be a red piece
             if ((collision.GetComponent<Piece>().PieceColor != "red")&&(PieceColor!="red"))
             {
-                Debug.Log("lingering piece was eaten");
+                
                 //who ate who?
                 if (MM.WaitingForCPUMove && human)
                 {
+                    Debug.Log("eating lingering white piece");
                     MM.EatPiece(this);
                 }
                 else if (MM.WaitingForPlayerMove && !human)
                 {
+                    Debug.Log("eating lingering black piece");
                     MM.EatPiece(this);
                 }
             }

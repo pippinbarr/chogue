@@ -151,15 +151,15 @@ public class MapMaker : MonoBehaviour {
                         float random = Random.value;
                         random += PlayerPrefs.GetInt("level") / 50;
                         
-                        if((random>1.14)&&(!AIKingCreated))
+                        if((random>1.05)&&(!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                         }
-                        else if (random > 1)
+                        else if (random > 0.95)
                         {
                             TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                         }
-                        else if (random > 0.90)
+                        else if (random > 0.80)
                         {
                             TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
                         }
@@ -182,7 +182,7 @@ public class MapMaker : MonoBehaviour {
                         }
 
                         //chances that it is a powerup
-                        if (Random.value < (0.1f + PlayerPrefs.GetInt("level")/100))
+                        if (Random.value < (0.1f + PlayerPrefs.GetInt("level")/50))
                         {
                             
                             if (TempPiece.GetComponent<Piece>().PieceType == "pawn")

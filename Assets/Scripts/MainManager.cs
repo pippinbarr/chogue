@@ -47,7 +47,7 @@ public class MainManager : MonoBehaviour {
         }
         if (firstscene)
         {
-            PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetInt("level", 6);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
         }
         if (!firstscene)
@@ -266,6 +266,7 @@ public class MainManager : MonoBehaviour {
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();
         CurrentActivePiece.transform.position = destination;
+        yield return new WaitForSeconds(0.05f);
         //did we land on stairs?
 
         if (tile.GetComponent<TileType>().Type == 3)
@@ -286,16 +287,17 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-        
+
+
+
         WaitingForMove = false;
-        
-        
 
         //was this a piece? then eat it!
         if (tile.transform.tag == "piece")
         {
             EatPiece(tile.GetComponent<Piece>());
             Debug.Log("eat piece at destination");
+            
         }
         else if (tile.CurrentPiece != null)
         {
@@ -305,6 +307,7 @@ public class MainManager : MonoBehaviour {
                 EatPiece(tile.CurrentPiece.GetComponent<Piece>());
                 Debug.Log("found a piece at destination tile");
             }
+            
 
         }
         if (CurrentActivePiece.NewQueen)
@@ -313,7 +316,8 @@ public class MainManager : MonoBehaviour {
         }
         UpdateVisibility();
         UpdateThreats();
-        yield return new WaitForSeconds(0.5f);
+        
+        
     }
 
     public void EatPiece(Piece piece)
@@ -331,6 +335,8 @@ public class MainManager : MonoBehaviour {
             gameover = true;
             Win();
         }
+        Debug.Log("I am human? : " + CurrentActivePiece.human);
+        Debug.Log("Eaten piece is human ?: " + piece.human);
         if (piece.PieceColor == "red")
         {
            // WaitingForCPUMove = false;
