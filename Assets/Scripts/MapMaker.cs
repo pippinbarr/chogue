@@ -152,7 +152,7 @@ public class MapMaker : MonoBehaviour {
                        // Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
                        // Debug.Log("random2 : " + random);
-                        if((random>1.0)&&(!AIKingCreated))
+                        if((random>1.1)&&(!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             AIKingCreated = true;
