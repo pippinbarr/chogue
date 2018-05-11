@@ -149,20 +149,21 @@ public class MapMaker : MonoBehaviour {
                         Transform TempPiece;
                         //select randomly between available pieces
                         float random = Random.value;
-                       // Debug.Log("random1 : " + random);
+                        Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
-                       // Debug.Log("random2 : " + random);
+                        Debug.Log("random2 : " + random);
                         if((random>1.1)&&(!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             AIKingCreated = true;
-                            Debug.Log("we have a king");
+                            Debug.Log("adding a king");
                         }
-                        else if (random > 0.98)
+                        else if (random > 1f)
                         {
                             TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
+                            Debug.Log("adding a queen");
                         }
-                        else if (random > 0.85)
+                        else if (random > 0.95)
                         {
                             TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
                         }

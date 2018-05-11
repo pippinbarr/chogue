@@ -7,12 +7,12 @@ public class GetCollidingThings : MonoBehaviour {
     public bool PawnWallCheck = false;
     public List<TileType> CollidingTileList = new List<TileType>();
 
-
+    MainManager MM;
 
 
     // Use this for initialization
     void Start () {
-
+        MM = GameObject.Find("MainManager").GetComponent<MainManager>();
 	}
 	
 	// Update is called once per frame
@@ -32,18 +32,23 @@ public class GetCollidingThings : MonoBehaviour {
 
     private void OnTriggerStay(Collider other)
     {
-        
-        if (((other.transform.tag == "tile")|| other.transform.tag == "wall" || other.transform.tag == "piece") &&(!CollidingTileList.Contains(other.GetComponent<TileType>())))
+        if (!MM.WaitingForMove)
         {
-            CollidingTileList.Add(other.GetComponent<TileType>());
-            //Has the pawn touched a wall?
-            if(PawnWallCheck && (other.transform.tag == "wall") &&(!transform.parent.GetComponent<Piece>().NewQueen))
+            if (((other.transform.tag == "tile") || other.transform.tag == "wall" || other.transform.tag == "piece") && (!CollidingTileList.Contains(other.GetComponent<TileType>())))
             {
-                Debug.Log("prepare for new queen");
-                transform.parent.GetComponent<Piece>().NewQueen = true;
-            }
+                CollidingTileList.Add(other.GetComponent<TileType>());
+                //Has the pawn touched a wall?
 
+
+            }
         }
+        if (PawnWallCheck && (other.transform.tag == "wall") && (!transform.parent.GetComponent<Piece>().NewQueen))
+        {
+            Debug.Log("prepare for new queen");
+            transform.parent.GetComponent<Piece>().NewQueen = true;
+        }
+
+
 
     }
     private void OnTriggerExit(Collider other)
