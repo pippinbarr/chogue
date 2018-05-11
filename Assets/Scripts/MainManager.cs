@@ -47,7 +47,7 @@ public class MainManager : MonoBehaviour {
         }
         if (firstscene)
         {
-            PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetInt("level", 0);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
         }
         if (!firstscene)
@@ -343,7 +343,7 @@ public class MainManager : MonoBehaviour {
             gameover = true;
             GameOver();
         }
-        if ((!piece.human) && (piece.PieceType == "king"))
+        if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor!="red"))
         {
             Debug.Log("game over");
             gameover = true;
