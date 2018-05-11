@@ -143,7 +143,7 @@ public class MapMaker : MonoBehaviour {
                        // PlayerPrefs.SetString("IncomingPieces", incomingpieces);
                     }
                     //Here we add the ennemies0
-                    float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100f);
+                    float enemythreshold = 0.04f + (((float)PlayerPrefs.GetInt("level")) / 100f);
                     if ((Random.value < enemythreshold) &&(!(difcolor<0.01))&&(Level.GetPixel(posx, posy)!=Color.red))
                     {
                         Transform TempPiece;
@@ -152,7 +152,7 @@ public class MapMaker : MonoBehaviour {
                         Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
                         Debug.Log("random2 : " + random);
-                        if((random>1.1)&&(!AIKingCreated))
+                        if((random>1.14)&&(!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             AIKingCreated = true;
