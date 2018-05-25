@@ -22,6 +22,7 @@ public class MainManager : MonoBehaviour {
     public AudioClip sliding;
     public AudioClip putdown;
     public Text statusline;
+    public Text msgline;
     public bool firstscene = false;
 
 
@@ -40,6 +41,7 @@ public class MainManager : MonoBehaviour {
         {
             Debug.Log("new game");
             PlayerPrefs.SetInt("maxlevel", 1);
+            PlayerPrefs.SetInt("maxtaken", 0);
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             //knight is chevalier to distinguish and rook is tour
@@ -49,10 +51,11 @@ public class MainManager : MonoBehaviour {
         {
             PlayerPrefs.SetInt("level", 0);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+            PlayerPrefs.SetInt("taken", 0);
         }
         if (!firstscene)
-        { 
-            statusline.text = "level " + PlayerPrefs.GetInt("level") + "| High Score: " + PlayerPrefs.GetInt("maxlevel");
+        {
+            
     
 
             //create a level
@@ -73,6 +76,7 @@ public class MainManager : MonoBehaviour {
         
 
         WaitingForPlayerMove = true;
+        
     }
 	
 	// Update is called once per frame
@@ -83,6 +87,7 @@ public class MainManager : MonoBehaviour {
 
             UpdateVisibility();
             dothisonce = false;
+            UpdateStatus();
         }
 
 
@@ -103,7 +108,7 @@ public class MainManager : MonoBehaviour {
             }
             if (Input.GetMouseButtonDown(0))
             {
-                
+                DisplayMsg("");
 
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
@@ -133,6 +138,7 @@ public class MainManager : MonoBehaviour {
                         
                         WaitingForPlayerMove = false;
                         UpdateVisibility();
+                        
 
                     }
                     //if this is a human piece, select it
@@ -151,8 +157,9 @@ public class MainManager : MonoBehaviour {
         }
         else if((!WaitingForCPUMove)&&(!WaitingForMove))
         {
-           // Debug.Log("calling play black");
-             PlayBlack();
+            // Debug.Log("calling play black");
+            UpdateStatus();
+            PlayBlack();
            
 
 
@@ -336,6 +343,20 @@ public class MainManager : MonoBehaviour {
 
     public void EatPiece(Piece piece)
     {
+        string tempmsg = "";
+        if (CurrentActivePiece.human&&!piece.human)
+        {
+            tempmsg = " Your "+CurrentActivePiece.PieceType+" scored an excellent hit on the " + piece.PieceType;
+        }
+        if (!CurrentActivePiece.human && piece.human)
+        {
+            tempmsg = " The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
+        }
+        if (CurrentActivePiece.human && (piece.PieceColor == "red"))
+        {
+            tempmsg = " You now have a new " + piece.PieceType + " !";
+        }
+        DisplayMsg(tempmsg);
         //was it the player's king?
         if ((piece.human) && (piece.PieceType == "king"))
         {
@@ -373,7 +394,15 @@ public class MainManager : MonoBehaviour {
             GetComponent<AudioSource>().clip = gulp;
             GetComponent<AudioSource>().Play();
         }
-
+        if (CurrentActivePiece.human)
+        {
+            PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
+            if(PlayerPrefs.GetInt("taken")> PlayerPrefs.GetInt("maxtaken"))
+            {
+                PlayerPrefs.SetInt("maxtaken", PlayerPrefs.GetInt("taken") );
+            }
+        }
+        
     }
 
     private void ChangeLevel()
@@ -430,5 +459,28 @@ public class MainManager : MonoBehaviour {
 
         SceneManager.LoadScene("Victory");
 
+    }
+    public void UpdateStatus()
+    {
+        int CurrentPieces = 0;
+        foreach(Piece piece in PieceList)
+        {
+            if (piece.human)
+            {
+                CurrentPieces++;
+            }
+        }
+        if (statusline != null)
+        {
+            statusline.text = " Level:" + PlayerPrefs.GetInt("level") + " (highest "+ PlayerPrefs.GetInt("maxlevel")+")     Pieces:" + CurrentPieces + "     Taken:" + PlayerPrefs.GetInt("taken") + " (highest " + PlayerPrefs.GetInt("maxtaken")+")";
+        }
+        
+    }
+    public void DisplayMsg(string msg)
+    {
+        if (msgline != null)
+        {
+            msgline.text = msg;
+        }
     }
 }

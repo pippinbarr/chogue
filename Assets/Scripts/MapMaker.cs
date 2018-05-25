@@ -186,7 +186,7 @@ public class MapMaker : MonoBehaviour {
                         }
 
                         //chances that it is a powerup
-                        if (Random.value < (0.03f + (float)PlayerPrefs.GetInt("level")/50f))
+                        if (Random.value < (0.08f + (float)PlayerPrefs.GetInt("level")/50f))
                         {
                             
                             if (TempPiece.GetComponent<Piece>().PieceType == "pawn")
