@@ -14,6 +14,7 @@ public class MapMaker : MonoBehaviour {
     public Transform Knight;
     public Transform King;
     public Transform Pawn;
+    public Transform Gold;
     bool LevelDone = false; //this is stupid but for now I do this to solve the JS CS order of compilation
 
     private void Start()
@@ -144,7 +145,7 @@ public class MapMaker : MonoBehaviour {
                     }
                     //Here we add the ennemies0
                     float enemythreshold = 0.04f + (((float)PlayerPrefs.GetInt("level")) / 100f);
-                    if ((Random.value < enemythreshold) &&(!(difcolor<0.01))&&(Level.GetPixel(posx, posy)!=Color.red))
+                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
@@ -152,7 +153,7 @@ public class MapMaker : MonoBehaviour {
                         Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
                         Debug.Log("random2 : " + random);
-                        if((random>1.14)&&(!AIKingCreated))
+                        if ((random > 1.14) && (!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             AIKingCreated = true;
@@ -167,7 +168,7 @@ public class MapMaker : MonoBehaviour {
                         {
                             TempPiece = Instantiate(Rook, tempTile.position + new Vector3(0, 0, -.2f), Bishop.rotation);
                         }
-                        else if(random > 0.70)
+                        else if (random > 0.70)
                         {
                             TempPiece = Instantiate(Bishop, tempTile.position + new Vector3(0, 0, -.2f), Queen.rotation);
                         }
@@ -175,7 +176,7 @@ public class MapMaker : MonoBehaviour {
                         {
                             TempPiece = Instantiate(Knight, tempTile.position + new Vector3(0, 0, -.2f), Knight.rotation);
                         }
-                        else if (Level.GetPixel(posx, posy-1) != Color.white)
+                        else if (Level.GetPixel(posx, posy - 1) != Color.white)
                         {
                             TempPiece = Instantiate(Pawn, tempTile.position + new Vector3(0, 0, -.2f), Pawn.rotation);
                             TempPiece.Rotate(new Vector3(180, 0, 0));
@@ -186,9 +187,9 @@ public class MapMaker : MonoBehaviour {
                         }
 
                         //chances that it is a powerup
-                        if (Random.value < (0.08f + (float)PlayerPrefs.GetInt("level")/50f))
+                        if (Random.value < (0.08f + (float)PlayerPrefs.GetInt("level") / 50f))
                         {
-                            
+
                             if (TempPiece.GetComponent<Piece>().PieceType == "pawn")
                             {
                                 TempPiece.Rotate(new Vector3(-180, 0, 0));
@@ -199,11 +200,19 @@ public class MapMaker : MonoBehaviour {
                         {
                             TempPiece.GetComponent<Piece>().CreateModel("black");
                         }
-                        
+
                         TempPiece.GetComponent<Piece>().human = false;
                         mm.PieceList.Add(TempPiece.GetComponent<Piece>());
 
-                                                
+
+                    }
+                    //we add coins
+                    else if (Random.value < 0.01f)
+                    {
+                        Transform TempPiece = Instantiate(Gold, tempTile.position + new Vector3(0, 0, -.2f), Gold.rotation);
+                        TempPiece.GetComponent<Piece>().human = false;
+                        TempPiece.GetComponent<Piece>().CreateModel("red");
+                        mm.PieceList.Add(TempPiece.GetComponent<Piece>());
                     }
 
 

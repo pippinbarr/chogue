@@ -42,6 +42,7 @@ public class MainManager : MonoBehaviour {
             Debug.Log("new game");
             PlayerPrefs.SetInt("maxlevel", 1);
             PlayerPrefs.SetInt("maxtaken", 0);
+            PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             //knight is chevalier to distinguish and rook is tour
@@ -52,6 +53,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("level", 0);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("taken", 0);
+            PlayerPrefs.SetInt("gold", 0);
         }
         if (!firstscene)
         {
@@ -344,7 +346,7 @@ public class MainManager : MonoBehaviour {
     public void EatPiece(Piece piece)
     {
         string tempmsg = "";
-        if (CurrentActivePiece.human&&!piece.human)
+        if (CurrentActivePiece.human&&!piece.human&&(piece.PieceType!="coin"))
         {
             tempmsg = " Your "+CurrentActivePiece.PieceType+" scored an excellent hit on the " + piece.PieceType;
         }
@@ -352,10 +354,11 @@ public class MainManager : MonoBehaviour {
         {
             tempmsg = " The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
         }
-        if (CurrentActivePiece.human && (piece.PieceColor == "red"))
+        if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType!="coin")
         {
             tempmsg = " You now have a new " + piece.PieceType + " !";
         }
+
         DisplayMsg(tempmsg);
         //was it the player's king?
         if ((piece.human) && (piece.PieceType == "king"))
@@ -374,15 +377,32 @@ public class MainManager : MonoBehaviour {
        // Debug.Log("Eaten piece is human ?: " + piece.human);
         if (piece.PieceColor == "red")
         {
-           // WaitingForCPUMove = false;
-            piece.human = true;
-            //piece.PieceColor = "white";
-            //WaitingForPlayerMove = false;
-            CurrentActivePiece = piece;
+            if (piece.PieceType != "coin")
+            {
+                // WaitingForCPUMove = false;
+                piece.human = true;
+                //piece.PieceColor = "white";
+                //WaitingForPlayerMove = false;
+                CurrentActivePiece = piece;
+
+                piece.DecideMove();
+                piece.MakeMove();
+                piece.PowerUp();
+            }
+            else
+            {
+                int gold = (int)(Random.value * 50);
+                tempmsg = " You found " + gold + " gold !";
+                PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);
+                DisplayMsg(tempmsg);
+                PieceList.Remove(piece);
+                Destroy(piece.gameObject);
+                GetComponent<AudioSource>().clip = gulp;
+                GetComponent<AudioSource>().Play();
+            }
+
+
             
-            piece.DecideMove();
-            piece.MakeMove();
-            piece.PowerUp();
 
             // WaitingForCPUMove = true;
 
@@ -472,7 +492,7 @@ public class MainManager : MonoBehaviour {
         }
         if (statusline != null)
         {
-            statusline.text = " Level:" + PlayerPrefs.GetInt("level") + " (highest "+ PlayerPrefs.GetInt("maxlevel")+")     Pieces:" + CurrentPieces + "     Taken:" + PlayerPrefs.GetInt("taken") + " (highest " + PlayerPrefs.GetInt("maxtaken")+")";
+            statusline.text = " Level:" + PlayerPrefs.GetInt("level") + " (highest "+ PlayerPrefs.GetInt("maxlevel")+")     Pieces:" + CurrentPieces + "     Captured:" + PlayerPrefs.GetInt("taken") + "     Gold:"+ PlayerPrefs.GetInt("gold");
         }
         
     }
