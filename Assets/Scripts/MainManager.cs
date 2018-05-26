@@ -148,8 +148,12 @@ public class MainManager : MonoBehaviour {
                     //if this is a human piece, select it
                     if((hit.transform.GetComponent<Piece>()!=null) &&(hit.transform.GetComponent<Piece>().human))
                     {
-                        CurrentActivePiece.SetActive(false);
-                        CurrentActivePiece.HideDestinations();
+                        if (CurrentActivePiece != null)
+                        {
+                            CurrentActivePiece.SetActive(false);
+                            CurrentActivePiece.HideDestinations();
+                        }
+
                         CurrentActivePiece = hit.transform.GetComponent<Piece>();
                         CurrentActivePiece.SetActive(true);
                         CurrentActivePiece.FindAvailableDestinations();

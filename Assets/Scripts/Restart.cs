@@ -16,8 +16,8 @@ public class Restart : MonoBehaviour {
         {
             PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level") );
         }
-        CurLevel.text = "Level reached: " + PlayerPrefs.GetInt("level");
-        BestLevel.text = "Highest level reached: " + PlayerPrefs.GetInt("maxlevel");
+        //CurLevel.text = "Level reached: " + PlayerPrefs.GetInt("level");
+        //BestLevel.text = "Highest level reached: " + PlayerPrefs.GetInt("maxlevel");
 
         PlayerPrefs.SetInt("level", 1);
         PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
