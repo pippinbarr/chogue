@@ -207,7 +207,7 @@ public class MapMaker : MonoBehaviour {
 
                     }
                     //we add coins
-                    else if (Random.value < 0.01f)
+                    else if ((Random.value < 0.01f)&& (!(difcolor < 0.01)))
                     {
                         Transform TempPiece = Instantiate(Gold, tempTile.position + new Vector3(0, 0, -.2f), Gold.rotation);
                         TempPiece.GetComponent<Piece>().human = false;

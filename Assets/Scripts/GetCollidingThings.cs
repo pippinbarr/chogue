@@ -13,6 +13,7 @@ public class GetCollidingThings : MonoBehaviour {
     // Use this for initialization
     void Start () {
         MM = GameObject.Find("MainManager").GetComponent<MainManager>();
+        this.enabled = false;
 	}
 	
 	// Update is called once per frame

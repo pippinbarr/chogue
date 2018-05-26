@@ -498,6 +498,21 @@ public class Piece : MonoBehaviour {
 
         
     }
+
+    public void SetActive(bool active)
+    {
+        Transform[] allChildren = GetComponentsInChildren<Transform>();
+        foreach (Transform child in allChildren)
+        {
+
+            if ((child.transform.name.Contains("Cube")) || (child.transform.name.Contains("ollider")))
+            {
+                child.GetComponent<GetCollidingThings>().enabled = active;
+            }
+
+        }
+    }
+
     public void SetVisibility()
     {
         //if I'm player piece and stumble upon corridor for the first time, make it visible

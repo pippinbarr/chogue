@@ -70,6 +70,7 @@ public class MainManager : MonoBehaviour {
             if (piece.human)
             {
                 CurrentActivePiece = piece;
+                CurrentActivePiece.SetActive(true);
                 
             }
         }
@@ -103,6 +104,7 @@ public class MainManager : MonoBehaviour {
                 if (LastSelectedPiece != null)
                 {
                     CurrentActivePiece = LastSelectedPiece;
+                    CurrentActivePiece.SetActive(true);
                     CurrentActivePiece.FindAvailableDestinations();
                     CurrentActivePiece.ShowDestinations();
                     PieceSelected = true;
@@ -146,8 +148,10 @@ public class MainManager : MonoBehaviour {
                     //if this is a human piece, select it
                     if((hit.transform.GetComponent<Piece>()!=null) &&(hit.transform.GetComponent<Piece>().human))
                     {
+                        CurrentActivePiece.SetActive(false);
                         CurrentActivePiece.HideDestinations();
                         CurrentActivePiece = hit.transform.GetComponent<Piece>();
+                        CurrentActivePiece.SetActive(true);
                         CurrentActivePiece.FindAvailableDestinations();
                         CurrentActivePiece.ShowDestinations();
                         LastSelectedPiece = CurrentActivePiece;
@@ -201,12 +205,14 @@ public class MainManager : MonoBehaviour {
             //if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
             if (piece.PieceColor == "black")
              {
+                piece.SetActive(true);
                 piece.DecideMove();
                 if (piece.BestMove > bestmove)
                 {
                     bestmove = piece.BestMove;
                     bestpiece = piece;
                 }
+                piece.SetActive(false);
                 // break;
             }
         }
