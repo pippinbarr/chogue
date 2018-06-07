@@ -29,6 +29,8 @@ public class MainManager : MonoBehaviour {
     private bool dothisonce = true; //hack
     public bool restartgame = false;
 
+    private string TempMessage = "";
+
 	// Use this for initialization
 	void Start () {
 
@@ -274,6 +276,9 @@ public class MainManager : MonoBehaviour {
     //make this a coroutine with actual movement, will collide with tiles and make them visible (maybe?!)
    public  IEnumerator MoveToTile(TileType tile)
     {
+        //saving original position (for message)
+        Vector3 OriginPosition = CurrentActivePiece.transform.position;
+        
         //Debug.Log("destination tile type: "+tile.GetComponent<TileType>().Type);
         WaitingForMove = true;
         CurrentActivePiece.CurrentTile.GetComponent<Collider>().enabled = true;
@@ -320,29 +325,37 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-
-
-
         WaitingForMove = false;
 
+        //Start preparing the displayed message
+        //Describe the move in chess notation
+
+        string PieceType = CurrentActivePiece.PieceType;
+        string OriginCoordinate = OriginPosition.x.ToString() + OriginPosition.y.ToString();
+        string DestinationCoordinate = tile.transform.position.x.ToString() + tile.transform.position.y.ToString();
+        string ActionSymbol = ""; // will be set to x or * by EatPiece()
+        string DestinationPiece = "";
+        TempMessage = ""; //reset message
         //was this a piece? then eat it!
         if (tile.transform.tag == "piece")
         {
-            EatPiece(tile.GetComponent<Piece>());
+            ActionSymbol = EatPiece(tile.GetComponent<Piece>());
             Debug.Log("eat piece at destination");
+            DestinationPiece = tile.GetComponent<Piece>().PieceType;
             
         }
-        /*else if (tile.CurrentPiece != null)
-        {
-            //not eating myself
-            if (tile.CurrentPiece != CurrentActivePiece.transform)
-            {
-                EatPiece(tile.CurrentPiece.GetComponent<Piece>());
-                Debug.Log("found a piece at destination tile");
-            }
-            
+        // The eating/attacking message is defined in TempMessage by the EatPiece() function
+        //Now building the full notation
+        string FullNotation = "("+PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate+") ";
+        //appending attack message (defined in EatPiece) to full notation for complete message
+        TempMessage = FullNotation + TempMessage;
+        //display message
+        DisplayMsg(TempMessage);
 
-        }*/
+
+
+
+
         if (CurrentActivePiece.NewQueen)
         {
             CurrentActivePiece.Queen();
@@ -353,23 +366,23 @@ public class MainManager : MonoBehaviour {
         
     }
 
-    public void EatPiece(Piece piece)
+    public string EatPiece(Piece piece)
     {
-        string tempmsg = "";
+
         if (CurrentActivePiece.human&&!piece.human&&(piece.PieceType!="coin"))
         {
-            tempmsg = " Your "+CurrentActivePiece.PieceType+" scored an excellent hit on the " + piece.PieceType;
+            TempMessage = " Your "+CurrentActivePiece.PieceType+" scored an excellent hit on the " + piece.PieceType;
         }
         if (!CurrentActivePiece.human && piece.human)
         {
-            tempmsg = " The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
+            TempMessage = " The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
         }
         if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType!="coin")
         {
-            tempmsg = " You now have a new " + piece.PieceType + " !";
+            TempMessage = " You now have a new " + piece.PieceType + " !";
         }
 
-        DisplayMsg(tempmsg);
+
         //was it the player's king?
         if ((piece.human) && (piece.PieceType == "king"))
         {
@@ -402,9 +415,8 @@ public class MainManager : MonoBehaviour {
             else
             {
                 int gold = (int)(Random.value * 50);
-                tempmsg = " You found " + gold + " gold !";
+                TempMessage = " You found " + gold + " gold !";
                 PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);
-                DisplayMsg(tempmsg);
                 PieceList.Remove(piece);
                 Destroy(piece.gameObject);
                 GetComponent<AudioSource>().clip = gulp;
@@ -432,8 +444,12 @@ public class MainManager : MonoBehaviour {
                 PlayerPrefs.SetInt("maxtaken", PlayerPrefs.GetInt("taken") );
             }
         }
+
+        return "x"; //will return * if partial hit in the HP branch
         
     }
+
+
 
     private void ChangeLevel()
     {
