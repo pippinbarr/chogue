@@ -29,7 +29,11 @@ public class MainManager : MonoBehaviour {
     private bool dothisonce = true; //hack
     public bool restartgame = false;
 
+    // Message and notation vars
+    int Turn = 1;
     private string TempMessage = "";
+    private string WhiteMoveNotation = "";
+    private string WhiteMoveMessage = "";
 
 	// Use this for initialization
 	void Start () {
@@ -330,6 +334,7 @@ public class MainManager : MonoBehaviour {
         //Start preparing the displayed message
         //Describe the move in chess notation
 
+
         string PieceType = CurrentActivePiece.PieceType;
         string OriginCoordinate = OriginPosition.x.ToString() + OriginPosition.y.ToString();
         string DestinationCoordinate = tile.transform.position.x.ToString() + tile.transform.position.y.ToString();
@@ -346,15 +351,31 @@ public class MainManager : MonoBehaviour {
         }
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
-        string FullNotation = "("+PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate+") ";
-        //appending attack message (defined in EatPiece) to full notation for complete message
-        TempMessage = FullNotation + TempMessage;
+        string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + ") ";
+
+        //Now assembling complete message
+        //output is different whether it's the human turn or not
+        //tempmessage is the attacking flavor defined in EatPiece();
+        if (CurrentActivePiece.human)
+        {
+            Turn++;
+            WhiteMoveNotation = FullNotation; //keeping it for black's turn
+            WhiteMoveMessage = TempMessage;
+            TempMessage = Turn.ToString()+". "+ FullNotation + TempMessage;
+        }
+        else
+        {
+            //if no black message, then put back the white message
+            if (TempMessage == "")
+            {
+                TempMessage = WhiteMoveMessage;
+            }
+            TempMessage = Turn.ToString() + ". " + WhiteMoveNotation + " "+ FullNotation + TempMessage;
+                    
+        }
+       
         //display message
         DisplayMsg(TempMessage);
-
-
-
-
 
         if (CurrentActivePiece.NewQueen)
         {
