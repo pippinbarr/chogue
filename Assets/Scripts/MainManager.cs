@@ -24,6 +24,7 @@ public class MainManager : MonoBehaviour {
     public Text statusline;
     public Text msgline;
     public bool firstscene = false;
+    
 
 
     private bool dothisonce = true; //hack
@@ -99,7 +100,7 @@ public class MainManager : MonoBehaviour {
             dothisonce = false;
             UpdateStatus();
         }
-
+        
 
 
         //Get click on destination (only if in "move" mode)
@@ -107,9 +108,9 @@ public class MainManager : MonoBehaviour {
         {
             if (!PieceSelected)
             {
-                
                 if (LastSelectedPiece != null)
                 {
+                    Debug.Log("finding last selected piece");
                     CurrentActivePiece = LastSelectedPiece;
                     CurrentActivePiece.SetActive(true);
                     CurrentActivePiece.FindAvailableDestinations();
@@ -118,6 +119,13 @@ public class MainManager : MonoBehaviour {
                     UpdateStatus();
                 }
             }
+            else
+            {
+                CurrentActivePiece.HideDestinations();
+                CurrentActivePiece.FindAvailableDestinations();
+                CurrentActivePiece.ShowDestinations();
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 DisplayMsg("");
@@ -148,7 +156,7 @@ public class MainManager : MonoBehaviour {
                         }
                         StartCoroutine(MoveToTile(gototile.GetComponent<TileType>()));
                         
-                        WaitingForPlayerMove = false;
+                        //WaitingForPlayerMove = false;
                         UpdateVisibility();
                         
 
@@ -174,15 +182,7 @@ public class MainManager : MonoBehaviour {
                 }
             }
         }
-        else if((!WaitingForCPUMove)&&(!WaitingForMove))
-        {
-            // Debug.Log("calling play black");
-            UpdateStatus();
-            PlayBlack();
-           
 
-
-        }
 
     }
 
@@ -207,7 +207,6 @@ public class MainManager : MonoBehaviour {
     {
         //give a few seconds
         WaitingForCPUMove = true;
-        Debug.Log("CPU's turn");
         //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
 
@@ -232,7 +231,7 @@ public class MainManager : MonoBehaviour {
                 // break;
             }
         }
-        //Debug.Log("best move is " + bestmove);
+        Debug.Log("best move is " + bestmove);
         //we can only move, select the one that can move closest to king
 
         if (bestmove < 2)
@@ -255,17 +254,27 @@ public class MainManager : MonoBehaviour {
             }
         }
         CurrentActivePiece = bestpiece;
+        Debug.Log(" best piece is " + CurrentActivePiece);
+
+        if (CurrentActivePiece.BestMoveTarget != null)
+        {
+            Debug.Log("Do it");
+            CurrentActivePiece.MakeMove();
+        }
+        else
+        {
+            ChangeTurn();
+        }
+
         
-        CurrentActivePiece.MakeMove();
-        
-        WaitingForCPUMove = false;
+      //  WaitingForCPUMove = false;
         
 
 
 
-        WaitingForPlayerMove = true;
-        Debug.Log("Waiting for player's turn");
-        PieceSelected = false;
+        //WaitingForPlayerMove = true;
+        //Debug.Log("Waiting for player's turn");
+        //PieceSelected = false;
 
 
     }
@@ -290,7 +299,11 @@ public class MainManager : MonoBehaviour {
         //Am I going to a tile that has a piece?
         if (tile.CurrentPiece != null)
         {
-            tile = tile.CurrentPiece.GetComponent<TileType>();
+            if (tile.CurrentPiece != CurrentActivePiece.transform)
+            {
+                tile = tile.CurrentPiece.GetComponent<TileType>();
+            }
+            
         }
 
         //saving original position (for message)
@@ -309,9 +322,13 @@ public class MainManager : MonoBehaviour {
             GetComponent<AudioSource>().clip = sliding;
             GetComponent<AudioSource>().Play();
         }
-        CurrentActivePiece.SetActive(true);
+        if (!nomessage)
+        {
+            CurrentActivePiece.SetActive(true);
+        }
         while (( Vector3.Distance(destination, CurrentActivePiece.transform.position)>0.2f)&&WaitingForMove)
         {
+            WaitingForMove = true;
             //Debug.Log("distance: "+Vector3.Distance(destination, CurrentActivePiece.transform.position));
             CurrentActivePiece.transform.position = CurrentActivePiece.transform.position + movestep;
             yield return new WaitForSeconds(0.01f);
@@ -356,7 +373,7 @@ public class MainManager : MonoBehaviour {
 
         //check whether piece has enemy king in check
         CurrentActivePiece.FindAvailableDestinations();
-       CurrentActivePiece.SetActive(false);
+        CurrentActivePiece.SetActive(false);
 
         WaitingForMove = false;
 
@@ -368,7 +385,7 @@ public class MainManager : MonoBehaviour {
 
         TempMessage = ""; //reset message
         //was this a piece? then eat it!
-        if (tile.transform.tag == "piece")
+        if ((tile.transform.tag == "piece")&&(!nomessage))
         {
             ActionSymbol = EatPiece(tile.GetComponent<Piece>());
             Debug.Log("eat piece at destination");
@@ -379,8 +396,18 @@ public class MainManager : MonoBehaviour {
         //if attack but not kill, send piece back to where it came from!
         if (ActionSymbol == "*")
         {
+            Piece TempPiece = CurrentActivePiece;
             StartCoroutine(MoveToTile(OriginPosition.GetComponent<TileType>(),true));
+            //wait for the piece to get there
+            WaitingForMove = true;
+            while (WaitingForMove)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+            CurrentActivePiece = TempPiece;
+            
         }
+        
 
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
@@ -419,13 +446,33 @@ public class MainManager : MonoBehaviour {
         {
             CurrentActivePiece.Queen();
         }
-        
-        UpdateVisibility();
-        UpdateThreats();
+        if (!nomessage)
+        {
+            ChangeTurn();
+        }
+
+
         
         
     }
+    public void ChangeTurn()
+    {
 
+        if (WaitingForPlayerMove)
+        {
+            Debug.Log("CPU's turn");
+            WaitingForPlayerMove = false;
+            PlayBlack();
+        }
+        else
+        {
+            Debug.Log("player's turn");
+            WaitingForCPUMove = false;
+            WaitingForPlayerMove = true;
+            PieceSelected = false;
+        }
+
+    }
     public string EatPiece(Piece piece)
     {
 

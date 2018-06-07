@@ -126,10 +126,10 @@ public class TileType : MonoBehaviour {
 
         SetTileType(Type);
     }
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerStay(Collider collision)
     {
         //update my tile
-        if ((collision.transform.tag == "piece")&&(CurrentPiece==null))
+        if ((collision.transform.tag == "piece"))
         {
             CurrentPiece = collision.transform;
 

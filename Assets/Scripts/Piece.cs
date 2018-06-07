@@ -377,8 +377,17 @@ public class Piece : MonoBehaviour {
     {
         if (BestMoveTarget != null)
         {
-            StartCoroutine(GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>()));
+            if (PieceColor != "red")
+            {
+                StartCoroutine(GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>()));
+            }
+            else
+            {
+                StartCoroutine(GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>(),true));
+            }
+            
         }
+
         
 
     }
@@ -507,6 +516,11 @@ public class Piece : MonoBehaviour {
 
             }
         }
+        if (BestMoveTarget == CurrentTile)
+        {
+            BestMove = 0;
+            LeastDistanceToKing = 1000000000;
+        }
 
         
     }
@@ -517,9 +531,14 @@ public class Piece : MonoBehaviour {
         foreach (Transform child in allChildren)
         {
 
-            if ((child.transform.name.Contains("Cube")) || (child.transform.name.Contains("ollider")))
+            if ((child.transform.name.Contains("Cube")) || (child.transform.name.Contains("ollider"))|| (child.transform.name.Contains("ubwe")))
             {
+                if (!active)
+                {
+                    child.GetComponent<GetCollidingThings>().CollidingTileList.Clear();
+                }
                 child.GetComponent<GetCollidingThings>().enabled = active;
+
             }
 
         }
