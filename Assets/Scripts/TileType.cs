@@ -104,6 +104,22 @@ public class TileType : MonoBehaviour {
                     visible = true;
                     //break;
                     visited = true;
+
+
+
+                }
+            }
+        }
+        if (visible==(transform.tag!="wall"))
+        {
+            //make surrounding walls visible as well
+            RaycastHit[] surrounding = Physics.BoxCastAll(transform.position, new Vector3(1.5f, 1.5f, 1.5f), new Vector3(0.0f, 0.0f, 0.1f));
+            foreach (RaycastHit hit in surrounding)
+            {
+                
+                if (hit.transform.tag=="wall")
+                {
+                    hit.transform.GetComponent<Renderer>().enabled = true;
                 }
             }
         }
