@@ -115,6 +115,7 @@ public class MainManager : MonoBehaviour {
                     CurrentActivePiece.FindAvailableDestinations();
                     CurrentActivePiece.ShowDestinations();
                     PieceSelected = true;
+                    UpdateStatus();
                 }
             }
             if (Input.GetMouseButtonDown(0))
@@ -167,6 +168,7 @@ public class MainManager : MonoBehaviour {
                         CurrentActivePiece.ShowDestinations();
                         LastSelectedPiece = CurrentActivePiece;
                         PieceSelected = true;
+                        UpdateStatus();
                     }
 
                 }
@@ -279,11 +281,11 @@ public class MainManager : MonoBehaviour {
         {
             piece.SetVisibility();
         }
-    } 
+    }
 
-   
+
     //make this a coroutine with actual movement, will collide with tiles and make them visible (maybe?!)
-   public  IEnumerator MoveToTile(TileType tile)
+    public IEnumerator MoveToTile(TileType tile, bool nomessage = false)
     {
         //Am I going to a tile that has a piece?
         if (tile.CurrentPiece != null)
@@ -292,7 +294,7 @@ public class MainManager : MonoBehaviour {
         }
 
         //saving original position (for message)
-        Vector3 OriginPosition = CurrentActivePiece.transform.position;
+        Transform OriginPosition = CurrentActivePiece.CurrentTile;
         
         //Debug.Log("destination tile type: "+tile.GetComponent<TileType>().Type);
         WaitingForMove = true;
@@ -346,7 +348,7 @@ public class MainManager : MonoBehaviour {
 
 
         string PieceType = CurrentActivePiece.PieceType;
-        string OriginCoordinate = OriginPosition.x.ToString() + OriginPosition.y.ToString();
+        string OriginCoordinate = OriginPosition.position.x.ToString() + OriginPosition.position.y.ToString();
         string DestinationCoordinate = tile.transform.position.x.ToString() + tile.transform.position.y.ToString();
         string ActionSymbol = ""; // will be set to x or * by EatPiece()
         string DestinationPiece = "";
@@ -373,6 +375,13 @@ public class MainManager : MonoBehaviour {
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
             
         }
+
+        //if attack but not kill, send piece back to where it came from!
+        if (ActionSymbol == "*")
+        {
+            StartCoroutine(MoveToTile(OriginPosition.GetComponent<TileType>(),true));
+        }
+
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
         string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + InCheck+") ";
@@ -380,26 +389,31 @@ public class MainManager : MonoBehaviour {
         //Now assembling complete message
         //output is different whether it's the human turn or not
         //tempmessage is the attacking flavor defined in EatPiece();
-        if (CurrentActivePiece.human)
+        if (!nomessage)
         {
-            Turn++;
-            WhiteMoveNotation = FullNotation; //keeping it for black's turn
-            WhiteMoveMessage = TempMessage;
-            TempMessage = Turn.ToString()+". "+ FullNotation + TempMessage ;
-        }
-        else
-        {
-            //if no black message, then put back the white message
-            if (TempMessage == "")
+            if (CurrentActivePiece.human)
             {
-                TempMessage = WhiteMoveMessage;
+                Turn++;
+                WhiteMoveNotation = FullNotation; //keeping it for black's turn
+                WhiteMoveMessage = TempMessage;
+                TempMessage = Turn.ToString() + ". " + FullNotation + TempMessage;
             }
-            TempMessage = Turn.ToString() + ". " + WhiteMoveNotation + " "+ FullNotation + TempMessage;
-                    
+            else
+            {
+                //if no black message, then put back the white message
+                if (TempMessage == "")
+                {
+                    TempMessage = WhiteMoveMessage;
+                }
+                TempMessage = Turn.ToString() + ". " + WhiteMoveNotation + " " + FullNotation + TempMessage;
+
+            }
+            //display message
+            DisplayMsg(TempMessage);
         }
+
        
-        //display message
-        DisplayMsg(TempMessage);
+
 
         if (CurrentActivePiece.NewQueen)
         {
@@ -415,83 +429,102 @@ public class MainManager : MonoBehaviour {
     public string EatPiece(Piece piece)
     {
 
-        if (CurrentActivePiece.human&&!piece.human&&(piece.PieceType!="coin"))
-        {
-            TempMessage = " Your "+CurrentActivePiece.PieceType+" scored an excellent hit on the " + piece.PieceType;
-        }
-        if (!CurrentActivePiece.human && piece.human)
-        {
-            TempMessage = " The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
-        }
-        if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType!="coin")
-        {
-            TempMessage = " You now have a new " + piece.PieceType + " !";
-        }
+        //Calculate damage (0 to MaxHP)
+        int DMG = (int)(Random.Range(0, CurrentActivePiece.MaxHP+1));
+        Debug.Log("damage:" + DMG);
+        //apply damage
+        piece.HP -= DMG;
 
+        //Dead?
+        if (piece.HP < 1)
+        {
 
-        //was it the player's king?
-        if ((piece.human) && (piece.PieceType == "king"))
-        {
-            Debug.Log("game over");
-            gameover = true;
-            GameOver();
-        }
-        if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor!="red"))
-        {
-            Debug.Log("game over");
-            gameover = true;
-            Win();
-        }
-        //Debug.Log("I am human? : " + CurrentActivePiece.human);
-       // Debug.Log("Eaten piece is human ?: " + piece.human);
-        if (piece.PieceColor == "red")
-        {
-            if (piece.PieceType != "coin")
+            if (CurrentActivePiece.human && !piece.human && (piece.PieceType != "coin"))
             {
-                // WaitingForCPUMove = false;
-                piece.human = true;
-                //piece.PieceColor = "white";
-                //WaitingForPlayerMove = false;
-                CurrentActivePiece = piece;
-
-                piece.DecideMove();
-                piece.MakeMove();
-                piece.PowerUp();
+                TempMessage = " Your " + CurrentActivePiece.PieceType + " scored an excellent hit on the " + piece.PieceType;
             }
-            else
+            if (!CurrentActivePiece.human && piece.human)
             {
-                int gold = (int)(Random.value * 50);
-                TempMessage = " You found " + gold + " gold !";
-                PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);
+                TempMessage = " The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
+            }
+            if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType != "coin")
+            {
+                TempMessage = " You now have a new " + piece.PieceType + " !";
+            }
+
+
+            //was it the player's king?
+            if ((piece.human) && (piece.PieceType == "king"))
+            {
+                Debug.Log("game over");
+                gameover = true;
+                GameOver();
+            }
+            if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor != "red"))
+            {
+                Debug.Log("game over");
+                gameover = true;
+                Win();
+            }
+            //Debug.Log("I am human? : " + CurrentActivePiece.human);
+            // Debug.Log("Eaten piece is human ?: " + piece.human);
+            if (piece.PieceColor == "red")
+            {
+                if (piece.PieceType != "coin")
+                {
+                    // WaitingForCPUMove = false;
+                    piece.human = true;
+                    //piece.PieceColor = "white";
+                    //WaitingForPlayerMove = false;
+                    CurrentActivePiece = piece;
+
+                    piece.DecideMove();
+                    piece.MakeMove();
+                    piece.PowerUp();
+                }
+                else
+                {
+                    int gold = (int)(Random.value * 50);
+                    TempMessage = " You found " + gold + " gold !";
+                    PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold") + gold);
+                    PieceList.Remove(piece);
+                    Destroy(piece.gameObject);
+                    GetComponent<AudioSource>().clip = gulp;
+                    GetComponent<AudioSource>().Play();
+                }
+
+
+
+
+                // WaitingForCPUMove = true;
+
+            }
+            else if (piece.human != CurrentActivePiece.human)
+            {
                 PieceList.Remove(piece);
                 Destroy(piece.gameObject);
                 GetComponent<AudioSource>().clip = gulp;
                 GetComponent<AudioSource>().Play();
             }
-
-
-            
-
-            // WaitingForCPUMove = true;
-
-        }
-        else if (piece.human!=CurrentActivePiece.human)
-        {
-            PieceList.Remove(piece);
-            Destroy(piece.gameObject);
-            GetComponent<AudioSource>().clip = gulp;
-            GetComponent<AudioSource>().Play();
-        }
-        if (CurrentActivePiece.human)
-        {
-            PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
-            if(PlayerPrefs.GetInt("taken")> PlayerPrefs.GetInt("maxtaken"))
+            if (CurrentActivePiece.human)
             {
-                PlayerPrefs.SetInt("maxtaken", PlayerPrefs.GetInt("taken") );
+                PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
+                if (PlayerPrefs.GetInt("taken") > PlayerPrefs.GetInt("maxtaken"))
+                {
+                    PlayerPrefs.SetInt("maxtaken", PlayerPrefs.GetInt("taken"));
+                }
             }
-        }
 
-        return "x"; //will return * if partial hit in the HP branch
+            return "x"; //will return * if partial hit in the HP branch
+        }
+        //not dead!
+        else
+        {
+            TempMessage = "Some damage but no kill";
+            //you have to go back to where you came from!
+            return "*";
+            
+        }
         
     }
 
@@ -564,7 +597,7 @@ public class MainManager : MonoBehaviour {
         }
         if (statusline != null)
         {
-            statusline.text = " Level:" + PlayerPrefs.GetInt("level") + " (highest "+ PlayerPrefs.GetInt("maxlevel")+")     Pieces:" + CurrentPieces + "     Captured:" + PlayerPrefs.GetInt("taken") + "     Gold:"+ PlayerPrefs.GetInt("gold");
+            statusline.text = " Level:" + PlayerPrefs.GetInt("level") + " (highest "+ PlayerPrefs.GetInt("maxlevel")+")     Hits:"+CurrentActivePiece.HP+"("+CurrentActivePiece.MaxHP+")"+"     Pieces:" + CurrentPieces + "     Captured:" + PlayerPrefs.GetInt("taken") + "     Gold:"+ PlayerPrefs.GetInt("gold");
         }
         
     }

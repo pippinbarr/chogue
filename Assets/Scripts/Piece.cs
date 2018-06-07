@@ -8,6 +8,8 @@ public class Piece : MonoBehaviour {
     public bool human = true; //is this a human controlled piece or not?
     public bool manual = false; //turn on if it creates itself
     public int turn = 0; //a priori seulement pour le pion, pour savoir s'il peut avancer deux fois
+    public int HP = 0;
+    public int MaxHP = 0;
     public string PieceType = "rook";
     public string PieceColor = "white";
     public Transform PieceWhiteModel;
