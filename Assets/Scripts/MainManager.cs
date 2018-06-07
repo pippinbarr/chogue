@@ -85,6 +85,7 @@ public class MainManager : MonoBehaviour {
         
 
         WaitingForPlayerMove = true;
+        Debug.Log("player's turn");
         
     }
 	
@@ -194,7 +195,9 @@ public class MainManager : MonoBehaviour {
         //first, find available destinations for all pieces to updated "protected" and "covered" statuses
         foreach (Piece piece in PieceList)
         {
+            piece.SetActive(true);
             piece.FindAvailableDestinations();
+            piece.SetActive(false);
         }
     }
 
@@ -202,6 +205,7 @@ public class MainManager : MonoBehaviour {
     {
         //give a few seconds
         WaitingForCPUMove = true;
+        Debug.Log("CPU's turn");
         //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
 
@@ -258,6 +262,7 @@ public class MainManager : MonoBehaviour {
 
 
         WaitingForPlayerMove = true;
+        Debug.Log("Waiting for player's turn");
         PieceSelected = false;
 
 
@@ -296,7 +301,7 @@ public class MainManager : MonoBehaviour {
             GetComponent<AudioSource>().clip = sliding;
             GetComponent<AudioSource>().Play();
         }
-
+        CurrentActivePiece.SetActive(true);
         while (( Vector3.Distance(destination, CurrentActivePiece.transform.position)>0.2f)&&WaitingForMove)
         {
             //Debug.Log("distance: "+Vector3.Distance(destination, CurrentActivePiece.transform.position));
@@ -308,7 +313,6 @@ public class MainManager : MonoBehaviour {
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();
         CurrentActivePiece.transform.position = destination;
-        yield return new WaitForSeconds(0.01f);
         //did we land on stairs?
 
         if (tile.GetComponent<TileType>().Type == 3)
@@ -329,7 +333,7 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-        WaitingForMove = false;
+        
 
         //Start preparing the displayed message
         //Describe the move in chess notation
@@ -340,6 +344,20 @@ public class MainManager : MonoBehaviour {
         string DestinationCoordinate = tile.transform.position.x.ToString() + tile.transform.position.y.ToString();
         string ActionSymbol = ""; // will be set to x or * by EatPiece()
         string DestinationPiece = "";
+        string InCheck = "";
+
+        //check whether piece has enemy king in check
+        CurrentActivePiece.FindAvailableDestinations();
+       CurrentActivePiece.SetActive(false);
+
+        WaitingForMove = false;
+
+        
+        if (CurrentActivePiece.check)
+        {
+            InCheck = "+";
+        }
+
         TempMessage = ""; //reset message
         //was this a piece? then eat it!
         if (tile.transform.tag == "piece")
@@ -351,7 +369,7 @@ public class MainManager : MonoBehaviour {
         }
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
-        string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + ") ";
+        string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + InCheck+") ";
 
         //Now assembling complete message
         //output is different whether it's the human turn or not
@@ -361,7 +379,7 @@ public class MainManager : MonoBehaviour {
             Turn++;
             WhiteMoveNotation = FullNotation; //keeping it for black's turn
             WhiteMoveMessage = TempMessage;
-            TempMessage = Turn.ToString()+". "+ FullNotation + TempMessage;
+            TempMessage = Turn.ToString()+". "+ FullNotation + TempMessage ;
         }
         else
         {
@@ -381,6 +399,7 @@ public class MainManager : MonoBehaviour {
         {
             CurrentActivePiece.Queen();
         }
+        
         UpdateVisibility();
         UpdateThreats();
         

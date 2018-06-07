@@ -23,6 +23,7 @@ public class Piece : MonoBehaviour {
     public bool threatened = false;
     public bool covered = false;
     public bool guarding = false;
+    public bool check = false; //Does this piece have the king in check?
 
     private MainManager MM;
 
@@ -85,6 +86,10 @@ public class Piece : MonoBehaviour {
 
     public void FindAvailableDestinations()
     {
+        check = false;
+        guarding = false;
+       // threatened = false;
+       // covered = false;
         //le pion est vraiment un cas spécial
         if (PieceType == "pawn")
         {
@@ -132,6 +137,11 @@ public class Piece : MonoBehaviour {
                         if ((tile.GetComponent<Piece>().human != human))
                         {
                             TileList.Add(tile);
+                            if (tile.GetComponent<Piece>().PieceType == "king")
+                            {
+                                Debug.Log("king in check");
+                                check = true;
+                            }
                             //did we add the tile underneath the piece?
 
                         }
