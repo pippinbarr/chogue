@@ -285,6 +285,12 @@ public class MainManager : MonoBehaviour {
     //make this a coroutine with actual movement, will collide with tiles and make them visible (maybe?!)
    public  IEnumerator MoveToTile(TileType tile)
     {
+        //Am I going to a tile that has a piece?
+        if (tile.CurrentPiece != null)
+        {
+            tile = tile.CurrentPiece.GetComponent<TileType>();
+        }
+
         //saving original position (for message)
         Vector3 OriginPosition = CurrentActivePiece.transform.position;
         
