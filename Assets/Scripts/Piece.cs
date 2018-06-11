@@ -458,7 +458,7 @@ public class Piece : MonoBehaviour {
             
             foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
             {
-                if (piece.human && (piece.PieceType == "king"))
+                if (piece.human )
                 {
                     HumanKing = piece;
                 }

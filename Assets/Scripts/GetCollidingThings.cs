@@ -37,7 +37,7 @@ public class GetCollidingThings : MonoBehaviour {
         {
             MM = GameObject.Find("MainManager").GetComponent<MainManager>();
         }
-        if ((!MM.WaitingForMove)||(MM.CurrentActivePiece==transform.parent.GetComponent<Piece>()))
+        if ((!MM.WaitingForMove))
         {
             if (((other.transform.tag == "tile") || other.transform.tag == "wall" || other.transform.tag == "piece") && (!CollidingTileList.Contains(other.GetComponent<TileType>())))
             {

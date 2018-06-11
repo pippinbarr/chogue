@@ -13,6 +13,7 @@ public class MainManager : MonoBehaviour {
     public bool WaitingForPlayerMove = false;
     public bool WaitingForCPUMove = false;
     public bool WaitingForMove = false;
+    public bool WaitingForMoveBack = false;
     public List<Piece> PieceList = new List<Piece>();
     public List<TileType> TileList = new List<TileType>();
     int CurrentPieceIndex = 0;
@@ -376,11 +377,7 @@ public class MainManager : MonoBehaviour {
             
         }
 
-        //if attack but not kill, send piece back to where it came from!
-        if (ActionSymbol == "*")
-        {
-            StartCoroutine(MoveToTile(OriginPosition.GetComponent<TileType>(),true));
-        }
+
 
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
@@ -418,12 +415,21 @@ public class MainManager : MonoBehaviour {
         if (CurrentActivePiece.NewQueen)
         {
             CurrentActivePiece.Queen();
+            CurrentActivePiece = PieceList[0];
         }
         
         UpdateVisibility();
         UpdateThreats();
-        
-        
+
+        //if attack but not kill, send piece back to where it came from!
+        if (WaitingForMoveBack)
+        {
+            WaitingForMoveBack = false;
+            StartCoroutine(MoveToTile(OriginPosition.GetComponent<TileType>(), true));
+            
+        }
+
+
     }
 
     public string EatPiece(Piece piece)
@@ -436,7 +442,7 @@ public class MainManager : MonoBehaviour {
         piece.HP -= DMG;
 
         //Dead?
-        if (piece.HP < 1)
+        if ((piece.HP < 1)||(piece.PieceColor=="red"))
         {
 
             if (CurrentActivePiece.human && !piece.human && (piece.PieceType != "coin"))
@@ -476,10 +482,11 @@ public class MainManager : MonoBehaviour {
                     piece.human = true;
                     //piece.PieceColor = "white";
                     //WaitingForPlayerMove = false;
-                    CurrentActivePiece = piece;
+                    // CurrentActivePiece = piece;
 
-                    piece.DecideMove();
-                    piece.MakeMove();
+                    // piece.DecideMove();
+                    // piece.MakeMove();
+                    WaitingForMoveBack = true;
                     piece.PowerUp();
                 }
                 else
@@ -522,6 +529,7 @@ public class MainManager : MonoBehaviour {
         {
             TempMessage = "Some damage but no kill";
             //you have to go back to where you came from!
+            WaitingForMoveBack = true;
             return "*";
             
         }
