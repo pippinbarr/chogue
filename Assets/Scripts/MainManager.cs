@@ -104,6 +104,7 @@ public class MainManager : MonoBehaviour {
         }
 
 
+       
 
         //Get click on destination (only if in "move" mode)
         if ((WaitingForPlayerMove)&&(!WaitingForMove))
@@ -121,6 +122,7 @@ public class MainManager : MonoBehaviour {
                     UpdateStatus();
                 }
             }
+
             if (Input.GetMouseButtonDown(0))
             {
                 DisplayMsg("");
@@ -290,9 +292,11 @@ public class MainManager : MonoBehaviour {
     //make this a coroutine with actual movement, will collide with tiles and make them visible (maybe?!)
     public IEnumerator MoveToTile(TileType tile, bool nomessage = false)
     {
+        //UpdateThreats();
         //Am I going to a tile that has a piece?
         if (tile.CurrentPiece != null)
         {
+            Debug.Log("Found a piece at the tile, going there instead");
             tile = tile.CurrentPiece.GetComponent<TileType>();
         }
 
@@ -366,7 +370,7 @@ public class MainManager : MonoBehaviour {
         CurrentActivePiece.FindAvailableDestinations();
        CurrentActivePiece.SetActive(false);
 
-        WaitingForMove = false;
+       
 
         
         if (CurrentActivePiece.check)
@@ -454,17 +458,27 @@ public class MainManager : MonoBehaviour {
             CurrentActivePiece = PieceList[0];
         }
         
-        UpdateVisibility();
-        UpdateThreats();
 
+
+        WaitingForMove = false;
         //if attack but not kill, send piece back to where it came from!
         if (WaitingForMoveBack)
         {
+            WaitingForMove = true;
+
             WaitingForMoveBack = false;
             StartCoroutine(MoveToTile(OriginPosition.GetComponent<TileType>(), true));
+            while (WaitingForMove)
+            {
+               
+                yield return new WaitForSeconds(0.01f);
+               
+            }
             
-        }
 
+        }
+        UpdateVisibility();
+        UpdateThreats();
 
     }
 

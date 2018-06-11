@@ -111,7 +111,12 @@ public class Piece : MonoBehaviour {
             //Crawl through each collider
             foreach (Collider col in Colliders)
             {
-                List<TileType> TempTileList = col.transform.GetComponent<GetCollidingThings>().CollidingTileList;
+                List<TileType> TempTileList = new List<TileType>();
+                foreach (TileType tile in col.transform.GetComponent<GetCollidingThings>().CollidingTileList)
+                {
+                    TempTileList.Add(tile);
+                }
+                //col.transform.GetComponent<GetCollidingThings>().CollidingTileList;
                 //for each tile, find out the distance to this piece
                 foreach (TileType tile in TempTileList.ToList<TileType>())
                 {
@@ -217,7 +222,13 @@ public class Piece : MonoBehaviour {
         TileList.Clear();
 
         //can I move forward 1? The first collider is the move forward 1.
-        List<TileType> TempTileList = Colliders[0].transform.GetComponent<GetCollidingThings>().CollidingTileList;
+        List<TileType> TempTileList = new List<TileType>();
+        foreach(TileType tile in Colliders[0].transform.GetComponent<GetCollidingThings>().CollidingTileList)
+        {
+            TempTileList.Add(tile);
+        }
+
+           // Colliders[0].transform.GetComponent<GetCollidingThings>().CollidingTileList;
         foreach (TileType tile in TempTileList.ToList<TileType>())
         {
             //in case it was a piece that was eaten
@@ -227,17 +238,20 @@ public class Piece : MonoBehaviour {
                 TempTileList.Remove(tile);
 
             }
-            else
-            {
-                tile.GetDistanceTo(transform);
-            }
 
         }
-        TempTileList = TempTileList.OrderBy(tile => tile.DistanceToPiece).ToList();
         bool nope = false;
         foreach (TileType tile in TempTileList)
         {
 
+            if (tile.CurrentPiece != null)
+            {
+                nope = true;
+                if (TileList.Contains(tile))
+                {
+                    TileList.Remove(tile);
+                }
+            }
             if (tile.transform.tag == "piece")
             {
 
@@ -270,7 +284,12 @@ public class Piece : MonoBehaviour {
         //if tile 1 is a free tile then maybe I can go to tile 2 if it's my first turn
         if ((turn == 0) && (TileList.Count > 0))
         {
-            TempTileList = Colliders[3].transform.GetComponent<GetCollidingThings>().CollidingTileList;
+            TempTileList = new List<TileType>();
+            foreach(TileType tile in Colliders[3].transform.GetComponent<GetCollidingThings>().CollidingTileList)
+            {
+                TempTileList.Add(tile);
+            }
+                //Colliders[3].transform.GetComponent<GetCollidingThings>().CollidingTileList;
             foreach (TileType tile in TempTileList.ToList<TileType>())
             {
                 //in case it was a piece that was eaten
@@ -290,7 +309,14 @@ public class Piece : MonoBehaviour {
             nope = false;
             foreach (TileType tile in TempTileList)
             {
-
+                if (tile.CurrentPiece != null)
+                {
+                    nope = true;
+                    if (TileList.Contains(tile))
+                    {
+                        TileList.Remove(tile);
+                    }
+                }
                 if (tile.transform.tag == "piece")
                 {
                     if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
@@ -312,8 +338,18 @@ public class Piece : MonoBehaviour {
         }
 
         //if a piece is in my diagonal, then I can eat it. But I can't move.
-        TempTileList = Colliders[1].transform.GetComponent<GetCollidingThings>().CollidingTileList;
-        TempTileList.AddRange(Colliders[2].transform.GetComponent<GetCollidingThings>().CollidingTileList);
+        //copy list
+
+        TempTileList.Clear();
+        foreach(TileType tile in Colliders[1].transform.GetComponent<GetCollidingThings>().CollidingTileList)
+        {
+            TempTileList.Add(tile);
+        }
+        foreach (TileType tile in Colliders[2].transform.GetComponent<GetCollidingThings>().CollidingTileList)
+        {
+            TempTileList.Add(tile);
+        }
+        
         foreach (TileType tile in TempTileList)
         {
             
@@ -525,7 +561,7 @@ public class Piece : MonoBehaviour {
         foreach (Transform child in allChildren)
         {
 
-            if ((child.transform.name.Contains("Cube")) || (child.transform.name.Contains("ollider")))
+            if ((child.transform.name.Contains("Cube")) || (child.transform.name.Contains("ollider"))|| (child.transform.name.Contains("ubwe")))
             {
                 child.GetComponent<GetCollidingThings>().enabled = active;
             }
@@ -570,10 +606,14 @@ public class Piece : MonoBehaviour {
 
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerStay(Collider collision)
     {
         //update my tile
-        if ((collision.transform.tag == "tile"))
+        if (MM == null)
+        {
+            MM = GameObject.Find("MainManager").GetComponent<MainManager>();
+        }
+        if ((collision.transform.tag == "tile")&&!MM.WaitingForMove)
         {
             CurrentTile = collision.transform;
             CurrentTileRoomColor = CurrentTile.GetComponent<TileType>().RoomColor;

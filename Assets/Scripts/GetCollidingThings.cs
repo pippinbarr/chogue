@@ -8,13 +8,15 @@ public class GetCollidingThings : MonoBehaviour {
     public List<TileType> CollidingTileList = new List<TileType>();
 
     MainManager MM;
+    public bool Active = true;
+    public bool debug = false;
 
 
     // Use this for initialization
     void Start () {
         MM = GameObject.Find("MainManager").GetComponent<MainManager>();
-        this.enabled = false;
-	}
+        CollidingTileList = new List<TileType>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -41,6 +43,10 @@ public class GetCollidingThings : MonoBehaviour {
         {
             if (((other.transform.tag == "tile") || other.transform.tag == "wall" || other.transform.tag == "piece") && (!CollidingTileList.Contains(other.GetComponent<TileType>())))
             {
+                if (debug)
+                {
+                 Debug.Log("add tiles");
+                }
                 CollidingTileList.Add(other.GetComponent<TileType>());
                 //Has the pawn touched a wall?
 

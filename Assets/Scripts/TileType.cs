@@ -126,14 +126,22 @@ public class TileType : MonoBehaviour {
 
         SetTileType(Type);
     }
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerStay(Collider collision)
     {
-        //update my tile
-        if ((collision.transform.tag == "piece")&&(CurrentPiece==null))
+        if(MM==null)
         {
-            CurrentPiece = collision.transform;
-
+            MM = GameObject.Find("MainManager").GetComponent<MainManager>();
         }
+        if (!MM.WaitingForMove)
+        {
+            //update my tile
+            if ((collision.transform.tag == "piece") && (CurrentPiece == null))
+            {
+                CurrentPiece = collision.transform;
+
+            }
+        }
+
 
     }
     private void OnTriggerExit(Collider collision)
