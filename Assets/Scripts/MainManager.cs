@@ -30,6 +30,7 @@ public class MainManager : MonoBehaviour {
 
     private bool dothisonce = true; //hack
     public bool restartgame = false;
+    public bool HitPointVersion = false;
 
     // Message and notation vars
     int Turn = 1;
@@ -474,6 +475,13 @@ public class MainManager : MonoBehaviour {
         //Calculate damage (0 to MaxHP)
         int DMG = (int)(Random.Range(0, CurrentActivePiece.MaxHP+1));
         Debug.Log("damage:" + DMG);
+
+        //If this is the clean take version, just add tons of damage
+        if (!HitPointVersion)
+        {
+            DMG = 1000000000;
+        }
+
         //apply damage
         piece.HP -= DMG;
 
