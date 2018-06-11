@@ -38,6 +38,10 @@ public class MainManager : MonoBehaviour {
     private string WhiteMoveNotation = "";
     private string WhiteMoveMessage = "";
 
+    private string[] files = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "ll", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx", "yy", "zz" };
+    private string[] hits = new string[] { "hits", "swings and hits", "has injured", "scored an excellent hit on" };
+    private string[] misses = new string[] { "misses", "swings and misses", "barely misses", "doesn't hit" };
+
 	// Use this for initialization
 	void Start () {
 
@@ -396,11 +400,6 @@ public class MainManager : MonoBehaviour {
 
 
         // Calculate notation for the squares
-        // (NB: Need to invert the rank)
-        int boardWidth = GetComponent<DungeonGenerator>().m_DungeonWidth;
-        int boardHeight = GetComponent<DungeonGenerator>().m_DungeonHeight;
-                                        
-        string[] files = new string[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","aa","bb","cc","dd","ee","ff","gg","hh","ii","jj","kk","ll","mm","nn","oo","pp","qq","rr","ss","tt","uu","vv","ww","xx","yy","zz"};
 
         string startRank = (OriginPosition.position.y).ToString();
         int startFileIndex = Mathf.FloorToInt(OriginPosition.position.x);
@@ -414,10 +413,6 @@ public class MainManager : MonoBehaviour {
         string MoveNotation = PieceSymbol + ActionSymbol + destFile + destRank + InCheck;
 
         //Now assembling complete message
-        //output is different whether it's the human turn or not
-        //tempmessage is the attacking flavor defined in EatPiece();
-
-
         string FullMoveMessage;
         if (!nomessage)
         {
@@ -502,19 +497,31 @@ public class MainManager : MonoBehaviour {
         //Dead?
         if ((piece.HP < 1)||(piece.PieceColor=="red"))
         {
-
-
             if (CurrentActivePiece.human && !piece.human && (piece.PieceType != "coin"))
             {
-                TempMessage = "Your " + CurrentActivePiece.PieceType + " scored an excellent hit on the " + piece.PieceType;
+                if (HitPointVersion)
+                {
+                    TempMessage = "Your " + CurrentActivePiece.PieceType + " defeated the black " + piece.PieceType;
+                }
+                else
+                {
+                    TempMessage = "Your " + CurrentActivePiece.PieceType + " captured the black " + piece.PieceType;
+                }
             }
             if (!CurrentActivePiece.human && piece.human)
             {
-                TempMessage = "The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
+                if (HitPointVersion)
+                {
+                    TempMessage = "The black " + CurrentActivePiece.PieceType + " defeated your " + piece.PieceType;
+                }
+                else
+                {
+                    TempMessage = "The black " + CurrentActivePiece.PieceType + " captured your " + piece.PieceType;
+                }
             }
             if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType != "coin")
             {
-                TempMessage = "You now have a new " + piece.PieceType + " !";
+                TempMessage = "You now have a new " + piece.PieceType + "!";
             }
 
 
@@ -551,7 +558,7 @@ public class MainManager : MonoBehaviour {
                 else
                 {
                     int gold = (int)(Random.value * 50);
-                    TempMessage = " You found " + gold + " gold !";
+                    TempMessage = "You found " + gold + " gold!";
                     PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold") + gold);
                     PieceList.Remove(piece);
                     Destroy(piece.gameObject);
@@ -591,7 +598,27 @@ public class MainManager : MonoBehaviour {
         //not dead!
         else
         {
-            TempMessage = "Some damage but no kill";
+            string verb = "xxxxxx";
+            if (DMG == 0)
+            {
+                verb = misses[Random.Range(0, misses.Length - 1)];
+            }
+            else
+            {
+                verb = hits[Random.Range(0, hits.Length - 1)];
+            }
+
+            if (CurrentActivePiece.human)
+            {
+                TempMessage = "Your " + CurrentActivePiece.PieceType + " " + verb + " the " + piece.PieceColor + " " + piece.PieceType;
+
+            }
+            else
+            {
+                TempMessage = "The " + CurrentActivePiece.PieceColor + " " + CurrentActivePiece.PieceType + " " + verb + " your " + piece.PieceType; ;
+            }
+
+            //TempMessage = "Some damage but no kill";
             //you have to go back to where you came from!
             WaitingForMoveBack = true;
             GetComponent<AudioSource>().clip = tic;
