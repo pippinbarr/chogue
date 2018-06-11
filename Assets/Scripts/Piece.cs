@@ -549,18 +549,22 @@ public class Piece : MonoBehaviour {
         Renderer[] allChildren = GetComponentsInChildren<Renderer>();
         foreach (Renderer child in allChildren)
         {
-            if (CurrentTile.GetComponent<TileType>().visible)
-            {
-                if ((!child.transform.name.Contains("Cube"))&& (!child.transform.name.Contains("ollider")))
+            //if (CurrentTile != null)
+          //  {
+                if (CurrentTile.GetComponent<TileType>().visible)
                 {
-                    child.enabled = true;
+                    if ((!child.transform.name.Contains("Cube")) && (!child.transform.name.Contains("ollider")))
+                    {
+                        child.enabled = true;
+                    }
+
                 }
-                    
-            }
-            else
-            {
-                child.enabled = false;
-            }
+                else
+                {
+                    child.enabled = false;
+                }
+           // }
+
         }
 
 
