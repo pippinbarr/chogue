@@ -369,8 +369,21 @@ public class MainManager : MonoBehaviour {
         string ActionSymbol = ""; // will be set to x or * by EatPiece()
         string DestinationPiece = "";
         string InCheck = "";
-
+        string Promotion = "";
         //check whether piece has enemy king in check
+
+        // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
+        // calculate its possible attacks based on that.
+        if (CurrentActivePiece.NewQueen)
+        {
+            CurrentActivePiece.Queen();
+            CurrentActivePiece = PieceList[0];
+            Promotion = "=Q";
+        }
+
+        //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
+
+
         CurrentActivePiece.FindAvailableDestinations();
        CurrentActivePiece.SetActive(false);
 
@@ -389,7 +402,6 @@ public class MainManager : MonoBehaviour {
             ActionSymbol = EatPiece(tile.GetComponent<Piece>());
             Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
-            
         }
 
 
@@ -409,8 +421,14 @@ public class MainManager : MonoBehaviour {
         int destFileIndex = Mathf.FloorToInt(tile.transform.position.x);
         string destFile = files[destFileIndex];
 
-        // Bug: InCheck didn't work for a black knight versus my kind...
-        string MoveNotation = PieceSymbol + ActionSymbol + destFile + destRank + InCheck;
+        if (ActionSymbol != "" && PieceType == "pawn")
+        {
+            // This is a pawn attack/capture, its symbol should be its current square
+            PieceSymbol = startFile + startRank;
+        }
+
+        // Bug: InCheck didn't work for a black knight versus my king?...
+        string MoveNotation = PieceSymbol + ActionSymbol + destFile + destRank + Promotion + InCheck;
 
         //Now assembling complete message
         string FullMoveMessage;
@@ -445,13 +463,6 @@ public class MainManager : MonoBehaviour {
             DisplayMsg(FullMoveMessage);
         }
  
-
-
-        if (CurrentActivePiece.NewQueen)
-        {
-            CurrentActivePiece.Queen();
-            CurrentActivePiece = PieceList[0];
-        }
         
 
 
@@ -598,7 +609,7 @@ public class MainManager : MonoBehaviour {
         //not dead!
         else
         {
-            string verb = "xxxxxx";
+            string verb = "**ERROR**";
             if (DMG == 0)
             {
                 verb = misses[Random.Range(0, misses.Length - 1)];

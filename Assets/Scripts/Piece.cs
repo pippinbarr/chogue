@@ -372,11 +372,12 @@ public class Piece : MonoBehaviour {
         Transform TempPiece = Instantiate(QueenPrefab, transform.position, transform.rotation);
         TempPiece.GetComponent<Piece>().CreateModel(PieceColor);
         TempPiece.GetComponent<Piece>().human = human;
-        
         TempPiece.GetComponent<Piece>().CurrentTile = CurrentTile;
         CurrentTile.GetComponent<TileType>().CurrentPiece = TempPiece;
         MM.PieceList.Insert(0,TempPiece.GetComponent<Piece>());
         MM.PieceList.Remove(this);
+        Debug.Log("Queen(), new PieceType is " + MM.PieceList[0].PieceType);
+
         Destroy(gameObject);
     }
     public void ShowDestinations()
