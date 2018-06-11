@@ -12,6 +12,7 @@ public class Piece : MonoBehaviour {
     public int MaxHP = 0;
     public string PieceType = "rook";
     public string PieceColor = "white";
+    public string PieceSymbol = "R";
     public Transform PieceWhiteModel;
     public Transform PieceBlackModel;
     public Transform PieceRedModel;
@@ -44,6 +45,13 @@ public class Piece : MonoBehaviour {
         {
             CreateModel(PieceColor);
         }
+
+        if (PieceType == "king") PieceSymbol = "K";
+        else if (PieceType == "queen") PieceSymbol = "Q";
+        else if (PieceType == "rook") PieceSymbol = "R";
+        else if (PieceType == "bishop") PieceSymbol = "B";
+        else if (PieceType == "knight") PieceSymbol = "N";
+        else if (PieceType == "pawn") PieceSymbol = "";
 	}
 	
 	// Update is called once per frame

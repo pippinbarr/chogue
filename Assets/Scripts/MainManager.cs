@@ -22,6 +22,7 @@ public class MainManager : MonoBehaviour {
     public AudioClip gulp;
     public AudioClip sliding;
     public AudioClip putdown;
+    public AudioClip tic;
     public Text statusline;
     public Text msgline;
     public bool firstscene = false;
@@ -349,7 +350,12 @@ public class MainManager : MonoBehaviour {
 
 
         string PieceType = CurrentActivePiece.PieceType;
+
+        //string OriginCoordinate = OriginPosition.position.x.ToString() + OriginPosition.position.y.ToString();
+
+        string PieceSymbol = CurrentActivePiece.PieceSymbol;
         string OriginCoordinate = OriginPosition.position.x.ToString() + OriginPosition.position.y.ToString();
+
         string DestinationCoordinate = tile.transform.position.x.ToString() + tile.transform.position.y.ToString();
         string ActionSymbol = ""; // will be set to x or * by EatPiece()
         string DestinationPiece = "";
@@ -381,35 +387,64 @@ public class MainManager : MonoBehaviour {
 
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
-        string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + InCheck+") ";
+        //string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + InCheck + ") ";
+
+
+        // Calculate notation for the squares
+        // (NB: Need to invert the rank)
+        int boardWidth = GetComponent<DungeonGenerator>().m_DungeonWidth;
+        int boardHeight = GetComponent<DungeonGenerator>().m_DungeonHeight;
+                                        
+        string[] files = new string[]{"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","aa","bb","cc","dd","ee","ff","gg","hh","ii","jj","kk","ll","mm","nn","oo","pp","qq","rr","ss","tt","uu","vv","ww","xx","yy","zz"};
+
+        string startRank = (OriginPosition.position.y).ToString();
+        int startFileIndex = Mathf.FloorToInt(OriginPosition.position.x);
+        string startFile = files[startFileIndex];
+
+        string destRank = (tile.transform.position.y).ToString();
+        int destFileIndex = Mathf.FloorToInt(tile.transform.position.x);
+        string destFile = files[destFileIndex];
+
+        // Bug: InCheck didn't work for a black knight versus my kind...
+        string MoveNotation = PieceSymbol + ActionSymbol + destFile + destRank + InCheck;
 
         //Now assembling complete message
         //output is different whether it's the human turn or not
         //tempmessage is the attacking flavor defined in EatPiece();
+
+
+        string FullMoveMessage;
         if (!nomessage)
         {
             if (CurrentActivePiece.human)
             {
                 Turn++;
-                WhiteMoveNotation = FullNotation; //keeping it for black's turn
-                WhiteMoveMessage = TempMessage;
-                TempMessage = Turn.ToString() + ". " + FullNotation + TempMessage;
+                FullMoveMessage = Turn.ToString() + ". " + MoveNotation;
+                string AttackFlavour = TempMessage;
+                if (AttackFlavour != "")
+                {
+                    FullMoveMessage += " (" + AttackFlavour + ")";
+                }
+
+                WhiteMoveMessage = FullMoveMessage; //keeping it for black's turn
             }
             else
             {
-                //if no black message, then put back the white message
-                if (TempMessage == "")
+                FullMoveMessage = WhiteMoveMessage + " " + MoveNotation;
+                string AttackFlavour = TempMessage;
+                if (AttackFlavour != "")
                 {
-                    TempMessage = WhiteMoveMessage;
+                    FullMoveMessage += " (" + AttackFlavour + ")";
                 }
-                TempMessage = Turn.ToString() + ". " + WhiteMoveNotation + " " + FullNotation + TempMessage;
 
             }
-            //display message
-            DisplayMsg(TempMessage);
-        }
 
-       
+
+
+            //display message
+            DisplayMsg(FullMoveMessage);
+        }
+ 
 
 
         if (CurrentActivePiece.NewQueen)
@@ -435,6 +470,7 @@ public class MainManager : MonoBehaviour {
     public string EatPiece(Piece piece)
     {
 
+
         //Calculate damage (0 to MaxHP)
         int DMG = (int)(Random.Range(0, CurrentActivePiece.MaxHP+1));
         Debug.Log("damage:" + DMG);
@@ -445,17 +481,18 @@ public class MainManager : MonoBehaviour {
         if ((piece.HP < 1)||(piece.PieceColor=="red"))
         {
 
+
             if (CurrentActivePiece.human && !piece.human && (piece.PieceType != "coin"))
             {
-                TempMessage = " Your " + CurrentActivePiece.PieceType + " scored an excellent hit on the " + piece.PieceType;
+                TempMessage = "Your " + CurrentActivePiece.PieceType + " scored an excellent hit on the " + piece.PieceType;
             }
             if (!CurrentActivePiece.human && piece.human)
             {
-                TempMessage = " The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
+                TempMessage = "The " + CurrentActivePiece.PieceType + " scored an excellent hit on your " + piece.PieceType;
             }
             if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType != "coin")
             {
-                TempMessage = " You now have a new " + piece.PieceType + " !";
+                TempMessage = "You now have a new " + piece.PieceType + " !";
             }
 
 
@@ -508,6 +545,11 @@ public class MainManager : MonoBehaviour {
             }
             else if (piece.human != CurrentActivePiece.human)
             {
+
+              /*  int gold = (int)(Random.value * 50);
+                TempMessage = "You found " + gold + " gold !";
+                PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);*/
+
                 PieceList.Remove(piece);
                 Destroy(piece.gameObject);
                 GetComponent<AudioSource>().clip = gulp;
@@ -530,6 +572,8 @@ public class MainManager : MonoBehaviour {
             TempMessage = "Some damage but no kill";
             //you have to go back to where you came from!
             WaitingForMoveBack = true;
+            GetComponent<AudioSource>().clip = tic;
+            GetComponent<AudioSource>().Play();
             return "*";
             
         }
