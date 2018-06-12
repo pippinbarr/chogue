@@ -135,7 +135,7 @@ public class TileType : MonoBehaviour {
         if (!MM.WaitingForMove)
         {
             //update my tile
-            if ((collision.transform.tag == "piece") && (CurrentPiece == null))
+            if (collision.transform.tag == "piece")
             {
                 CurrentPiece = collision.transform;
 

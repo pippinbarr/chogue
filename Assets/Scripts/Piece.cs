@@ -114,7 +114,15 @@ public class Piece : MonoBehaviour {
                 List<TileType> TempTileList = new List<TileType>();
                 foreach (TileType tile in col.transform.GetComponent<GetCollidingThings>().CollidingTileList)
                 {
-                    TempTileList.Add(tile);
+                   if (tile.CurrentPiece == null)
+                    {
+                        TempTileList.Add(tile);
+                    }
+                    else
+                    {
+                        
+                        TempTileList.Add(tile.CurrentPiece.GetComponent<TileType>());
+                    }
                 }
                 //col.transform.GetComponent<GetCollidingThings>().CollidingTileList;
                 //for each tile, find out the distance to this piece
@@ -376,7 +384,7 @@ public class Piece : MonoBehaviour {
         CurrentTile.GetComponent<TileType>().CurrentPiece = TempPiece;
         MM.PieceList.Insert(0,TempPiece.GetComponent<Piece>());
         MM.PieceList.Remove(this);
-        Debug.Log("Queen(), new PieceType is " + MM.PieceList[0].PieceType);
+        //Debug.Log("Queen(), new PieceType is " + MM.PieceList[0].PieceType);
 
         Destroy(gameObject);
     }
@@ -429,9 +437,10 @@ public class Piece : MonoBehaviour {
     }
    public void DecideMove()
     {
-        
-        
+
+
         //Find available destinations
+        FindAvailableDestinations();
         
         if (TileList.Count > 0)
         {
@@ -614,7 +623,7 @@ public class Piece : MonoBehaviour {
         {
             MM = GameObject.Find("MainManager").GetComponent<MainManager>();
         }
-        if ((collision.transform.tag == "tile")&&!MM.WaitingForMove)
+        if ((collision.transform.tag == "tile"))
         {
             CurrentTile = collision.transform;
             CurrentTileRoomColor = CurrentTile.GetComponent<TileType>().RoomColor;

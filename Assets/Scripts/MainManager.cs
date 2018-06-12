@@ -92,7 +92,8 @@ public class MainManager : MonoBehaviour {
         
 
         WaitingForPlayerMove = true;
-        Debug.Log("player's turn");
+        WaitingForCPUMove = false;
+       // Debug.Log("player's turn");
         
     }
 	
@@ -122,6 +123,7 @@ public class MainManager : MonoBehaviour {
                     CurrentActivePiece.SetActive(true);
                     CurrentActivePiece.FindAvailableDestinations();
                     CurrentActivePiece.ShowDestinations();
+                   // CurrentActivePiece.SetActive(false);
                     PieceSelected = true;
                     UpdateStatus();
                 }
@@ -157,8 +159,8 @@ public class MainManager : MonoBehaviour {
                         }
                         StartCoroutine(MoveToTile(gototile.GetComponent<TileType>()));
                         
-                        WaitingForPlayerMove = false;
-                        UpdateVisibility();
+                        //WaitingForPlayerMove = false;
+                        //UpdateVisibility();
                         
 
                     }
@@ -212,19 +214,27 @@ public class MainManager : MonoBehaviour {
         }
     }
 
-    void  PlayBlack()
+    IEnumerator  PlayBlack()
     {
         //give a few seconds
-        WaitingForCPUMove = true;
-        Debug.Log("CPU's turn");
         //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
+        int wait = 1;
+        Debug.Log("about to wait");
+        while (wait > 0)
+        {
+            yield return new WaitForSeconds(0.1f);
+            wait--;
+            Debug.Log("waiting a bit");
+        }
+        Debug.Log("finished waiting");
 
         UpdateThreats();
+        UpdateVisibility();
 
         //first ask every piece what is its best move
         int bestmove = 0;
-        Piece bestpiece = PieceList[0];
+        Piece bestpiece = null;
         foreach (Piece piece in PieceList)
         {
             //if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
@@ -263,18 +273,18 @@ public class MainManager : MonoBehaviour {
                 }
             }
         }
-        CurrentActivePiece = bestpiece;
-        
-        CurrentActivePiece.MakeMove();
-        
-        WaitingForCPUMove = false;
-        
 
+        if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null))
+        {
+            CurrentActivePiece = bestpiece;
+            CurrentActivePiece.MakeMove();
 
-
-        WaitingForPlayerMove = true;
-        Debug.Log("Waiting for player's turn");
-        PieceSelected = false;
+        }
+        else
+        {
+            ChangeTurn();
+        }
+                
 
 
     }
@@ -298,7 +308,7 @@ public class MainManager : MonoBehaviour {
     {
         //UpdateThreats();
         //Am I going to a tile that has a piece?
-        if (tile.CurrentPiece != null)
+        if ((tile.CurrentPiece != null)&&(!nomessage))
         {
             Debug.Log("Found a piece at the tile, going there instead");
             tile = tile.CurrentPiece.GetComponent<TileType>();
@@ -306,6 +316,7 @@ public class MainManager : MonoBehaviour {
 
         //saving original position (for message)
         Transform OriginPosition = CurrentActivePiece.CurrentTile;
+        Vector3 Origin = OriginPosition.position;
         
         //Debug.Log("destination tile type: "+tile.GetComponent<TileType>().Type);
         WaitingForMove = true;
@@ -372,28 +383,8 @@ public class MainManager : MonoBehaviour {
         string Promotion = "";
         //check whether piece has enemy king in check
 
-        // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
-        // calculate its possible attacks based on that.
-        if (CurrentActivePiece.NewQueen)
-        {
-            CurrentActivePiece.Queen();
-            CurrentActivePiece = PieceList[0];
-            Promotion = "=Q";
-        }
+    
 
-        //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
-
-
-        CurrentActivePiece.FindAvailableDestinations();
-       CurrentActivePiece.SetActive(false);
-
-       
-
-        
-        if (CurrentActivePiece.check)
-        {
-            InCheck = "+";
-        }
 
         TempMessage = ""; //reset message
         //was this a piece? then eat it!
@@ -404,8 +395,31 @@ public class MainManager : MonoBehaviour {
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
         }
 
+        // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
+        // calculate its possible attacks based on that.
+        if (CurrentActivePiece.NewQueen)
+        {
+            CurrentActivePiece.Queen();
+            CurrentActivePiece = PieceList[0];
+            CurrentActivePiece.SetActive(true);
+            CurrentActivePiece.FindAvailableDestinations();
+            OriginPosition = CurrentActivePiece.CurrentTile;
+            //OriginPosition.position = Origin;
+            //ChangeTurn();
+            Debug.Log("nomessage: " + nomessage);
+
+            Promotion = "=Q";
+        }
+
+        //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
 
 
+        CurrentActivePiece.FindAvailableDestinations();
+        CurrentActivePiece.SetActive(false);
+        if (CurrentActivePiece.check)
+        {
+            InCheck = "+";
+        }
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
         //string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + InCheck + ") ";
@@ -471,9 +485,15 @@ public class MainManager : MonoBehaviour {
         if (WaitingForMoveBack)
         {
             WaitingForMove = true;
+            Debug.Log("going back to where I came from");
 
             WaitingForMoveBack = false;
-            StartCoroutine(MoveToTile(OriginPosition.GetComponent<TileType>(), true));
+            TileType temptile = FindTileByPosition(Origin);
+            if (temptile == null)
+            {
+                temptile = OriginPosition.GetComponent<TileType>();
+            }
+            StartCoroutine(MoveToTile(temptile, true));
             while (WaitingForMove)
             {
                
@@ -483,8 +503,15 @@ public class MainManager : MonoBehaviour {
             
 
         }
+        
         UpdateVisibility();
         UpdateThreats();
+        if (!nomessage)
+        {
+            ChangeTurn();
+        }
+        
+
 
     }
 
@@ -578,7 +605,7 @@ public class MainManager : MonoBehaviour {
                 }
 
 
-
+                
 
                 // WaitingForCPUMove = true;
 
@@ -719,5 +746,37 @@ public class MainManager : MonoBehaviour {
         {
             msgline.text = msg;
         }
+    }
+    TileType FindTileByPosition(Vector3 tilepos)
+
+    {
+        foreach(TileType tile in TileList)
+        {
+            if (tile.transform.position == tilepos)
+            {
+                return tile;
+            }
+        }
+        return null;
+    }
+    void ChangeTurn()
+    {
+        if (WaitingForCPUMove)
+        {
+            Debug.Log("Player's turn");
+            WaitingForCPUMove = false;
+            PieceSelected = false;
+            WaitingForPlayerMove = true;
+        }
+        else
+        {
+            Debug.Log("CPU's turn");
+            WaitingForCPUMove = true;
+           
+            WaitingForPlayerMove = false;
+            StartCoroutine(PlayBlack());
+        }
+
+
     }
 }
