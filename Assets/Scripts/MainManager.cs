@@ -332,14 +332,16 @@ public class MainManager : MonoBehaviour {
             GetComponent<AudioSource>().Play();
         }
         CurrentActivePiece.SetActive(true);
-        while (( Vector3.Distance(destination, CurrentActivePiece.transform.position)>0.2f)&&WaitingForMove)
+        Debug.Log("About to get moving");
+        while (( Vector3.Distance(destination, CurrentActivePiece.transform.position)>0.2f))
         {
             //Debug.Log("distance: "+Vector3.Distance(destination, CurrentActivePiece.transform.position));
             CurrentActivePiece.transform.position = CurrentActivePiece.transform.position + movestep;
             yield return new WaitForSeconds(0.01f);
             //UpdateVisibility();
         }
-
+        Debug.Log("finished moving");
+        
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();
         CurrentActivePiece.transform.position = destination;
@@ -406,7 +408,7 @@ public class MainManager : MonoBehaviour {
             OriginPosition = CurrentActivePiece.CurrentTile;
             //OriginPosition.position = Origin;
             //ChangeTurn();
-            Debug.Log("nomessage: " + nomessage);
+            
 
             Promotion = "=Q";
         }
@@ -476,11 +478,11 @@ public class MainManager : MonoBehaviour {
             //display message
             DisplayMsg(FullMoveMessage);
         }
- 
+
+
+
+
         
-
-
-        WaitingForMove = false;
         //if attack but not kill, send piece back to where it came from!
         if (WaitingForMoveBack)
         {
@@ -494,22 +496,25 @@ public class MainManager : MonoBehaviour {
                 temptile = OriginPosition.GetComponent<TileType>();
             }
             StartCoroutine(MoveToTile(temptile, true));
-            while (WaitingForMove)
+            Debug.Log("waiting to get back");
+            yield break;
+           /* while (WaitingForMove==true)
             {
-               
-                yield return new WaitForSeconds(0.01f);
-               
-            }
-            
+                //Debug.Log("WaitingForMove:" + WaitingForMove);
+                yield return new WaitForSeconds(0.001f);
+                //Debug.Log("WaitingForMove2:" + WaitingForMove);
 
+            }*/
+
+            Debug.Log("got back, finish move function");
         }
-        
+        WaitingForMove = false;
         UpdateVisibility();
         UpdateThreats();
-        if (!nomessage)
-        {
-            ChangeTurn();
-        }
+        
+
+        ChangeTurn();
+
         
 
 
@@ -750,17 +755,21 @@ public class MainManager : MonoBehaviour {
     TileType FindTileByPosition(Vector3 tilepos)
 
     {
+        Debug.Log("find tile by position");
         foreach(TileType tile in TileList)
         {
             if (tile.transform.position == tilepos)
             {
+                Debug.Log("found tile");
                 return tile;
             }
         }
+        Debug.Log("tile not found");
         return null;
     }
     void ChangeTurn()
     {
+        Debug.Log("changing turn");
         if (WaitingForCPUMove)
         {
             Debug.Log("Player's turn");
