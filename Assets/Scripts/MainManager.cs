@@ -539,22 +539,22 @@ public class MainManager : MonoBehaviour {
             {
                 if (HitPointVersion)
                 {
-                    TempMessage = "Your " + CurrentActivePiece.PieceType + " defeated the black " + piece.PieceType;
+                    TempMessage = "Your " + CurrentActivePiece.PieceType + " defeated the " + piece.PieceType;
                 }
                 else
                 {
-                    TempMessage = "Your " + CurrentActivePiece.PieceType + " captured the black " + piece.PieceType;
+                    TempMessage = "Your " + CurrentActivePiece.PieceType + " captured the " + piece.PieceType;
                 }
             }
             if (!CurrentActivePiece.human && piece.human)
             {
                 if (HitPointVersion)
                 {
-                    TempMessage = "The black " + CurrentActivePiece.PieceType + " defeated your " + piece.PieceType;
+                    TempMessage = "The " + CurrentActivePiece.PieceType + " defeated your " + piece.PieceType;
                 }
                 else
                 {
-                    TempMessage = "The black " + CurrentActivePiece.PieceType + " captured your " + piece.PieceType;
+                    TempMessage = "The " + CurrentActivePiece.PieceType + " captured your " + piece.PieceType;
                 }
             }
             if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType != "coin")
@@ -648,12 +648,12 @@ public class MainManager : MonoBehaviour {
 
             if (CurrentActivePiece.human)
             {
-                TempMessage = "Your " + CurrentActivePiece.PieceType + " " + verb + " the " + piece.PieceColor + " " + piece.PieceType;
+                TempMessage = "Your " + CurrentActivePiece.PieceType + " " + verb + " the " + " " + piece.PieceType;
 
             }
             else
             {
-                TempMessage = "The " + CurrentActivePiece.PieceColor + " " + CurrentActivePiece.PieceType + " " + verb + " your " + piece.PieceType; ;
+                TempMessage = "The " + " " + CurrentActivePiece.PieceType + " " + verb + " your " + piece.PieceType; ;
             }
 
             //TempMessage = "Some damage but no kill";
