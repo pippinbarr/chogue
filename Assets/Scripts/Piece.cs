@@ -518,7 +518,7 @@ public class Piece : MonoBehaviour {
         //am I threatened and uncovered?
         threatened = CurrentTile.GetComponent<TileType>().threatened;
         covered = CurrentTile.GetComponent<TileType>().covered;
-        if ( (PieceType!="king")&&(BestMove == 0)&&(threatened)&&(!covered))
+        if ( (PieceType!="king")&&(BestMove == 0)&&(threatened))
         {
            
             //Debug.Log("I'm threatened");
@@ -532,12 +532,12 @@ public class Piece : MonoBehaviour {
                     BestMoveTarget = tile.transform;
                     break;
                 }
-                else if(tile.covered)
+                /*else if(tile.covered)
                 {
                     //Debug.Log("covered ");
                     BestMove = 1;
                     BestMoveTarget = tile.transform;
-                }
+                }*/
 
             }
         }
@@ -621,6 +621,19 @@ public class Piece : MonoBehaviour {
                 BestMove = 5;
                 BestMoveTarget = TileList[0].transform;
 
+            }
+        }
+        if ((BestMoveTarget!=null)&&(BestMove==1)){
+            if (BestMoveTarget.GetComponent<TileType>().threatened)
+            {
+                BestMove = -1;
+            }
+            if (BestMoveTarget.GetComponent<Piece>() != null)
+            {
+                if (BestMoveTarget.GetComponent<Piece>().threatened)
+                {
+                    BestMove = -1;
+                }
             }
         }
         

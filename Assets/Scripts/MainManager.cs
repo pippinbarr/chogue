@@ -211,9 +211,15 @@ public class MainManager : MonoBehaviour {
             piece.threatened = false;
             piece.covered = false;
             piece.guarding = false;
-            piece.SetActive(true);
+           // piece.SetActive(true);
+            
+           // piece.SetActive(false);
+        }
+        foreach (Piece piece in PieceList)
+        {
+            
             piece.FindAvailableDestinations();
-            piece.SetActive(false);
+            // piece.SetActive(false);
         }
     }
 
@@ -226,14 +232,14 @@ public class MainManager : MonoBehaviour {
         //Debug.Log("about to wait");
         while (wait > 0)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
             wait--;
            // Debug.Log("waiting a bit");
         }
        // Debug.Log("finished waiting");
 
-        UpdateThreats();
-        UpdateVisibility();
+        
+        //UpdateVisibility();
 
         //first ask every piece what is its best move
         int bestmove = 0;
@@ -243,14 +249,15 @@ public class MainManager : MonoBehaviour {
             //if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
             if (piece.PieceColor == "black")
              {
-                piece.SetActive(true);
+                //piece.SetActive(true);
+                //UpdateThreats();
                 piece.DecideMove();
                 if (piece.BestMove > bestmove)
                 {
                     bestmove = piece.BestMove;
                     bestpiece = piece;
                 }
-                piece.SetActive(false);
+               // piece.SetActive(false);
                 // break;
             }
         }
@@ -266,7 +273,7 @@ public class MainManager : MonoBehaviour {
             {
                 if (!piece.human)
                 {
-                    if (piece.LeastDistanceToKing < leastdist)
+                    if ((piece.LeastDistanceToKing < leastdist)&&(!piece.BestMoveTarget.GetComponent<TileType>().threatened))
                     {
                         leastdist = piece.LeastDistanceToKing;
                         //Debug.Log("Least distance is " + leastdist);
@@ -408,13 +415,10 @@ public class MainManager : MonoBehaviour {
         int destFileIndex = Mathf.FloorToInt(tile.transform.position.x);
         string destFile = files[destFileIndex];
         //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
-        WaitingForMove = false;
-        CurrentActivePiece.SetActive(true);
-        yield return new WaitForSeconds(0.2f);
-        //yield return new WaitForSeconds(0.05f);        
-        CurrentActivePiece.FindAvailableDestinations();
 
-        UpdateThreats();
+
+
+       // UpdateThreats();
         //was this a piece? then eat it!
         if (tile.transform.tag == "piece")
         {
@@ -422,7 +426,20 @@ public class MainManager : MonoBehaviour {
             Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
         }
-
+        WaitingForMove = false;
+        foreach (Piece piece in PieceList)
+        {
+            piece.SetActive(true);
+        }
+        yield return new WaitForSeconds(0.2f);
+        UpdateThreats();
+       //yield return new WaitForSeconds(2.2f);
+        //UpdateThreats();
+        UpdateVisibility();
+        foreach (Piece piece in PieceList)
+        {
+            piece.SetActive(false);
+        }
         // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
         // calculate its possible attacks based on that.
         if (CurrentActivePiece.NewQueen)
@@ -525,7 +542,7 @@ public class MainManager : MonoBehaviour {
         }
         WaitingForMove = false;
         UpdateVisibility();
-        UpdateThreats();
+        //UpdateThreats();
         
 
         ChangeTurn();
