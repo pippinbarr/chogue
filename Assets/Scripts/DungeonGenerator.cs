@@ -372,10 +372,13 @@ public class DungeonGenerator : MonoBehaviour
         }
         else
         {
+            // I assume this is a failure case???
             startX = 0;
             startY = 0;
             endX = 0;
             endY = 0;
+            Debug.Log("BIG PROBLEM: From and To cannot be connected!");
+            Application.Quit();
         }
 
         int y = startY;
@@ -392,7 +395,7 @@ public class DungeonGenerator : MonoBehaviour
             {
                 if (x != endX && progress > 1)
                 {
-                    if (y == endY - 3 || y == endY + 3 || Random.value < 0.33)
+                    if (y == endY - 2 || y == endY + 2 || Random.value < 0.33)
                     {
                         while (x != endX)
                         {
@@ -418,7 +421,7 @@ public class DungeonGenerator : MonoBehaviour
             {
                 if (y != endY && progress > 1)
                 {
-                    if (x == endX - 3 || x == endX + 3 || Random.value < 0.33)
+                    if (x == endX - 2 || x == endX + 2 || Random.value < 0.33)
                     {
                         while (y != endY)
                         {
