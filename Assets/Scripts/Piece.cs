@@ -148,6 +148,7 @@ public class Piece : MonoBehaviour {
 
                 //then add tiles to main list until you find a wall
                 guarding = false;
+                bool BreakOnNextTile = false;
                 foreach (TileType tile in TempTileList)
                 {
 
@@ -155,8 +156,14 @@ public class Piece : MonoBehaviour {
                     {
                         break;
                     }
-                    else if (tile.transform.tag == "piece")
+                    else if ((tile.transform.tag == "piece")&&(!BreakOnNextTile))
                     {
+                        if (PieceColor == "white")
+                        {
+                            tile.GetComponent<Piece>().threatened = true;
+                            tile.threatened = true;
+                        }
+                        
                         if ((tile.GetComponent<Piece>().human != human))
                         {
                             TileList.Add(tile);
@@ -176,26 +183,37 @@ public class Piece : MonoBehaviour {
                         {
                             TileList.Remove(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>());
                         }
-                        break;
+                        BreakOnNextTile = true;
 
                     }
                     else if (tile.transform.tag == "tile")
                     {
-                        TileList.Add(tile);
-                        //if we are white, set visibility around
-                        if (PieceColor == "white")
+                        if (!BreakOnNextTile)
                         {
-                            tile.GetDistanceTo(transform);
-                            if (tile.DistanceToPiece < 3)
+                            TileList.Add(tile);
+                            //if we are white, set visibility around
+                            if (PieceColor == "white")
                             {
-                                tile.visited = true;
-                                tile.visible = true;
-                                tile.SetVisibility();
+                                tile.GetDistanceTo(transform);
+                                if (tile.DistanceToPiece < 3)
+                                {
+                                    tile.visited = true;
+                                    tile.visible = true;
+                                    tile.SetVisibility();
 
+                                }
                             }
                         }
 
+                        else 
+                        {
+                            tile.threatened = true;
+
+                            //break;
+                        }
+
                     }
+
                 }
 
             }
@@ -211,6 +229,10 @@ public class Piece : MonoBehaviour {
                     if (tile.GetComponent<Piece>() != null)
                     {
                         tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().threatened = true;
+                    }
+                    if (tile.CurrentPiece != null)
+                    {
+                        tile.CurrentPiece.GetComponent<Piece>().threatened = true;
                     }
                 }
                 else
@@ -367,6 +389,10 @@ public class Piece : MonoBehaviour {
                 {
                     TileList.Add(tile);
                 }
+                if (PieceColor == "white")
+                {
+                    tile.threatened = true;
+                }
 
                
             }
@@ -448,6 +474,12 @@ public class Piece : MonoBehaviour {
         }
         else
         {
+            //if I'm king and I am threatened, this means I'm checkmated
+            if (threatened)
+            {
+               // MM.Win();
+                Debug.Log("Checkmate");
+            }
             BestMove = 0;
             LeastDistanceToKing = 10000000;
         }
@@ -459,22 +491,24 @@ public class Piece : MonoBehaviour {
             {
                 if (tile.GetComponent<Piece>().human)
                 {
-                    //Debug.Log("eat human");
-                    BestMove = 3;
-                    BestMoveTarget = tile.transform;
-                    if (tile.GetComponent<Piece>().PieceType == "king")
+                    //if I'm king and the piece I'm looking at is threatened, can't eat it
+                    if (!((PieceType == "king") && (tile.GetComponent<Piece>().threatened)))
                     {
-                        BestMove = 4;
-                        return;
-                    }
-                    
+                        BestMove = 3;
+                        BestMoveTarget = tile.transform;
+                        if ((tile.GetComponent<Piece>().PieceType == "king")||((PieceType=="king")&&threatened))
+                        {
+                            BestMove = 5;
+                            return;
+                        }
+                    }                   
                     
                 }
             }
             //special case for ennemy king, looking for an exit
             else if ((PieceType == "king") && (tile.Type == 3))
             {
-                BestMove = 2;
+                BestMove = 5;
                 BestMoveTarget = tile.transform;
             }
 
@@ -482,7 +516,7 @@ public class Piece : MonoBehaviour {
         //am I threatened and uncovered?
         threatened = CurrentTile.GetComponent<TileType>().threatened;
         covered = CurrentTile.GetComponent<TileType>().covered;
-        if ( (BestMove == 1)&&(threatened)&&(!covered))
+        if ( (PieceType!="king")&&(BestMove == 1)&&(threatened)&&(!covered))
         {
             //Debug.Log("I'm threatened");
             //can I find a place where I'll be protected?
@@ -504,6 +538,26 @@ public class Piece : MonoBehaviour {
 
             }
         }
+        //If I'm king I absolutely want to be not threatened.
+        if ((PieceType == "king") && (threatened))
+        {
+            Debug.Log("I'm king and threatened");
+            foreach(TileType tile in TileList)
+            {
+                if (!tile.threatened)
+                {
+                    BestMove = 4;
+                    BestMoveTarget = tile.transform;
+                }
+            }
+            //if I haven't found anything, I'm checkmate
+            if (BestMove < 4)
+            {
+                //MM.Win();
+                Debug.Log("checkmate");
+            }
+        }
+
         //if we haven't found a piece to eat, find closest place
         if ((BestMove == 1)&&(!guarding))
         {
@@ -552,6 +606,10 @@ public class Piece : MonoBehaviour {
             }
 
         }
+        if ((BestMove == 1) && (threatened))
+        {
+            BestMove = -1;
+        }
         if (PieceColor == "red")
         {
             if (TileList.Count > 0)
@@ -561,7 +619,7 @@ public class Piece : MonoBehaviour {
 
             }
         }
-
+        
         
     }
 
@@ -664,6 +722,7 @@ public class Piece : MonoBehaviour {
                 Destroy(child.gameObject);
             }
         }
+        HP = MaxHP;
         CreateModel("white");
         human = true;
 

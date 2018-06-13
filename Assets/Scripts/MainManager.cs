@@ -208,6 +208,9 @@ public class MainManager : MonoBehaviour {
         //first, find available destinations for all pieces to updated "protected" and "covered" statuses
         foreach (Piece piece in PieceList)
         {
+            piece.threatened = false;
+            piece.covered = false;
+            piece.guarding = false;
             piece.SetActive(true);
             piece.FindAvailableDestinations();
             piece.SetActive(false);
@@ -220,14 +223,14 @@ public class MainManager : MonoBehaviour {
         //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
         int wait = 1;
-        Debug.Log("about to wait");
+        //Debug.Log("about to wait");
         while (wait > 0)
         {
             yield return new WaitForSeconds(0.1f);
             wait--;
-            Debug.Log("waiting a bit");
+           // Debug.Log("waiting a bit");
         }
-        Debug.Log("finished waiting");
+       // Debug.Log("finished waiting");
 
         UpdateThreats();
         UpdateVisibility();
@@ -273,15 +276,20 @@ public class MainManager : MonoBehaviour {
                 }
             }
         }
+        Debug.Log("best move level:" + bestmove);
+        Debug.Log("best piece:" + bestpiece);
+        Debug.Log("best destination:" + bestpiece.BestMoveTarget);
 
-        if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null))
+        if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null)&&(bestmove>-1))
         {
+            Debug.Log("let's move");
             CurrentActivePiece = bestpiece;
             CurrentActivePiece.MakeMove();
 
         }
         else
         {
+            Debug.Log("Haven'T found any good move");
             ChangeTurn();
         }
                 
@@ -340,7 +348,7 @@ public class MainManager : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
             //UpdateVisibility();
         }
-        Debug.Log("finished moving");
+        //Debug.Log("finished moving");
         
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();
@@ -415,7 +423,7 @@ public class MainManager : MonoBehaviour {
 
         //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
 
-
+        //yield return new WaitForSeconds(0.05f);
         CurrentActivePiece.FindAvailableDestinations();
         CurrentActivePiece.SetActive(false);
         if (CurrentActivePiece.check)
@@ -769,17 +777,17 @@ public class MainManager : MonoBehaviour {
     }
     void ChangeTurn()
     {
-        Debug.Log("changing turn");
+        //Debug.Log("changing turn");
         if (WaitingForCPUMove)
         {
-            Debug.Log("Player's turn");
+           // Debug.Log("Player's turn");
             WaitingForCPUMove = false;
             PieceSelected = false;
             WaitingForPlayerMove = true;
         }
         else
         {
-            Debug.Log("CPU's turn");
+           // Debug.Log("CPU's turn");
             WaitingForCPUMove = true;
            
             WaitingForPlayerMove = false;
