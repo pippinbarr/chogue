@@ -727,7 +727,8 @@ public class MainManager : MonoBehaviour {
     }
     public void GameOver()
     {
-        
+
+        PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         SceneManager.LoadScene("GameOver");
 
     }

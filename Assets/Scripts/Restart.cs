@@ -8,10 +8,13 @@ public class Restart : MonoBehaviour {
 
     public Text CurLevel;
     public Text BestLevel;
+    public Text Epitaph;
     // Use this for initialization
 
     public void Start()
     {
+        Epitaph.text = "White King\n\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\n" + System.DateTime.Today.ToShortDateString();
+        
         if (PlayerPrefs.GetInt("level") > PlayerPrefs.GetInt("maxlevel"))
         {
             PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level") );
@@ -26,5 +29,13 @@ public class Restart : MonoBehaviour {
     public void RestartGame()
     {
         SceneManager.LoadScene("Level1");
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            RestartGame();
+        }
     }
 }
