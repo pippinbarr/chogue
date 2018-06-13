@@ -398,6 +398,23 @@ public class MainManager : MonoBehaviour {
 
 
         TempMessage = ""; //reset message
+        // Calculate notation for the squares
+
+        string startRank = (OriginPosition.position.y).ToString();
+        int startFileIndex = Mathf.FloorToInt(OriginPosition.position.x);
+        string startFile = files[startFileIndex];
+
+        string destRank = (tile.transform.position.y).ToString();
+        int destFileIndex = Mathf.FloorToInt(tile.transform.position.x);
+        string destFile = files[destFileIndex];
+        //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
+        WaitingForMove = false;
+        CurrentActivePiece.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        //yield return new WaitForSeconds(0.05f);        
+        CurrentActivePiece.FindAvailableDestinations();
+
+        UpdateThreats();
         //was this a piece? then eat it!
         if (tile.transform.tag == "piece")
         {
@@ -422,11 +439,8 @@ public class MainManager : MonoBehaviour {
             Promotion = "=Q";
         }
 
-        //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
 
-        //yield return new WaitForSeconds(0.05f);
-        CurrentActivePiece.FindAvailableDestinations();
-        CurrentActivePiece.SetActive(false);
+
         if (CurrentActivePiece.check)
         {
             InCheck = "+";
@@ -436,15 +450,7 @@ public class MainManager : MonoBehaviour {
         //string FullNotation = "(" + PieceType + OriginCoordinate + ActionSymbol + DestinationPiece + DestinationCoordinate + InCheck + ") ";
 
 
-        // Calculate notation for the squares
 
-        string startRank = (OriginPosition.position.y).ToString();
-        int startFileIndex = Mathf.FloorToInt(OriginPosition.position.x);
-        string startFile = files[startFileIndex];
-
-        string destRank = (tile.transform.position.y).ToString();
-        int destFileIndex = Mathf.FloorToInt(tile.transform.position.x);
-        string destFile = files[destFileIndex];
 
         if (ActionSymbol != "" && PieceType == "pawn")
         {

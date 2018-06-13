@@ -48,6 +48,7 @@ public class GetCollidingThings : MonoBehaviour {
                  Debug.Log("add tiles");
                 }
                 CollidingTileList.Add(other.GetComponent<TileType>());
+                //other.GetComponent<TileType>().threatened = true;
                 //Has the pawn touched a wall?
 
 

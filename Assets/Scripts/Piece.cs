@@ -156,7 +156,7 @@ public class Piece : MonoBehaviour {
                     {
                         break;
                     }
-                    else if ((tile.transform.tag == "piece")&&(!BreakOnNextTile))
+                    else if ((tile.transform.tag == "piece"))
                     {
                         if (PieceColor == "white")
                         {
@@ -183,13 +183,14 @@ public class Piece : MonoBehaviour {
                         {
                             TileList.Remove(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>());
                         }
-                        BreakOnNextTile = true;
+                        //BreakOnNextTile = true;
+                        break;
 
                     }
                     else if (tile.transform.tag == "tile")
                     {
-                        if (!BreakOnNextTile)
-                        {
+                       // if (!BreakOnNextTile)
+                       // {
                             TileList.Add(tile);
                             //if we are white, set visibility around
                             if (PieceColor == "white")
@@ -202,16 +203,17 @@ public class Piece : MonoBehaviour {
                                     tile.SetVisibility();
 
                                 }
+                                tile.threatened = true;
                             }
-                        }
-
+                       // }
+                       /*
                         else 
                         {
                             tile.threatened = true;
 
                             //break;
                         }
-
+                        */
                     }
 
                 }
@@ -470,7 +472,7 @@ public class Piece : MonoBehaviour {
         
         if (TileList.Count > 0)
         {
-            BestMove = 1;
+            BestMove = 0;
         }
         else
         {
@@ -480,7 +482,7 @@ public class Piece : MonoBehaviour {
                // MM.Win();
                 Debug.Log("Checkmate");
             }
-            BestMove = 0;
+            BestMove = -1;
             LeastDistanceToKing = 10000000;
         }
         //See if the human is there 
@@ -516,8 +518,9 @@ public class Piece : MonoBehaviour {
         //am I threatened and uncovered?
         threatened = CurrentTile.GetComponent<TileType>().threatened;
         covered = CurrentTile.GetComponent<TileType>().covered;
-        if ( (PieceType!="king")&&(BestMove == 1)&&(threatened)&&(!covered))
+        if ( (PieceType!="king")&&(BestMove == 0)&&(threatened)&&(!covered))
         {
+           
             //Debug.Log("I'm threatened");
             //can I find a place where I'll be protected?
             foreach(TileType tile in TileList)
@@ -559,7 +562,7 @@ public class Piece : MonoBehaviour {
         }
 
         //if we haven't found a piece to eat, find closest place
-        if ((BestMove == 1)&&(!guarding))
+        if ((BestMove == 0)&&(!guarding))
         {
             //Get the human coordinates
             Piece HumanKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
@@ -586,12 +589,13 @@ public class Piece : MonoBehaviour {
             //try to find a tile that isn't threatened
             if ((TileList.Count > 0)&&(PieceType!="pawn"))
             {
-                BestMove = 0;
+                //BestMove = 0;
                 LeastDistanceToKing = 1000000000;
                 foreach (TileType tile in TileList)
                 {
                     if (!tile.threatened)
                     {
+                        BestMove = 1;
                         BestMoveTarget = TileList[0].transform;
                         LeastDistanceToKing = TileList[0].DistanceToPiece;
                     }
@@ -606,10 +610,10 @@ public class Piece : MonoBehaviour {
             }
 
         }
-        if ((BestMove == 1) && (threatened))
+       /* if ((BestMove == 1) && (threatened))
         {
             BestMove = -1;
-        }
+        }*/
         if (PieceColor == "red")
         {
             if (TileList.Count > 0)

@@ -100,6 +100,7 @@ public class MapMaker : MonoBehaviour {
                     Color startroomcolor = GameObject.Find("MainManager").GetComponent<DungeonGenerator>().m_StartRoomColor;
                     Color currentcolor = Level.GetPixel(posx, posy);
                     float difcolor = Mathf.Abs((startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r));
+
                    // Debug.Log("color difference : " + difcolor);
                     if ((incomingpieces!="")&&(difcolor<0.01))
                     {
@@ -142,6 +143,11 @@ public class MapMaker : MonoBehaviour {
                         incomingpieces = incomingpieces.Substring(1,(incomingpieces.Length-1));
                         Debug.Log("incoming pieces : " + incomingpieces);
                        // PlayerPrefs.SetString("IncomingPieces", incomingpieces);
+                    }
+                    //we don't want to spawn on stairs either
+                    if (currentcolor == new Color(0, 0, 1, 1))
+                    {
+                        difcolor = -100;
                     }
                     //Here we add the ennemies0
                     float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100f);
