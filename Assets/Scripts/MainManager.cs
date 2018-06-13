@@ -276,9 +276,10 @@ public class MainManager : MonoBehaviour {
                 }
             }
         }
+
         Debug.Log("best move level:" + bestmove);
-        Debug.Log("best piece:" + bestpiece);
-        Debug.Log("best destination:" + bestpiece.BestMoveTarget);
+        if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
+        if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
 
         if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null)&&(bestmove>-1))
         {
