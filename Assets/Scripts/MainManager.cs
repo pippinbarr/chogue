@@ -40,11 +40,8 @@ public class MainManager : MonoBehaviour {
 
     private int statusLineLength = 103; // Oh hardcoding, oh god
     private string[] files = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "ll", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx", "yy", "zz" };
-    private string[] hits = new string[] { "hits", "scored an excellent hit on" };
+    private string[] hits = new string[] { "hits", "swings and hits", "has injured", "scored an excellent hit on" };
     private string[] misses = new string[] { "misses", "swings and misses", "barely misses", "doesn't hit" };
-
-    //private string[] hits = new string[] { "hits", "swings and hits", "has injured", "scored an excellent hit on" };
-    //private string[] misses = new string[] { "misses", "swings and misses", "barely misses", "doesn't hit" };
 
 	// Use this for initialization
 	void Start () {
