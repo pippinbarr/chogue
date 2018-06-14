@@ -38,9 +38,13 @@ public class MainManager : MonoBehaviour {
     private string WhiteMoveNotation = "";
     private string WhiteMoveMessage = "";
 
+    private int statusLineLength = 103; // Oh hardcoding, oh god
     private string[] files = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "ll", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx", "yy", "zz" };
-    private string[] hits = new string[] { "hits", "swings and hits", "has injured", "scored an excellent hit on" };
+    private string[] hits = new string[] { "hits", "scored an excellent hit on" };
     private string[] misses = new string[] { "misses", "swings and misses", "barely misses", "doesn't hit" };
+
+    //private string[] hits = new string[] { "hits", "swings and hits", "has injured", "scored an excellent hit on" };
+    //private string[] misses = new string[] { "misses", "swings and misses", "barely misses", "doesn't hit" };
 
 	// Use this for initialization
 	void Start () {
@@ -486,7 +490,6 @@ public class MainManager : MonoBehaviour {
             PieceSymbol = startFile + startRank;
         }
 
-        // Bug: InCheck didn't work for a black knight versus my king?...
         string MoveNotation = PieceSymbol + ActionSymbol + destFile + destRank + Promotion + InCheck;
 
         //Now assembling complete message
@@ -507,16 +510,29 @@ public class MainManager : MonoBehaviour {
             }
             else
             {
+                
                 FullMoveMessage = WhiteMoveMessage + " " + MoveNotation;
                 string AttackFlavour = TempMessage;
                 if (AttackFlavour != "")
                 {
-                    FullMoveMessage += " (" + AttackFlavour + ")";
+                    string TempFullMoveMessage = FullMoveMessage + " (" + AttackFlavour + ")";
+                    while (TempFullMoveMessage.Length > statusLineLength) {
+                        Debug.Log("Too long: " + TempFullMoveMessage + " (" + TempFullMoveMessage.Length + " > " + statusLineLength);
+                        if (ActionSymbol == "*")
+                        {
+                            AttackFlavour = GenerateAttackMessage(tile.GetComponent<Piece>(), hits);
+                        }
+                        else if (ActionSymbol == ".")
+                        {
+                            AttackFlavour = GenerateAttackMessage(tile.GetComponent<Piece>(), misses);
+                        }
+                        TempFullMoveMessage = WhiteMoveMessage + " " + MoveNotation + " (" + AttackFlavour + ")";
+
+                    }
+                    FullMoveMessage = TempFullMoveMessage;
                 }
 
             }
-
-
 
             //display message
             DisplayMsg(FullMoveMessage);
@@ -685,23 +701,27 @@ public class MainManager : MonoBehaviour {
         else
         {
             string verb = "**ERROR**";
+
+            Debug.Log("Arrays are length " + hits.Length + " and " + misses.Length);
+
             if (DMG == 0)
             {
-                verb = misses[Random.Range(0, misses.Length - 1)];
+                verb = misses[Random.Range(0, misses.Length)];
             }
             else
             {
-                verb = hits[Random.Range(0, hits.Length - 1)];
+                verb = hits[Random.Range(0, hits.Length)];
             }
+
+            Debug.Log("Chose verb: " + verb);
 
             if (CurrentActivePiece.human)
             {
-                TempMessage = "Your " + CurrentActivePiece.PieceType + " " + verb + " the " + " " + piece.PieceType;
-
+                TempMessage = "Your " + CurrentActivePiece.PieceType + " " + verb + " the " + piece.PieceType;
             }
             else
             {
-                TempMessage = "The " + " " + CurrentActivePiece.PieceType + " " + verb + " your " + piece.PieceType; ;
+                TempMessage = "The " + CurrentActivePiece.PieceType + " " + verb + " your " + piece.PieceType; ;
             }
 
             //TempMessage = "Some damage but no kill";
@@ -709,12 +729,34 @@ public class MainManager : MonoBehaviour {
             WaitingForMoveBack = true;
             GetComponent<AudioSource>().clip = tic;
             GetComponent<AudioSource>().Play();
-            return "*";
+
+            if (DMG == 0)
+            {
+                return "."; // Symbol for missing
+            }
+            else {
+                return "*"; // Symbol for hitting and damaging
+            }
             
         }
         
     }
 
+
+    private string GenerateAttackMessage(Piece piece, string[] verbArray)
+    {
+        string verb = verbArray[Random.Range(0, verbArray.Length)];
+
+        if (CurrentActivePiece.human)
+        {
+            return "Your " + CurrentActivePiece.PieceType + " " + verb + " the " + piece.PieceType;
+
+        }
+        else
+        {
+            return "The " + CurrentActivePiece.PieceType + " " + verb + " your " + piece.PieceType; ;
+        }
+    }
 
 
     private void ChangeLevel()
