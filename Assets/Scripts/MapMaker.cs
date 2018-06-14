@@ -100,7 +100,7 @@ public class MapMaker : MonoBehaviour {
                     Color startroomcolor = GameObject.Find("MainManager").GetComponent<DungeonGenerator>().m_StartRoomColor;
                     Color currentcolor = Level.GetPixel(posx, posy);
                     float difcolor = Mathf.Abs((startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r));
-
+                    Debug.Log("Current color: " + currentcolor);
                    // Debug.Log("color difference : " + difcolor);
                     if ((incomingpieces!="")&&(difcolor<0.01))
                     {

@@ -221,21 +221,20 @@ public class MainManager : MonoBehaviour {
             piece.FindAvailableDestinations();
             // piece.SetActive(false);
         }
+        foreach (Piece piece in PieceList)
+        {
+
+            piece.FindAvailableDestinations();
+            // piece.SetActive(false);
+        }
     }
 
-    IEnumerator  PlayBlack()
+    void  PlayBlack()
     {
         //give a few seconds
         //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
-        int wait = 1;
-        //Debug.Log("about to wait");
-        while (wait > 0)
-        {
-            yield return new WaitForSeconds(0.01f);
-            wait--;
-           // Debug.Log("waiting a bit");
-        }
+ 
        // Debug.Log("finished waiting");
 
         
@@ -273,11 +272,15 @@ public class MainManager : MonoBehaviour {
             {
                 if (!piece.human)
                 {
-                    if ((piece.LeastDistanceToKing < leastdist)&&(!piece.BestMoveTarget.GetComponent<TileType>().threatened))
+                    if ((piece.LeastDistanceToKing < leastdist))
                     {
-                        leastdist = piece.LeastDistanceToKing;
-                        //Debug.Log("Least distance is " + leastdist);
-                        bestpiece = piece;
+                        if((piece.BestMoveTarget!=null)&& (!piece.BestMoveTarget.GetComponent<TileType>().threatened))
+                        {
+                            leastdist = piece.LeastDistanceToKing;
+                            //Debug.Log("Least distance is " + leastdist);
+                            bestpiece = piece;
+                        }
+
                     }
                     // break;
                 }
@@ -362,24 +365,8 @@ public class MainManager : MonoBehaviour {
         GetComponent<AudioSource>().Play();
         CurrentActivePiece.transform.position = destination;
         //did we land on stairs?
-
-        if (tile.GetComponent<TileType>().Type == 3)
-        {
-            Debug.Log("landed on stairs");
-            CurrentActivePiece.gameObject.SetActive(false);
-            if(CurrentActivePiece.PieceColor == "white")
-            {
-                LastSelectedPiece = null;
-                ChangeLevel();
-            }
-            else
-            {
-                //remove king
-                PieceList.Remove(CurrentActivePiece);
-                Destroy(CurrentActivePiece.gameObject);
-                //CurrentActivePiece = PieceList[0];
-            }
-        }
+        
+ 
 
         
 
@@ -431,7 +418,26 @@ public class MainManager : MonoBehaviour {
         {
             piece.SetActive(true);
         }
-        yield return new WaitForSeconds(0.2f);
+        //waiting for all collisions to register
+        yield return new WaitForSeconds(0.1f);
+
+        if ((tile!=null)&&(tile.GetComponent<TileType>().Type == 3))
+        {
+            Debug.Log("landed on stairs");
+
+            if (CurrentActivePiece.PieceColor == "white")
+            {
+                LastSelectedPiece = null;
+                ChangeLevel();
+            }
+            else
+            {
+                //remove king
+                PieceList.Remove(CurrentActivePiece);
+                Destroy(CurrentActivePiece.gameObject);
+                //CurrentActivePiece = PieceList[0];
+            }
+        }
         UpdateThreats();
        //yield return new WaitForSeconds(2.2f);
         //UpdateThreats();
@@ -816,7 +822,7 @@ public class MainManager : MonoBehaviour {
             WaitingForCPUMove = true;
            
             WaitingForPlayerMove = false;
-            StartCoroutine(PlayBlack());
+            PlayBlack();
         }
 
 
