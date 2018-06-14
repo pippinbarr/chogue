@@ -100,7 +100,7 @@ public class MapMaker : MonoBehaviour {
                     Color startroomcolor = GameObject.Find("MainManager").GetComponent<DungeonGenerator>().m_StartRoomColor;
                     Color currentcolor = Level.GetPixel(posx, posy);
                     float difcolor = Mathf.Abs((startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r) + (startroomcolor.r - currentcolor.r));
-                    Debug.Log("Current color: " + currentcolor);
+                    
                    // Debug.Log("color difference : " + difcolor);
                     if ((incomingpieces!="")&&(difcolor<0.01))
                     {
@@ -144,14 +144,10 @@ public class MapMaker : MonoBehaviour {
                         Debug.Log("incoming pieces : " + incomingpieces);
                        // PlayerPrefs.SetString("IncomingPieces", incomingpieces);
                     }
-                    //we don't want to spawn on stairs either
-                    if (currentcolor == new Color(0, 0, 1, 1))
-                    {
-                        difcolor = -100;
-                    }
+
                     //Here we add the ennemies0
                     float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100f);
-                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red))
+                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (Level.GetPixel(posx, posy) != new Color(0f, 1f, 0f)))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
@@ -159,7 +155,7 @@ public class MapMaker : MonoBehaviour {
                         Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
                         Debug.Log("random2 : " + random);
-                        if ((random > 0.14) && (!AIKingCreated))
+                        if ((random > 1.14) && (!AIKingCreated))
                         {
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             AIKingCreated = true;
