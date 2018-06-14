@@ -13,17 +13,25 @@ public class Restart : MonoBehaviour {
 
     public void Start()
     {
-        Epitaph.text = "White King\n\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\n" + System.DateTime.Today.ToShortDateString();
-        
-        if (PlayerPrefs.GetInt("level") > PlayerPrefs.GetInt("maxlevel"))
+        if (SceneManager.GetActiveScene().name == "GameOver")
         {
-            PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level") );
-        }
-        //CurLevel.text = "Level reached: " + PlayerPrefs.GetInt("level");
-        //BestLevel.text = "Highest level reached: " + PlayerPrefs.GetInt("maxlevel");
+            Epitaph.text = "White King\n\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\n" + System.DateTime.Today.ToShortDateString();
+            if (PlayerPrefs.GetInt("level") > PlayerPrefs.GetInt("maxlevel"))
+            {
+                PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
+            }
+            //CurLevel.text = "Level reached: " + PlayerPrefs.GetInt("level");
+            //BestLevel.text = "Highest level reached: " + PlayerPrefs.GetInt("maxlevel");
 
-        PlayerPrefs.SetInt("level", 1);
-        PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+            PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+        }
+        else
+        {
+            Epitaph.text = "Black King\n\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\n" + System.DateTime.Today.ToShortDateString();
+        }
+        
+
     }
 
     public void RestartGame()
@@ -33,9 +41,13 @@ public class Restart : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if ((Input.GetMouseButtonDown(0)) &&(SceneManager.GetActiveScene().name == "GameOver"))
         {
             RestartGame();
         }
+    }
+    public void ContinueGame()
+    {
+        SceneManager.LoadScene("LevelGen");
     }
 }

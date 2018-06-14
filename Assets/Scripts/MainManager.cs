@@ -755,11 +755,10 @@ public class MainManager : MonoBehaviour {
         }
     }
 
-
-    private void ChangeLevel()
+    private void PrepareNextLevel()
     {
         string outgoingpieces = "";
-        foreach(Piece piece in PieceList)
+        foreach (Piece piece in PieceList)
         {
             if (piece.PieceColor == "white")
             {
@@ -796,7 +795,12 @@ public class MainManager : MonoBehaviour {
         {
             PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
         }
+    }
 
+    private void ChangeLevel()
+    {
+
+        PrepareNextLevel();
         SceneManager.LoadScene("LevelGen"); 
     }
     public void GameOver()
@@ -808,7 +812,8 @@ public class MainManager : MonoBehaviour {
     }
     public void Win()
     {
-
+        PrepareNextLevel();
+        PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         SceneManager.LoadScene("Victory");
 
     }
