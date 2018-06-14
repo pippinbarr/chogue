@@ -71,7 +71,7 @@ public class TileType : MonoBehaviour {
         if (OnOrOff)
         {
             
-            GetComponent<Renderer>().material.color = (GetComponent<Renderer>().material.color + HighlightColor) / 2;
+            GetComponent<Renderer>().material.color = (GetComponent<Renderer>().material.color)/2+HighlightColor/1.5f;
             AvailableDestination = true;
         }
         else
