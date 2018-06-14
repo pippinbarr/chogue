@@ -274,7 +274,7 @@ public class MainManager : MonoBehaviour {
                 {
                     if ((piece.LeastDistanceToKing < leastdist))
                     {
-                        if((piece.BestMoveTarget!=null)&& (!piece.BestMoveTarget.GetComponent<TileType>().threatened))
+                        if((piece.BestMoveTarget!=null)&& (!piece.BestMoveTarget.GetComponent<TileType>().threatened)&&(piece.BestMoveTarget.position!=piece.transform.position)&&(piece.PieceType!="king"))
                         {
                             leastdist = piece.LeastDistanceToKing;
                             //Debug.Log("Least distance is " + leastdist);

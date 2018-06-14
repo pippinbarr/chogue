@@ -157,8 +157,9 @@ public class MapMaker : MonoBehaviour {
                         Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
                         Debug.Log("random2 : " + random);
-                        if ((random > 1.14) && (!AIKingCreated))
+                        if ((random > 0.14) && (!AIKingCreated))
                         {
+
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
                             AIKingCreated = true;
                             Debug.Log("adding a king");
@@ -231,7 +232,54 @@ public class MapMaker : MonoBehaviour {
             blacktile = !blacktile;
         }
 
-        //update visibility
+        //If we have a king, let's put him in the stairs room, but not exactly next to the stairs
+        if (AIKingCreated)
+        {
+            //find the stairs
+            TileType stairstile = null;
+            foreach(TileType tile in mm.TileList)
+            {
+                if (tile.Type == 3)
+                {
+                    stairstile = tile;
+                }
+            }
+            // find the king
+            Piece king = null;
+            foreach(Piece piece in mm.PieceList)
+            {
+                if ((piece.PieceType == "king") && (piece.PieceColor == "black"))
+                {
+                    king = piece;
+                }
+            }
+            if (stairstile != null)
+            {
+                //find a tile that is between 2 and 3 units away and doesn't have a a piece on it
+                foreach(TileType tile in mm.TileList)
+                {
+                    float dist = Vector3.Distance(tile.transform.position, stairstile.transform.position);
+                    if ((dist < 2.6f) && (dist > 1.9f)&&!tile.corridor)
+                    {
+                        bool notgood = false;
+                        foreach (Piece piece in mm.PieceList)
+                        {
+                            if(piece.transform.position == tile.transform.position)
+                            {
+                                notgood = true;
+                            }
+                        }
+                        if ((!notgood)&&(king!=null))
+                        {
+                            king.transform.position = tile.transform.position;
+                        }
+                    }
+                }
+
+            }
+
+        }
+
         
 
 	}
