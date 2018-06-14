@@ -274,7 +274,7 @@ public class MainManager : MonoBehaviour {
                 {
                     if ((piece.LeastDistanceToKing < leastdist))
                     {
-                        if((piece.BestMoveTarget!=null)&& (!piece.BestMoveTarget.GetComponent<TileType>().threatened)&&(piece.BestMoveTarget.position!=piece.transform.position)&&(piece.PieceType!="king"))
+                        if((piece.BestMoveTarget!=null)&& (!piece.BestMoveTarget.GetComponent<TileType>().threatened)&&(piece.BestMoveTarget!=piece.CurrentTile)&&(piece.PieceType!="king"))
                         {
                             leastdist = piece.LeastDistanceToKing;
                             //Debug.Log("Least distance is " + leastdist);
@@ -380,6 +380,10 @@ public class MainManager : MonoBehaviour {
 
         string PieceSymbol = CurrentActivePiece.PieceSymbol;
         string OriginCoordinate = OriginPosition.position.x.ToString() + OriginPosition.position.y.ToString();
+        if (tile == null)
+        {
+            tile = TileList[0];
+        }
 
         string DestinationCoordinate = tile.transform.position.x.ToString() + tile.transform.position.y.ToString();
         string ActionSymbol = ""; // will be set to x or * by EatPiece()
