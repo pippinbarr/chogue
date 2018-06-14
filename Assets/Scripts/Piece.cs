@@ -648,6 +648,11 @@ public class Piece : MonoBehaviour {
 
             if ((child.transform.name.Contains("Cube")) || (child.transform.name.Contains("ollider"))|| (child.transform.name.Contains("ubwe")))
             {
+                if (active)
+                {
+                    child.GetComponent<GetCollidingThings>().CollidingTileList.Clear();
+                }
+                child.GetComponent<Collider>().enabled = active;
                 child.GetComponent<GetCollidingThings>().enabled = active;
             }
 

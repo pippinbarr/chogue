@@ -83,7 +83,7 @@ public class MainManager : MonoBehaviour {
             if (piece.human)
             {
                 CurrentActivePiece = piece;
-                CurrentActivePiece.SetActive(true);
+                //CurrentActivePiece.SetActive(true);
                 
             }
         }
@@ -120,7 +120,7 @@ public class MainManager : MonoBehaviour {
                 if (LastSelectedPiece != null)
                 {
                     CurrentActivePiece = LastSelectedPiece;
-                    CurrentActivePiece.SetActive(true);
+                   // CurrentActivePiece.SetActive(true);
                     CurrentActivePiece.FindAvailableDestinations();
                     CurrentActivePiece.ShowDestinations();
                    // CurrentActivePiece.SetActive(false);
@@ -174,7 +174,7 @@ public class MainManager : MonoBehaviour {
                         }
 
                         CurrentActivePiece = hit.transform.GetComponent<Piece>();
-                        CurrentActivePiece.SetActive(true);
+                       // CurrentActivePiece.SetActive(true);
                         CurrentActivePiece.FindAvailableDestinations();
                         CurrentActivePiece.ShowDestinations();
                         LastSelectedPiece = CurrentActivePiece;
@@ -350,7 +350,7 @@ public class MainManager : MonoBehaviour {
             GetComponent<AudioSource>().clip = sliding;
             GetComponent<AudioSource>().Play();
         }
-        CurrentActivePiece.SetActive(true);
+       // CurrentActivePiece.SetActive(true);
         Debug.Log("About to get moving");
         while (( Vector3.Distance(destination, CurrentActivePiece.transform.position)>0.2f))
         {
@@ -419,6 +419,7 @@ public class MainManager : MonoBehaviour {
             piece.SetActive(true);
         }
         //waiting for all collisions to register
+
         yield return new WaitForSeconds(0.1f);
 
         if ((tile!=null)&&(tile.GetComponent<TileType>().Type == 3))
@@ -452,7 +453,7 @@ public class MainManager : MonoBehaviour {
         {
             CurrentActivePiece.Queen();
             CurrentActivePiece = PieceList[0];
-            CurrentActivePiece.SetActive(true);
+            //CurrentActivePiece.SetActive(true);
             CurrentActivePiece.FindAvailableDestinations();
             OriginPosition = CurrentActivePiece.CurrentTile;
             //OriginPosition.position = Origin;

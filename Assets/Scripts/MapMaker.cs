@@ -52,8 +52,10 @@ public class MapMaker : MonoBehaviour {
                 {
                     Transform tempTile;
                     //is this a stairs?
+                    bool stairs = false;
                     if (Level.GetPixel(posx, posy) == new Color(0f, 1f, 0f))
                     {
+                        stairs = true;
                         Debug.Log("instantiating stairs");
                         tempTile = Instantiate(StairsPrefab, new Vector3(posx, posy, 0), transform.rotation);
                         tempTile.Rotate(new Vector3(180,0,0));
@@ -147,7 +149,7 @@ public class MapMaker : MonoBehaviour {
 
                     //Here we add the ennemies0
                     float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100f);
-                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (Level.GetPixel(posx, posy) != new Color(0f, 1f, 0f)))
+                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (!stairs))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
