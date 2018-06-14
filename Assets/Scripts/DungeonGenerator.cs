@@ -72,6 +72,13 @@ public class DungeonGenerator : MonoBehaviour
         m_RawImage.texture = m_DungeonImage;
         byte[] bytes = m_DungeonImage.EncodeToPNG();
         File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);
+
+        //for (int i = 0; i < 50; i++) {
+        //    GenerateDungeon();
+        //    m_DungeonImage.Apply();
+        //    byte[] testBytes = m_DungeonImage.EncodeToPNG();
+        //    File.WriteAllBytes(Application.dataPath + "/../levels/level" + i + ".png", testBytes);
+        //}
     }
 
     void GenerateDungeon()
@@ -155,14 +162,16 @@ public class DungeonGenerator : MonoBehaviour
     Room CreateRoom(int row, int col)
     {
 
-        int width = m_MinRoomWidth + Mathf.FloorToInt(Random.value * (m_MaxRoomWidth - m_MinRoomWidth));
-        int height = m_MinRoomHeight + Mathf.FloorToInt(Random.value * (m_MaxRoomHeight - m_MinRoomHeight));
+        int width = Random.Range(m_MinRoomWidth, m_MaxRoomWidth);
+        int height = Random.Range(m_MinRoomHeight, m_MaxRoomHeight);
+        //int width = m_MinRoomWidth + Mathf.FloorToInt(Random.value * (m_MaxRoomWidth - m_MinRoomWidth));
+        //int height = m_MinRoomHeight + Mathf.FloorToInt(Random.value * (m_MaxRoomHeight - m_MinRoomHeight));
 
         int xOffset = col * m_RoomCellWidth + m_RoomPadding;
         int yOffset = row * m_RoomCellHeight + m_RoomPadding;
 
-        int x = xOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomWidth - width));
-        int y = yOffset + Mathf.FloorToInt(Random.Range(0, m_MaxRoomHeight - height));
+        int x = xOffset + Random.Range(0, m_MaxRoomWidth - width);
+        int y = yOffset + Random.Range(0, m_MaxRoomHeight - height);
 
         return new Room(row, col, x, y, width, height, m_RoomColors[(COLS * row) + col], m_HallColor);
     }
@@ -357,8 +366,8 @@ public class DungeonGenerator : MonoBehaviour
 
         if (from.col == to.col)
         {
-            startX = Mathf.FloorToInt(Random.Range(start.x, start.x + start.width - 2));
-            endX = Mathf.FloorToInt(Random.Range(end.x, end.x + end.width - 2));
+            startX = Random.Range(start.x, start.x + start.width - 2); // -2 because hall is 2 pixels wide
+            endX = Random.Range(end.x, end.x + end.width - 2);
             startY = start.y + start.height;
             endY = end.y;
         }
@@ -367,8 +376,8 @@ public class DungeonGenerator : MonoBehaviour
         {
             startX = start.x + start.width;
             endX = end.x;
-            startY = Mathf.FloorToInt(Random.Range(start.y, start.y + start.height - 2));
-            endY = Mathf.FloorToInt(Random.Range(end.y, end.y + end.height - 2));
+            startY = Random.Range(start.y, start.y + start.height - 2);
+            endY = Random.Range(end.y, end.y + end.height - 2);
         }
         else
         {
@@ -381,8 +390,8 @@ public class DungeonGenerator : MonoBehaviour
             Application.Quit();
         }
 
-        int y = startY;
         int x = startX;
+        int y = startY;
 
         int xInc = startX < endX ? 1 : -1;
         int yInc = startY < endY ? 1 : -1;
@@ -393,9 +402,9 @@ public class DungeonGenerator : MonoBehaviour
         {
             while (y != endY)
             {
-                if (x != endX && progress > 1)
+                if (x != endX && progress >= 1)
                 {
-                    if (y == endY - 2 || y == endY + 2 || Random.value < 0.33)
+                    if (y == endY - 3 || y == endY + 3 || Random.value < 0.33)
                     {
                         while (x != endX)
                         {
@@ -419,9 +428,9 @@ public class DungeonGenerator : MonoBehaviour
         {
             while (x != endX)
             {
-                if (y != endY && progress > 1)
+                if (y != endY && progress >= 1)
                 {
-                    if (x == endX - 2 || x == endX + 2 || Random.value < 0.33)
+                    if (x == endX - 3 || x == endX + 3 || Random.value < 0.33)
                     {
                         while (y != endY)
                         {
