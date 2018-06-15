@@ -25,6 +25,7 @@ public class Restart : MonoBehaviour {
 
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+            PlayerPrefs.SetInt("continued", 0);
         }
         else
         {
@@ -49,5 +50,6 @@ public class Restart : MonoBehaviour {
     public void ContinueGame()
     {
         SceneManager.LoadScene("LevelGen");
+        PlayerPrefs.SetInt("continued", 1);
     }
 }

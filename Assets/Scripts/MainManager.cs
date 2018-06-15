@@ -59,8 +59,9 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+            PlayerPrefs.SetInt("continued", 0);
             //knight is chevalier to distinguish and rook is tour
-            
+
         }
         if (firstscene)
         {
@@ -268,6 +269,7 @@ public class MainManager : MonoBehaviour {
 
         {
             float leastdist = 1000000;
+
            // Debug.Log("Can only move, get closest to king");
             foreach (Piece piece in PieceList)
             {
