@@ -606,7 +606,13 @@ public class MainManager : MonoBehaviour {
                 }
                 else
                 {
-                    TempMessage = "Your " + CurrentActivePiece.PieceType + " captured the " + piece.PieceType;
+                    if (Random.value > 0.5f)
+                    {
+                        TempMessage = "Your " + CurrentActivePiece.PieceType + " captured the " + piece.PieceType;
+                    }
+                    else {
+                        TempMessage = "Votre " + FrenchPiece(CurrentActivePiece.PieceType) + " a pris " + genre(piece.PieceType) +  FrenchPiece(piece.PieceType);
+                    }
                 }
             }
             if (!CurrentActivePiece.human && piece.human)
@@ -617,7 +623,13 @@ public class MainManager : MonoBehaviour {
                 }
                 else
                 {
-                    TempMessage = "The " + CurrentActivePiece.PieceType + " captured your " + piece.PieceType;
+                    if (Random.value > 0.5f)
+                    {
+                        TempMessage = "The " + CurrentActivePiece.PieceType + " captured your " + piece.PieceType;
+                    }
+                    else {
+                        TempMessage = genre(CurrentActivePiece.PieceType) + FrenchPiece(CurrentActivePiece.PieceType) + " a pris votre " + FrenchPiece(piece.PieceType);
+                    }
                 }
             }
             if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType != "coin")
@@ -856,6 +868,42 @@ public class MainManager : MonoBehaviour {
         }
         Debug.Log("tile not found");
         return null;
+    }
+    string FrenchPiece(string piece)
+    {
+        if (piece == "queen")
+        {
+            return "reine";
+        }
+        if (piece == "king")
+        {
+            return "roi";
+        }
+        if (piece == "pawn")
+        {
+            return "pion";
+        }
+        if (piece == "bishop")
+        {
+            return "un fou";
+        }
+        if (piece == "rook")
+        {
+            return "tour";
+        }
+        if (piece == "knight")
+        {
+            return "cavalier";
+        }
+        return "une merde";
+    }
+    string genre(string piece)
+    {
+        if ((piece == "rook") || (piece == "queen"))
+        {
+            return "une ";
+        }
+        return "un ";
     }
     void ChangeTurn()
     {
