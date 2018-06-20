@@ -94,9 +94,9 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-            //update visibility manually
-        
+        //update visibility manually
 
+        
         WaitingForPlayerMove = true;
         WaitingForCPUMove = false;
        // Debug.Log("player's turn");
@@ -809,7 +809,14 @@ public class MainManager : MonoBehaviour {
 
         }
         PlayerPrefs.SetString("IncomingPieces", outgoingpieces);
-        PlayerPrefs.SetInt("level", PlayerPrefs.GetInt("level") + 1);
+        if (PlayerPrefs.GetInt("continued") != 1)
+        {
+            PlayerPrefs.SetInt("level", PlayerPrefs.GetInt("level") + 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("level", PlayerPrefs.GetInt("level") - 1);
+        }
         if (PlayerPrefs.GetInt("level") > PlayerPrefs.GetInt("maxlevel"))
         {
             PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
@@ -820,7 +827,14 @@ public class MainManager : MonoBehaviour {
     {
 
         PrepareNextLevel();
-        SceneManager.LoadScene("LevelGen"); 
+        if (PlayerPrefs.GetInt("level") == 0)
+        {
+            SceneManager.LoadScene("LastLevel");
+        }
+        else
+        {
+            SceneManager.LoadScene("LevelGen");
+        }
     }
     public void GameOver()
     {
@@ -833,11 +847,14 @@ public class MainManager : MonoBehaviour {
     {
         //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
         PlayerPrefs.SetInt("continued", 1);
+        msgline.color = new Color(1f, 1f, 0x55/255);
+        DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
         while (!Input.GetKeyDown(KeyCode.Space))
         {
             DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.01f);
         }
+        msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
         DisplayMsg("");
         //PrepareNextLevel();
         //PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);

@@ -52,7 +52,7 @@ public class Restart : MonoBehaviour {
 
     private void Update()
     {
-        if ((Input.GetMouseButtonDown(0)) &&(SceneManager.GetActiveScene().name == "GameOver"))
+        if ((Input.GetKeyDown(KeyCode.Space)) &&(SceneManager.GetActiveScene().name == "GameOver"))
         {
             RestartGame();
         }

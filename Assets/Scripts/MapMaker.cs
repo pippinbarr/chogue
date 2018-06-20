@@ -5,6 +5,8 @@ using UnityEngine;
 public class MapMaker : MonoBehaviour {
 
     Texture2D Level;
+    public Texture2D ManualLevel;
+    public bool manual = false;
     public int KingArrivesAtLevel = 1;
     public Transform TilePrefab;
     public Transform WallPrefab;
@@ -31,11 +33,23 @@ public class MapMaker : MonoBehaviour {
         MainManager mm = GetComponent<MainManager>();
         bool PlayerCreated = false; //set true when a player piece has been created
         bool AIKingCreated = false;
-
+        int sizeX;
+        int sizeY;
         //Get the generated level
-        Level = GetComponent<DungeonGenerator>().m_DungeonImage;
-        int sizeX = GetComponent<DungeonGenerator>().m_DungeonWidth;
-        int sizeY = GetComponent<DungeonGenerator>().m_DungeonHeight;
+        if (manual)
+        {
+            Level = ManualLevel;
+            sizeX = 40;// Level.width;
+            sizeY = 25; // Level.height;
+        }
+        else
+        {
+            Level = GetComponent<DungeonGenerator>().m_DungeonImage;
+            sizeX = GetComponent<DungeonGenerator>().m_DungeonWidth;
+            sizeY = GetComponent<DungeonGenerator>().m_DungeonHeight;
+        }
+
+        Debug.Log("size X " + sizeX);
 
         bool blacktile = true; //used to alternate colors
 

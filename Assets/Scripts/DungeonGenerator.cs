@@ -49,6 +49,8 @@ public class DungeonGenerator : MonoBehaviour
 
     private Room stairsRoom;
 
+    public bool manual = false;
+
 
     void Start()
     {
@@ -66,7 +68,11 @@ public class DungeonGenerator : MonoBehaviour
         m_HallColor = new Color(1.0f, 0f, 0f);
         m_EmptyColor = new Color(0f, 0f, 0f);
 
-        GenerateDungeon();
+        if (!manual)
+        {
+            GenerateDungeon();
+        }
+        
 
         m_RawImage.texture = m_DungeonImage;
         byte[] bytes = m_DungeonImage.EncodeToPNG();
