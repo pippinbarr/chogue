@@ -467,9 +467,11 @@ public class MainManager : MonoBehaviour {
             //CurrentActivePiece.SetActive(true);
             CurrentActivePiece.FindAvailableDestinations();
             OriginPosition = CurrentActivePiece.CurrentTile;
+            LastSelectedPiece = CurrentActivePiece = PieceList[0]; 
+
             //OriginPosition.position = Origin;
             //ChangeTurn();
-            
+
 
             Promotion = "=Q";
         }
