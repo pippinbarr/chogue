@@ -33,6 +33,7 @@ public class MainManager : MonoBehaviour {
     public bool HitPointVersion = false;
     private bool changinglevel = false;
 
+
     // Message and notation vars
     int Turn = 1;
     private string TempMessage = "";
@@ -71,6 +72,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("taken", 0);
             PlayerPrefs.SetInt("gold", 0);
+            PlayerPrefs.SetInt("continued", 0);
         }
         if (!firstscene)
         {
@@ -469,7 +471,11 @@ public class MainManager : MonoBehaviour {
             //CurrentActivePiece.SetActive(true);
             CurrentActivePiece.FindAvailableDestinations();
             OriginPosition = CurrentActivePiece.CurrentTile;
-            LastSelectedPiece = CurrentActivePiece = PieceList[0]; 
+            if (CurrentActivePiece.human)
+            {
+                LastSelectedPiece = CurrentActivePiece = PieceList[0];
+            }
+            
 
             //OriginPosition.position = Origin;
             //ChangeTurn();
@@ -648,7 +654,7 @@ public class MainManager : MonoBehaviour {
             {
                 Debug.Log("game over");
                 gameover = true;
-                Win();
+                StartCoroutine(Win());
             }
             //Debug.Log("I am human? : " + CurrentActivePiece.human);
             // Debug.Log("Eaten piece is human ?: " + piece.human);
@@ -823,11 +829,19 @@ public class MainManager : MonoBehaviour {
         SceneManager.LoadScene("GameOver");
 
     }
-    public void Win()
+    IEnumerator  Win()
     {
-        PrepareNextLevel();
-        PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
-        SceneManager.LoadScene("Victory");
+        //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
+        PlayerPrefs.SetInt("continued", 1);
+        while (!Input.GetKeyDown(KeyCode.Space))
+        {
+            DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
+            yield return new WaitForSeconds(0.05f);
+        }
+        DisplayMsg("");
+        //PrepareNextLevel();
+        //PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
+        //SceneManager.LoadScene("Victory");
 
     }
     public void UpdateStatus()

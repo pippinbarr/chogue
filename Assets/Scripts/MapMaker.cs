@@ -5,6 +5,7 @@ using UnityEngine;
 public class MapMaker : MonoBehaviour {
 
     Texture2D Level;
+    public int KingArrivesAtLevel = 1;
     public Transform TilePrefab;
     public Transform WallPrefab;
     public Transform StairsPrefab;
@@ -154,10 +155,13 @@ public class MapMaker : MonoBehaviour {
                         Transform TempPiece;
                         //select randomly between available pieces
                         float random = Random.value;
-                        Debug.Log("random1 : " + random);
+                       // Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
-                        Debug.Log("random2 : " + random);
-                        if ((random > 1.14) && (!AIKingCreated)&&(PlayerPrefs.GetInt("continued")!=1))
+                        //Debug.Log("random2 : " + random);
+                        Debug.Log("continued? " + PlayerPrefs.GetInt("continued"));
+                        Debug.Log("LEvel? " + (PlayerPrefs.GetInt("level")));
+                        Debug.Log("king should arrive at " + KingArrivesAtLevel);
+                        if ((PlayerPrefs.GetInt("level")>=KingArrivesAtLevel) && (!AIKingCreated)&&(PlayerPrefs.GetInt("continued")!=1))
                         {
 
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
@@ -167,7 +171,7 @@ public class MapMaker : MonoBehaviour {
                         else if (random > 1f)
                         {
                             TempPiece = Instantiate(Queen, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
-                            Debug.Log("adding a queen");
+                            //Debug.Log("adding a queen");
                         }
                         else if (random > 0.95)
                         {
