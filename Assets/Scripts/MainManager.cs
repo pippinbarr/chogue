@@ -656,9 +656,26 @@ public class MainManager : MonoBehaviour {
                     TempMessage = "The " + attackerName + " captured your " + attackedName;
                 }
             }
+            int humanpieces = 0;
             if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType != "coin")
             {
-                TempMessage = "You now have a new " + piece.PieceType + "!";
+                
+                foreach(Piece pie in PieceList)
+                {
+                    if (pie.human)
+                    {
+                        humanpieces++;
+                    }
+                }
+                if (humanpieces < 16)
+                {
+                    TempMessage = "You now have a new " + piece.PieceType + "!";
+                }
+                else
+                {
+                    TempMessage = "Your party is full";
+                }
+                
             }
 
 
@@ -681,16 +698,15 @@ public class MainManager : MonoBehaviour {
             {
                 if (piece.PieceType != "coin")
                 {
-                    // WaitingForCPUMove = false;
-                    piece.human = true;
-                    //piece.PieceColor = "white";
-                    //WaitingForPlayerMove = false;
-                    // CurrentActivePiece = piece;
-
-                    // piece.DecideMove();
-                    // piece.MakeMove();
+                    
+                    if (humanpieces < 16){
+                        piece.human = true;
+                        piece.PowerUp();
+                    }
+                    
                     WaitingForMoveBack = true;
-                    piece.PowerUp();
+                    return ".";
+
                 }
                 else
                 {
