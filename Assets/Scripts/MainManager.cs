@@ -115,7 +115,11 @@ public class MainManager : MonoBehaviour {
         }
 
 
-       
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            PlayerPrefs.SetString("Executor", "resigned");
+            SceneManager.LoadScene("GameOver");
+        }
 
         //Get click on destination (only if in "move" mode)
         if ((WaitingForPlayerMove)&&(!WaitingForMove))
@@ -185,6 +189,10 @@ public class MainManager : MonoBehaviour {
                         CurrentActivePiece.ShowDestinations();
                         LastSelectedPiece = CurrentActivePiece;
                         PieceSelected = true;
+                        if (CurrentActivePiece.PieceType == "king")
+                        {
+                            DisplayMsg("Press [R] to resign");
+                        }
                         UpdateStatus();
                     }
 
@@ -875,6 +883,7 @@ public class MainManager : MonoBehaviour {
         {
             statusline.text = " Level:" + PlayerPrefs.GetInt("level")+"     Hits:"+CurrentActivePiece.HP+"("+CurrentActivePiece.MaxHP+")"+"     Pieces:" + CurrentPieces + "     Captured:" + PlayerPrefs.GetInt("taken") + "     Gold:"+ PlayerPrefs.GetInt("gold");
         }
+
         
     }
     public void DisplayMsg(string msg)

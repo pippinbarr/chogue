@@ -15,7 +15,15 @@ public class Restart : MonoBehaviour {
     {
         if (SceneManager.GetActiveScene().name == "GameOver")
         {
-            Epitaph.text = "White King\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\nin level " + PlayerPrefs.GetInt("level");
+            if (PlayerPrefs.GetString("Executor") == "resigned")
+            {
+                Epitaph.text = "White King\nResigned" + "\n\nin level " + PlayerPrefs.GetInt("level");
+            }
+            else
+            {
+                Epitaph.text = "White King\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\nin level " + PlayerPrefs.GetInt("level");
+            }
+           
             
             if (PlayerPrefs.GetInt("level") >= PlayerPrefs.GetInt("maxlevel"))
             {
