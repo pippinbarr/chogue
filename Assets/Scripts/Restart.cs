@@ -15,11 +15,21 @@ public class Restart : MonoBehaviour {
     {
         if (SceneManager.GetActiveScene().name == "GameOver")
         {
-            Epitaph.text = "White King\n\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\n" + System.DateTime.Today.ToShortDateString();
-            if (PlayerPrefs.GetInt("level") > PlayerPrefs.GetInt("maxlevel"))
+            Epitaph.text = "White King\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\nin level " + PlayerPrefs.GetInt("level");
+            
+            if (PlayerPrefs.GetInt("level") >= PlayerPrefs.GetInt("maxlevel"))
             {
+                Epitaph.text = Epitaph.text + " (new record!)";
                 PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
             }
+
+            Epitaph.text = Epitaph.text + "\nwith " + PlayerPrefs.GetInt("gold") + " gold";
+            if (PlayerPrefs.GetInt("gold") > PlayerPrefs.GetInt("maxgold"))
+            {
+                Epitaph.text = Epitaph.text + " (new record!)";
+                PlayerPrefs.SetInt("maxgold", PlayerPrefs.GetInt("gold"));
+            }
+            Epitaph.text = Epitaph.text + "\n\n"+ System.DateTime.Today.ToShortDateString();
             //CurLevel.text = "Level reached: " + PlayerPrefs.GetInt("level");
             //BestLevel.text = "Highest level reached: " + PlayerPrefs.GetInt("maxlevel");
 

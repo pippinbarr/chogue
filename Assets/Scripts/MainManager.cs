@@ -55,6 +55,7 @@ public class MainManager : MonoBehaviour {
         {
             Debug.Log("new game");
             PlayerPrefs.SetInt("maxlevel", 1);
+            PlayerPrefs.SetInt("maxgold", 0);
             PlayerPrefs.SetInt("maxtaken", 0);
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("level", 1);
@@ -829,7 +830,7 @@ public class MainManager : MonoBehaviour {
         }
         if (statusline != null)
         {
-            statusline.text = " Level:" + PlayerPrefs.GetInt("level") + " (highest "+ PlayerPrefs.GetInt("maxlevel")+")     Hits:"+CurrentActivePiece.HP+"("+CurrentActivePiece.MaxHP+")"+"     Pieces:" + CurrentPieces + "     Captured:" + PlayerPrefs.GetInt("taken") + "     Gold:"+ PlayerPrefs.GetInt("gold");
+            statusline.text = " Level:" + PlayerPrefs.GetInt("level")+"     Hits:"+CurrentActivePiece.HP+"("+CurrentActivePiece.MaxHP+")"+"     Pieces:" + CurrentPieces + "     Captured:" + PlayerPrefs.GetInt("taken") + "     Gold:"+ PlayerPrefs.GetInt("gold");
         }
         
     }
