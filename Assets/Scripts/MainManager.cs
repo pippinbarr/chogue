@@ -430,7 +430,8 @@ public class MainManager : MonoBehaviour {
         if (tile.transform.tag == "piece")
         {
             tile.GetComponent<Piece>().eaten = true;
-            ActionSymbol = EatPiece(tile.GetComponent<Piece>());
+            ActionSymbol = EatPiece(tile.GetComponent<Piece>()); // SETS TempMessage with Attack Flavour
+
             Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
         }
@@ -620,6 +621,12 @@ public class MainManager : MonoBehaviour {
         //apply damage
         piece.HP -= DMG;
 
+        string attackerName = (CurrentActivePiece.PieceType == "king" && CurrentActivePiece.PieceColor == "black") ? "King of Yendor" : CurrentActivePiece.PieceType;
+        string attackedName = (piece.PieceType == "king" && piece.PieceColor == "black") ? "King of Yendor" : piece.PieceType;
+
+        Debug.Log("Attacker name: " + attackerName);
+        Debug.Log("Attacked name: " + attackedName);
+
         //Dead?
         if ((piece.HP < 1)||(piece.PieceColor=="red"))
         {
@@ -627,22 +634,22 @@ public class MainManager : MonoBehaviour {
             {
                 if (HitPointVersion)
                 {
-                    TempMessage = "Your " + CurrentActivePiece.PieceType + " defeated the " + piece.PieceType;
+                    TempMessage = "Your " + attackerName + " defeated the " + attackedName;
                 }
                 else
                 {
-                    TempMessage = "Your " + CurrentActivePiece.PieceType + " captured the " + piece.PieceType;
+                    TempMessage = "Your " + attackerName + " captured the " + attackedName;
                 }
             }
             if (!CurrentActivePiece.human && piece.human)
             {
                 if (HitPointVersion)
                 {
-                    TempMessage = "The " + CurrentActivePiece.PieceType + " defeated your " + piece.PieceType;
+                    TempMessage = "The " + attackerName + " defeated your " + attackedName;
                 }
                 else
                 {
-                    TempMessage = "The " + CurrentActivePiece.PieceType + " captured your " + piece.PieceType;
+                    TempMessage = "The " + attackerName + " captured your " + attackedName;
                 }
             }
             if (CurrentActivePiece.human && (piece.PieceColor == "red") && piece.PieceType != "coin")
@@ -746,6 +753,24 @@ public class MainManager : MonoBehaviour {
             else
             {
                 TempMessage = "The " + CurrentActivePiece.PieceType + " " + verb + " your " + piece.PieceType; ;
+            }
+
+            // Hard coding the special case of the king of yendor
+            if (attackerName == "King of Yendor" && DMG == 0)
+            {
+                TempMessage = "The King of Yendor misses your " + piece.PieceType;
+            }
+            else if (attackerName == "King of Yendor" && DMG > 0)
+            {
+                TempMessage = "The King of Yendor hits your " + piece.PieceType;
+            }
+            else if (attackedName == "King of Yendor" && DMG == 0)
+            {
+                TempMessage = "Your " + CurrentActivePiece.PieceType + " misses the King of Yendor";
+            }
+            else if (attackedName == "King of Yendor" && DMG > 0)
+            {
+                TempMessage = "Your " + CurrentActivePiece.PieceType + " hits the King of Yendor";
             }
 
             //TempMessage = "Some damage but no kill";
