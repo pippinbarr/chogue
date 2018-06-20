@@ -149,7 +149,7 @@ public class MapMaker : MonoBehaviour {
 
                     //Here we add the ennemies0
                     float enemythreshold = 0.05f + (((float)PlayerPrefs.GetInt("level")) / 100f);
-                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (!stairs))
+                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (!stairs) && (mm.PieceList.Count<50))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
@@ -157,7 +157,7 @@ public class MapMaker : MonoBehaviour {
                         Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
                         Debug.Log("random2 : " + random);
-                        if ((random > 1.14) && (!AIKingCreated))
+                        if ((random > 1.14) && (!AIKingCreated)&&(PlayerPrefs.GetInt("continued")!=1))
                         {
 
                             TempPiece = Instantiate(King, tempTile.position + new Vector3(0, 0, -.2f), Rook.rotation);
@@ -212,7 +212,7 @@ public class MapMaker : MonoBehaviour {
 
                     }
                     //we add coins
-                    else if ((Random.value < 0.01f)&& (!(difcolor < 0.01)))
+                    else if ((Random.value < 0.01f)&& (!(difcolor < 0.01))&&!stairs)
                     {
                         Transform TempPiece = Instantiate(Gold, tempTile.position + new Vector3(0, 0, -.2f), Gold.rotation);
                         TempPiece.GetComponent<Piece>().human = false;
@@ -264,7 +264,7 @@ public class MapMaker : MonoBehaviour {
                         bool notgood = false;
                         foreach (Piece piece in mm.PieceList)
                         {
-                            if(piece.transform.position == tile.transform.position)
+                            if(Vector3.Distance(piece.transform.position,tile.transform.position)<0.5)
                             {
                                 notgood = true;
                             }

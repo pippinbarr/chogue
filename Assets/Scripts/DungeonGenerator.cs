@@ -68,7 +68,6 @@ public class DungeonGenerator : MonoBehaviour
 
         GenerateDungeon();
 
-        m_DungeonImage.Apply();
         m_RawImage.texture = m_DungeonImage;
         byte[] bytes = m_DungeonImage.EncodeToPNG();
         File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);
@@ -81,7 +80,7 @@ public class DungeonGenerator : MonoBehaviour
         //}
     }
 
-    void GenerateDungeon()
+    public void GenerateDungeon(bool finalBoard = false)
     {
         // Create the Texture2D that will contain the map
         m_DungeonImage = new Texture2D(m_DungeonWidth, m_DungeonHeight);
@@ -98,10 +97,27 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
 
-        CreateRooms();
-        DrawHalls();
-        DrawRooms();
+        if (!finalBoard)
+        {
+            CreateRooms();
+            DrawHalls();
+            DrawRooms();
+        }
+        else {
+            for (int x = 0; x < m_DungeonImage.width; x++)
+            {
+                for (int y = 0; y < m_DungeonImage.height; y++)
+                {
+                    if (x > 16 && x < 40-16 && y > 16 && y < 40-16)
+                    {
+                        m_DungeonImage.SetPixel(x, y, m_RoomColors[0]);
+                    }
+                }
+            }
+        }
 
+        // Apply changes to the image
+        m_DungeonImage.Apply();
     }
 
     void CreateRooms()

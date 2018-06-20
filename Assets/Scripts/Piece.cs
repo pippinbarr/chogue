@@ -566,14 +566,25 @@ public class Piece : MonoBehaviour {
         {
             //Get the human coordinates
             Piece HumanKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
-            
-            foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
+
+            bool foundpiece = false;
+            while (!foundpiece)
+            {
+                int randompiece = (int)(Random.value * MM.PieceList.Count);
+                if (MM.PieceList[randompiece].human)
+                {
+                    foundpiece = true;
+                    HumanKing = MM.PieceList[randompiece];
+                }
+            }
+
+           /* foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
             {
                 if (piece.human )
                 {
                     HumanKing = piece;
                 }
-            }
+            }*/
             
 
             //Find distance of all available tiles to human

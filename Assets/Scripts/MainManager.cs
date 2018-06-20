@@ -60,8 +60,9 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+            PlayerPrefs.SetInt("continued", 0);
             //knight is chevalier to distinguish and rook is tour
-            
+
         }
         if (firstscene)
         {
@@ -269,6 +270,7 @@ public class MainManager : MonoBehaviour {
 
         {
             float leastdist = 1000000;
+
            // Debug.Log("Can only move, get closest to king");
             foreach (Piece piece in PieceList)
             {
@@ -411,10 +413,12 @@ public class MainManager : MonoBehaviour {
 
 
 
-       // UpdateThreats();
+        // UpdateThreats();
         //was this a piece? then eat it!
+        bool eatpiece = false;
         if (tile.transform.tag == "piece")
         {
+            eatpiece = true;
             ActionSymbol = EatPiece(tile.GetComponent<Piece>());
             Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
@@ -455,7 +459,8 @@ public class MainManager : MonoBehaviour {
         }
         // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
         // calculate its possible attacks based on that.
-        if (CurrentActivePiece.NewQueen)
+        //will not do the queening if the pawn was eaten
+        if ((CurrentActivePiece.NewQueen)&&(!eatpiece))
         {
             CurrentActivePiece.Queen();
             CurrentActivePiece = PieceList[0];
