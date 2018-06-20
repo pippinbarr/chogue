@@ -543,7 +543,7 @@ public class Piece : MonoBehaviour {
             }
         }
         //If I'm king I absolutely want to be not threatened.
-        if ((PieceType == "king") && (threatened))
+        if ((PieceType == "king") && (threatened) && (BestMove < 5))
         {
             Debug.Log("I'm king and threatened");
             foreach(TileType tile in TileList)

@@ -429,7 +429,11 @@ public class MainManager : MonoBehaviour {
         
         if (tile.transform.tag == "piece")
         {
-            tile.GetComponent<Piece>().eaten = true;
+            if (tile.GetComponent<Piece>().PieceColor != "red")
+            {
+                tile.GetComponent<Piece>().eaten = true;
+            }
+               
             ActionSymbol = EatPiece(tile.GetComponent<Piece>()); // SETS TempMessage with Attack Flavour
 
             Debug.Log("eat piece at destination");
@@ -473,7 +477,7 @@ public class MainManager : MonoBehaviour {
         // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
         // calculate its possible attacks based on that.
         //will not do the queening if the pawn was eaten
-        if ((CurrentActivePiece.NewQueen)&&(!CurrentActivePiece.eaten))
+        if ((CurrentActivePiece.NewQueen)&&(!CurrentActivePiece.eaten)&&(ActionSymbol!=".") && (ActionSymbol != "*"))
         {
             CurrentActivePiece.Queen();
             CurrentActivePiece = PieceList[0];
