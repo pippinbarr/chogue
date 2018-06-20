@@ -31,6 +31,7 @@ public class MainManager : MonoBehaviour {
     private bool dothisonce = true; //hack
     public bool restartgame = false;
     public bool HitPointVersion = false;
+    private bool changinglevel = false;
 
     // Message and notation vars
     int Turn = 1;
@@ -439,6 +440,7 @@ public class MainManager : MonoBehaviour {
             if (CurrentActivePiece.PieceColor == "white")
             {
                 LastSelectedPiece = null;
+                changinglevel = true;
                 ChangeLevel();
             }
             else
@@ -575,9 +577,12 @@ public class MainManager : MonoBehaviour {
         WaitingForMove = false;
         UpdateVisibility();
         //UpdateThreats();
-        
 
-        ChangeTurn();
+        if (!changinglevel)
+        {
+            ChangeTurn();
+        }
+        
 
         
 
