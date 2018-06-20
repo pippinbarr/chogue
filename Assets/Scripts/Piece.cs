@@ -27,6 +27,7 @@ public class Piece : MonoBehaviour {
     public bool covered = false;
     public bool guarding = false;
     public bool check = false; //Does this piece have the king in check?
+    public bool eaten = false;
 
     private MainManager MM;
 
@@ -528,7 +529,7 @@ public class Piece : MonoBehaviour {
                 if (!tile.threatened)
                 {
                     //Debug.Log("not threatened");
-                    BestMove = 2;
+                    BestMove = 2;   
                     BestMoveTarget = tile.transform;
                     break;
                 }
@@ -562,7 +563,7 @@ public class Piece : MonoBehaviour {
         }
 
         //if we haven't found a piece to eat, find closest place
-        if ((BestMove == 0)&&(!guarding))
+        if ((BestMove == 0))
         {
             //Get the human coordinates
             Piece HumanKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
@@ -598,7 +599,7 @@ public class Piece : MonoBehaviour {
             TileList = TileList.OrderBy(tile => tile.DistanceToPiece).ToList();
 
             //try to find a tile that isn't threatened
-            if ((TileList.Count > 0)&&(PieceType!="pawn"))
+            if ((TileList.Count > 0))
             {
                 //BestMove = 0;
                 LeastDistanceToKing = 1000000000;
@@ -606,9 +607,19 @@ public class Piece : MonoBehaviour {
                 {
                     if (!tile.threatened)
                     {
-                        BestMove = 1;
-                        BestMoveTarget = TileList[0].transform;
+                        if (PieceType == "pawn")
+                        {
+                            BestMove = -2;
+                        }
+                        else
+                        {
+                            BestMove = 1;
+
+                        }
+                        
+                        BestMoveTarget = tile.transform;
                         LeastDistanceToKing = TileList[0].DistanceToPiece;
+                        break;
                     }
 
                 }
@@ -637,13 +648,13 @@ public class Piece : MonoBehaviour {
         if ((BestMoveTarget!=null)&&(BestMove==1)){
             if (BestMoveTarget.GetComponent<TileType>().threatened)
             {
-                BestMove = -1;
+                BestMove = -2;
             }
             if (BestMoveTarget.GetComponent<Piece>() != null)
             {
                 if (BestMoveTarget.GetComponent<Piece>().threatened)
                 {
-                    BestMove = -1;
+                    BestMove = -2;
                 }
             }
         }

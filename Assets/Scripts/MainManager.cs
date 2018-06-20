@@ -306,7 +306,7 @@ public class MainManager : MonoBehaviour {
         if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
         if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
 
-        if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null)&&(bestmove>-1))
+        if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null))
         {
             Debug.Log("let's move");
             CurrentActivePiece = bestpiece;
@@ -426,10 +426,10 @@ public class MainManager : MonoBehaviour {
 
         // UpdateThreats();
         //was this a piece? then eat it!
-        bool eatpiece = false;
+        
         if (tile.transform.tag == "piece")
         {
-            eatpiece = true;
+            tile.GetComponent<Piece>().eaten = true;
             ActionSymbol = EatPiece(tile.GetComponent<Piece>());
             Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
@@ -472,7 +472,7 @@ public class MainManager : MonoBehaviour {
         // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
         // calculate its possible attacks based on that.
         //will not do the queening if the pawn was eaten
-        if ((CurrentActivePiece.NewQueen)&&(!eatpiece))
+        if ((CurrentActivePiece.NewQueen)&&(!CurrentActivePiece.eaten))
         {
             CurrentActivePiece.Queen();
             CurrentActivePiece = PieceList[0];
@@ -855,14 +855,14 @@ public class MainManager : MonoBehaviour {
     {
         //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
         PlayerPrefs.SetInt("continued", 1);
-        msgline.color = new Color(1f, 1f, 0x55/255);
+       // msgline.color = new Color(1f, 1f, 0x55/255);
         DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
         while (!Input.GetKeyDown(KeyCode.Space))
         {
             DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
             yield return new WaitForSeconds(0.01f);
         }
-        msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
+       // msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
         DisplayMsg("");
         //PrepareNextLevel();
         //PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
