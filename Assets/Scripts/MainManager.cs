@@ -23,6 +23,8 @@ public class MainManager : MonoBehaviour {
     public AudioClip sliding;
     public AudioClip putdown;
     public AudioClip tic;
+    public AudioClip endchord;
+    public AudioClip winchord;
     public Text statusline;
     public Text msgline;
     public bool firstscene = false;
@@ -47,7 +49,13 @@ public class MainManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        Debug.Log(SceneManager.GetActiveScene().name);
+        if (SceneManager.GetActiveScene().name == "LastLevel")
+        {
+            
+            GetComponent<AudioSource>().clip = winchord;
+            GetComponent<AudioSource>().Play();
+        }
         if (restartgame)
         {
             PlayerPrefs.DeleteAll();
@@ -684,7 +692,8 @@ public class MainManager : MonoBehaviour {
             {
                 Debug.Log("game over");
                 gameover = true;
-                GameOver();
+
+                StartCoroutine(GameOver());
             }
             if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor != "red"))
             {
@@ -715,6 +724,7 @@ public class MainManager : MonoBehaviour {
                     PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold") + gold);
                     PieceList.Remove(piece);
                     Destroy(piece.gameObject);
+
                     GetComponent<AudioSource>().clip = gulp;
                     GetComponent<AudioSource>().Play();
                 }
@@ -889,9 +899,12 @@ public class MainManager : MonoBehaviour {
             SceneManager.LoadScene("LevelGen");
         }
     }
-    public void GameOver()
+    public IEnumerator GameOver()
     {
-
+        yield return new WaitForSeconds(0.2f);
+        GetComponent<AudioSource>().clip = endchord;
+        GetComponent<AudioSource>().Play();
+        yield return new WaitForSeconds(3f);
         PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         SceneManager.LoadScene("GameOver");
 
