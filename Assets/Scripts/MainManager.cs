@@ -53,8 +53,8 @@ public class MainManager : MonoBehaviour {
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
             
-            GetComponent<AudioSource>().clip = winchord;
-            GetComponent<AudioSource>().Play();
+           // GetComponent<AudioSource>().clip = winchord;
+            //GetComponent<AudioSource>().Play();
         }
         if (restartgame)
         {
@@ -605,7 +605,7 @@ public class MainManager : MonoBehaviour {
         UpdateVisibility();
         //UpdateThreats();
 
-        if (!changinglevel)
+        if ((!changinglevel)&&(!gameover))
         {
             ChangeTurn();
         }
@@ -698,7 +698,7 @@ public class MainManager : MonoBehaviour {
             if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor != "red"))
             {
                 Debug.Log("game over");
-                gameover = true;
+                //gameover = true;
                 StartCoroutine(Win());
             }
             //Debug.Log("I am human? : " + CurrentActivePiece.human);
@@ -901,10 +901,10 @@ public class MainManager : MonoBehaviour {
     }
     public IEnumerator GameOver()
     {
-        yield return new WaitForSeconds(0.2f);
+        /*yield return new WaitForSeconds(0.2f);
         GetComponent<AudioSource>().clip = endchord;
-        GetComponent<AudioSource>().Play();
-        yield return new WaitForSeconds(3f);
+        GetComponent<AudioSource>().Play();*/
+        yield return new WaitForSeconds(2f);
         PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         SceneManager.LoadScene("GameOver");
 
@@ -913,14 +913,16 @@ public class MainManager : MonoBehaviour {
     {
         //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
         PlayerPrefs.SetInt("continued", 1);
-       // msgline.color = new Color(1f, 1f, 0x55/255);
+        PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
+        // msgline.color = new Color(1f, 1f, 0x55/255);
         DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
         while (!Input.GetKeyDown(KeyCode.Space))
         {
             DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
             yield return new WaitForSeconds(0.01f);
         }
-       // msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
+        // msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
+        yield return new WaitForSeconds(0.01f);
         DisplayMsg("");
         //PrepareNextLevel();
         //PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);

@@ -17,19 +17,43 @@ public class Restart : MonoBehaviour {
         {
             if (PlayerPrefs.GetString("Executor") == "resigned")
             {
-                Epitaph.text = "White King\nResigned" + "\n\nin level " + PlayerPrefs.GetInt("level");
+                Epitaph.text = "White King\nResigned";
             }
             else
             {
-                Epitaph.text = "White King\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\nin level " + PlayerPrefs.GetInt("level");
+                Epitaph.text = "White King\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() ;
             }
-           
-            
-            if (PlayerPrefs.GetInt("level") >= PlayerPrefs.GetInt("maxlevel"))
+
+            if (PlayerPrefs.GetInt("continued") == 1)
             {
-                Epitaph.text = Epitaph.text + " (new record!)";
-                PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
+                Epitaph.text = Epitaph.text + "\n\nCaptured the king of Yendor\nand ";
             }
+            else
+            {
+                Epitaph.text = Epitaph.text + "\n\n";
+            }
+
+            Epitaph.text = Epitaph.text + "reached level " + PlayerPrefs.GetInt("level");
+
+
+            if (PlayerPrefs.GetInt("continued") == 0)
+            {
+                if (PlayerPrefs.GetInt("level") >= PlayerPrefs.GetInt("maxlevel"))
+                {
+                    Epitaph.text = Epitaph.text + " (new record!)";
+                    PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
+                }
+            }
+            else
+            {
+                int kinglevel = PlayerPrefs.GetInt("kinglevel");
+                if (kinglevel + (kinglevel - (PlayerPrefs.GetInt("level"))) >= PlayerPrefs.GetInt("maxlevel"))
+                {
+                    Epitaph.text = Epitaph.text + " (new record!)";
+                    PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
+                }
+            }
+
 
             Epitaph.text = Epitaph.text + "\nwith " + PlayerPrefs.GetInt("gold") + " gold";
             if (PlayerPrefs.GetInt("gold") > PlayerPrefs.GetInt("maxgold"))
