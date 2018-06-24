@@ -68,7 +68,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("maxgold", 0);
             PlayerPrefs.SetInt("maxtaken", 0);
             PlayerPrefs.SetInt("gold", 0);
-            PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetInt("level", 2);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("continued", 0);
             //knight is chevalier to distinguish and rook is tour
@@ -76,7 +76,7 @@ public class MainManager : MonoBehaviour {
         }
         if (firstscene)
         {
-            PlayerPrefs.SetInt("level", 0);
+            PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("taken", 0);
             PlayerPrefs.SetInt("gold", 0);
@@ -698,7 +698,7 @@ public class MainManager : MonoBehaviour {
             if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor != "red"))
             {
                 Debug.Log("game over");
-                //gameover = true;
+                gameover = true;
                 StartCoroutine(Win());
             }
             //Debug.Log("I am human? : " + CurrentActivePiece.human);
@@ -890,7 +890,7 @@ public class MainManager : MonoBehaviour {
     {
 
         PrepareNextLevel();
-        if (PlayerPrefs.GetInt("level") == 0)
+        if (PlayerPrefs.GetInt("level") == 1)
         {
             SceneManager.LoadScene("LastLevel");
         }
@@ -904,7 +904,7 @@ public class MainManager : MonoBehaviour {
         /*yield return new WaitForSeconds(0.2f);
         GetComponent<AudioSource>().clip = endchord;
         GetComponent<AudioSource>().Play();*/
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(4f);
         PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         SceneManager.LoadScene("GameOver");
 
@@ -916,14 +916,20 @@ public class MainManager : MonoBehaviour {
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
         // msgline.color = new Color(1f, 1f, 0x55/255);
         DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
+        WaitingForPlayerMove = false;
+        WaitingForCPUMove = true;
         while (!Input.GetKeyDown(KeyCode.Space))
         {
             DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
             yield return new WaitForSeconds(0.01f);
         }
+        gameover = false;
         // msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
         yield return new WaitForSeconds(0.01f);
         DisplayMsg("");
+        WaitingForPlayerMove = true;
+        WaitingForCPUMove = false;
+        ChangeTurn();
         //PrepareNextLevel();
         //PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         //SceneManager.LoadScene("Victory");
