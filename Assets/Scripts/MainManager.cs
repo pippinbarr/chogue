@@ -68,7 +68,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("maxgold", 0);
             PlayerPrefs.SetInt("maxtaken", 0);
             PlayerPrefs.SetInt("gold", 0);
-            PlayerPrefs.SetInt("level", 2);
+            PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("continued", 0);
             //knight is chevalier to distinguish and rook is tour
@@ -76,7 +76,7 @@ public class MainManager : MonoBehaviour {
         }
         if (firstscene)
         {
-            PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetInt("level", 0);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("taken", 0);
             PlayerPrefs.SetInt("gold", 0);
@@ -890,7 +890,7 @@ public class MainManager : MonoBehaviour {
     {
 
         PrepareNextLevel();
-        if (PlayerPrefs.GetInt("level") == 1)
+        if (PlayerPrefs.GetInt("level") == 0)
         {
             SceneManager.LoadScene("LastLevel");
         }

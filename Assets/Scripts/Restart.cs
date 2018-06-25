@@ -33,7 +33,14 @@ public class Restart : MonoBehaviour {
                 Epitaph.text = Epitaph.text + "\n\n";
             }
 
-            Epitaph.text = Epitaph.text + "reached level " + PlayerPrefs.GetInt("level");
+            if (PlayerPrefs.GetInt("level") == 0)
+            {
+                Epitaph.text = Epitaph.text + "on the chess board";
+            }
+            else
+            {
+                Epitaph.text = Epitaph.text + "reached level " + PlayerPrefs.GetInt("level");
+            }
 
 
             if (PlayerPrefs.GetInt("continued") == 0)
