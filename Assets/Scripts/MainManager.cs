@@ -447,16 +447,35 @@ public class MainManager : MonoBehaviour {
             Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
         }
+        // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
+        // calculate its possible attacks based on that.
+        //will not do the queening if the pawn was eaten
+        if ((CurrentActivePiece.NewQueen) && (!CurrentActivePiece.eaten) && (ActionSymbol != ".") && (ActionSymbol != "*"))
+        {
+            CurrentActivePiece.Queen();
+            CurrentActivePiece = PieceList[0];
+            //CurrentActivePiece.SetActive(true);
+            CurrentActivePiece.FindAvailableDestinations();
+            OriginPosition = CurrentActivePiece.CurrentTile;
+            if (CurrentActivePiece.human)
+            {
+                LastSelectedPiece = CurrentActivePiece = PieceList[0];
+            }
+
+
+            //OriginPosition.position = Origin;
+            //ChangeTurn();
+
+
+            Promotion = "=Q";
+        }
         WaitingForMove = false;
         foreach (Piece piece in PieceList)
         {
             piece.SetActive(true);
         }
         //waiting for all collisions to register
-
-        yield return new WaitForSeconds(0.1f);
-
-        if ((tile!=null)&&(tile.GetComponent<TileType>().Type == 3))
+        if ((tile != null) && (tile.GetComponent<TileType>().Type == 3))
         {
             Debug.Log("landed on stairs");
 
@@ -470,10 +489,14 @@ public class MainManager : MonoBehaviour {
             {
                 //remove king
                 PieceList.Remove(CurrentActivePiece);
-                Destroy(CurrentActivePiece.gameObject);
+                CurrentActivePiece.transform.position = new Vector3(10000, 10000, 10000);
                 //CurrentActivePiece = PieceList[0];
             }
         }
+        yield return new WaitForSeconds(0.1f);
+
+
+
         UpdateThreats();
        //yield return new WaitForSeconds(2.2f);
         //UpdateThreats();
@@ -482,28 +505,7 @@ public class MainManager : MonoBehaviour {
         {
             piece.SetActive(false);
         }
-        // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
-        // calculate its possible attacks based on that.
-        //will not do the queening if the pawn was eaten
-        if ((CurrentActivePiece.NewQueen)&&(!CurrentActivePiece.eaten)&&(ActionSymbol!=".") && (ActionSymbol != "*"))
-        {
-            CurrentActivePiece.Queen();
-            CurrentActivePiece = PieceList[0];
-            //CurrentActivePiece.SetActive(true);
-            CurrentActivePiece.FindAvailableDestinations();
-            OriginPosition = CurrentActivePiece.CurrentTile;
-            if (CurrentActivePiece.human)
-            {
-                LastSelectedPiece = CurrentActivePiece = PieceList[0];
-            }
-            
-
-            //OriginPosition.position = Origin;
-            //ChangeTurn();
-
-
-            Promotion = "=Q";
-        }
+ 
 
 
 
@@ -607,6 +609,7 @@ public class MainManager : MonoBehaviour {
 
         if ((!changinglevel)&&(!gameover))
         {
+            
             ChangeTurn();
         }
         
