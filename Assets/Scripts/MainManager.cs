@@ -383,7 +383,7 @@ public class MainManager : MonoBehaviour {
             //UpdateVisibility();
         }
         //Debug.Log("finished moving");
-        
+        //yield return new WaitForSeconds(0.01f);
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();
         CurrentActivePiece.transform.position = destination;
@@ -447,11 +447,19 @@ public class MainManager : MonoBehaviour {
             Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
         }
+        WaitingForMove = false;
+        foreach (Piece piece in PieceList)
+        {
+            piece.SetActive(true);
+        }
+        yield return new WaitForSeconds(0.05f);
         // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
         // calculate its possible attacks based on that.
         //will not do the queening if the pawn was eaten
+        Debug.Log("is this new queen?");
         if ((CurrentActivePiece.NewQueen) && (!CurrentActivePiece.eaten) && (ActionSymbol != ".") && (ActionSymbol != "*"))
         {
+            Debug.Log("yes");
             CurrentActivePiece.Queen();
             CurrentActivePiece = PieceList[0];
             //CurrentActivePiece.SetActive(true);
@@ -469,11 +477,7 @@ public class MainManager : MonoBehaviour {
 
             Promotion = "=Q";
         }
-        WaitingForMove = false;
-        foreach (Piece piece in PieceList)
-        {
-            piece.SetActive(true);
-        }
+
         //waiting for all collisions to register
         if ((tile != null) && (tile.GetComponent<TileType>().Type == 3))
         {
