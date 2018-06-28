@@ -415,7 +415,8 @@ public class Piece : MonoBehaviour {
         MM.PieceList.Remove(this);
         //Debug.Log("Queen(), new PieceType is " + MM.PieceList[0].PieceType);
 
-        Destroy(gameObject);
+        //Destroy(gameObject);
+        transform.position = new Vector3(10000f, 100000f, 10000f);
     }
     public void ShowDestinations()
     {
