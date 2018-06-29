@@ -107,6 +107,7 @@ public class MainManager : MonoBehaviour {
         
         WaitingForPlayerMove = true;
         WaitingForCPUMove = false;
+
        // Debug.Log("player's turn");
         
     }
@@ -202,6 +203,10 @@ public class MainManager : MonoBehaviour {
                             DisplayMsg("Press [R] to resign");
                         }
                         UpdateStatus();
+                        foreach (Piece piece in PieceList)
+                        {
+                            piece.SetActive(false);
+                        }
                     }
 
                 }
