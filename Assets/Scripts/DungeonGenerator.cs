@@ -76,7 +76,7 @@ public class DungeonGenerator : MonoBehaviour
 
         m_RawImage.texture = m_DungeonImage;
         byte[] bytes = m_DungeonImage.EncodeToPNG();
-        File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);
+       // File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);
 
         //for (int i = 0; i < 50; i++) {
         //    GenerateDungeon();
