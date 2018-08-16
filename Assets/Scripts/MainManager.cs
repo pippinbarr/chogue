@@ -159,12 +159,19 @@ public class MainManager : MonoBehaviour {
 
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                int layerMask = 1 << 8;
-                if (Physics.Raycast(ray, out hit, 100,layerMask))
+
+                int layerMask = LayerMask.GetMask("mouse");
+                Debug.Log("Using layerMask of " + layerMask);
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
                 {
-                    //Debug.Log("hit something ");
+                    Transform selection = hit.transform;
+
+                    Debug.Log("Hit " + selection.name + " on layer " + selection.gameObject.layer);
+
+                    Transform gototile = (selection.parent ? selection.parent : selection);
+
                     //if this is an available destination, move!
-                    Transform gototile = hit.transform;
                     if ((gototile.GetComponent<TileType>()!=null)&&(gototile.GetComponent<TileType>().AvailableDestination))
                     {
                         if (gototile.GetComponent<TileType>().CurrentPiece != null)
