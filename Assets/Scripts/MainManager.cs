@@ -165,11 +165,12 @@ public class MainManager : MonoBehaviour {
 
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
                 {
-                    Transform selection = hit.transform;
+                    Transform selection = hit.collider.transform;
 
                     Debug.Log("Hit " + selection.name + " on layer " + selection.gameObject.layer);
 
-                    Transform gototile = (selection.parent ? selection.parent : selection);
+                    // Transform gototile = (selection.parent ? selection.parent : selection);
+                    Transform gototile = selection.parent;
 
                     //if this is an available destination, move!
                     if ((gototile.GetComponent<TileType>()!=null)&&(gototile.GetComponent<TileType>().AvailableDestination))
@@ -399,7 +400,7 @@ public class MainManager : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
             //UpdateVisibility();
         }
-        //Debug.Log("finished moving");
+        Debug.Log("finished moving");
         //yield return new WaitForSeconds(0.01f);
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();

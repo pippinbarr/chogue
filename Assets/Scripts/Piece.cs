@@ -458,8 +458,10 @@ public class Piece : MonoBehaviour {
     }
    public void MakeMove()
     {
+        Debug.Log("is bestmovetarget null?");
         if (BestMoveTarget != null)
         {
+            Debug.Log("Moving to bestmovetarget");
             StartCoroutine(GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>()));
         }
         
