@@ -81,6 +81,8 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("taken", 0);
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("continued", 0);
+            PlayerPrefs.SetInt("HP", 9);
+            PlayerPrefs.SetInt("MaxHP", 9);
         }
         if (!firstscene)
         {
@@ -97,8 +99,11 @@ public class MainManager : MonoBehaviour {
             if (piece.human)
             {
                 CurrentActivePiece = piece;
+                CurrentActivePiece.HP = PlayerPrefs.GetInt("HP");
+                CurrentActivePiece.MaxHP = PlayerPrefs.GetInt("MaxHP");
+
                 //CurrentActivePiece.SetActive(true);
-                
+
             }
         }
 
@@ -732,7 +737,12 @@ public class MainManager : MonoBehaviour {
             {
                 if (piece.PieceType != "coin")
                 {
-                    
+                    CurrentActivePiece.HP += piece.MaxHP;
+                    if(CurrentActivePiece.HP > CurrentActivePiece.MaxHP)
+                    {
+                        CurrentActivePiece.MaxHP=CurrentActivePiece.HP;
+                    }
+
                     if (humanpieces < 16){
                         piece.human = true;
                         piece.PowerUp();
@@ -897,6 +907,8 @@ public class MainManager : MonoBehaviour {
 
         }
         PlayerPrefs.SetString("IncomingPieces", outgoingpieces);
+        PlayerPrefs.SetInt("HP", CurrentActivePiece.HP);
+        PlayerPrefs.SetInt("MaxHP", CurrentActivePiece.MaxHP);
         if (PlayerPrefs.GetInt("continued") != 1)
         {
             PlayerPrefs.SetInt("level", PlayerPrefs.GetInt("level") + 1);

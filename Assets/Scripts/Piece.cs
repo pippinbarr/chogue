@@ -772,6 +772,9 @@ public class Piece : MonoBehaviour {
         HP = MaxHP;
         CreateModel("white");
         human = true;
+        MM.PieceList.Remove(this);
+        Destroy(gameObject);
+        
 
     }
 
