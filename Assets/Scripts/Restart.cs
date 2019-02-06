@@ -9,6 +9,7 @@ public class Restart : MonoBehaviour {
     public Text CurLevel;
     public Text BestLevel;
     public Text Epitaph;
+    public int m_RestartDelay;
     // Use this for initialization
 
     public void Start()
@@ -76,17 +77,29 @@ public class Restart : MonoBehaviour {
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("continued", 0);
         }
+        else if (SceneManager.GetActiveScene().name == "LastLevel") {
+            
+        }
         else
         {
             Epitaph.text = "Black King\n\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() + "\n\n" + System.DateTime.Today.ToShortDateString();
         }
-        
 
+        if (m_RestartDelay > 0) StartCoroutine(DelayRestart());
+    }
+
+    private IEnumerator DelayRestart () {
+        Debug.Log("Waiting to restart...");
+        yield return new WaitForSeconds(m_RestartDelay);
+        Debug.Log("Restarting...");
+        RestartGame();
     }
 
     public void RestartGame()
     {
         SceneManager.LoadScene("Level1");
+
+
     }
 
     private void Update()

@@ -1,9 +1,12 @@
 ﻿<Properties StartupConfiguration="{07509587-19DB-D9A2-D673-3EDEFDF9D3E7}|">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DungeonGenerator.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/MainManager.cs">
     <Files>
-      <File FileName="Assets/Scripts/DungeonGenerator.cs" Line="191" Column="26" />
+      <File FileName="Assets/Scripts/DungeonGenerator.cs" Line="191" Column="1" />
       <File FileName="Assets/Scripts/MapMaker.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/MainManager.cs" Line="5" Column="34" />
+      <File FileName="Assets/Scripts/Resign.cs" Line="22" Column="6" />
+      <File FileName="Assets/Scripts/Restart.cs" Line="80" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
