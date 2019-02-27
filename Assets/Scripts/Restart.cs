@@ -97,9 +97,11 @@ public class Restart : MonoBehaviour {
 
     public void RestartGame()
     {
-        SceneManager.LoadScene("Level1");
-
-
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.SetInt("level", 1);
+        PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+        PlayerPrefs.SetInt("continued", 0);
+        SceneManager.LoadScene("LevelGen");
     }
 
     private void Update()

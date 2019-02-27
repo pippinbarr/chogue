@@ -84,9 +84,6 @@ public class MainManager : MonoBehaviour {
         }
         if (!firstscene)
         {
-            
-    
-
             //create a level
             GetComponent<MapMaker>().CreateLevel();
         }
