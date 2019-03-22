@@ -163,8 +163,8 @@ public class MapMaker : MonoBehaviour {
                     }
 
                     //Here we add the ennemies0
-                    float enemythreshold = 0.025f + (((float)PlayerPrefs.GetInt("level")) / 100f);
-                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (!stairs) && (mm.PieceList.Count<50))
+                    float enemythreshold = 0.25f + (((float)PlayerPrefs.GetInt("level")) / 100f);
+                    if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (!stairs) && (mm.PieceList.Count<75))
                     {
                         Transform TempPiece;
                         //select randomly between available pieces
@@ -210,7 +210,7 @@ public class MapMaker : MonoBehaviour {
                         }
 
                         //chances that it is a powerup
-                        if ((Random.value < (0.08f + (float)PlayerPrefs.GetInt("level") / 50f))&&(TempPiece.GetComponent<Piece>().PieceType!="king"))
+                        /*if ((Random.value < (0.08f + (float)PlayerPrefs.GetInt("level") / 50f))&&(TempPiece.GetComponent<Piece>().PieceType!="king"))
                         {
 
                             if (TempPiece.GetComponent<Piece>().PieceType == "pawn")
@@ -218,11 +218,11 @@ public class MapMaker : MonoBehaviour {
                                 TempPiece.Rotate(new Vector3(-180, 0, 0));
                             }
                             TempPiece.GetComponent<Piece>().CreateModel("red");
-                        }
-                        else
-                        {
+                        }*/
+                        //else
+                        //{
                             TempPiece.GetComponent<Piece>().CreateModel("black");
-                        }
+                        //}
 
                         TempPiece.GetComponent<Piece>().human = false;
                         mm.PieceList.Add(TempPiece.GetComponent<Piece>());

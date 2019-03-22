@@ -76,7 +76,7 @@ public class DungeonGenerator : MonoBehaviour
 
         m_RawImage.texture = m_DungeonImage;
         byte[] bytes = m_DungeonImage.EncodeToPNG();
-       // File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);
+        File.WriteAllBytes(Application.dataPath + "/../niveau.png", bytes);
 
         //for (int i = 0; i < 50; i++) {
         //    GenerateDungeon();
@@ -221,7 +221,7 @@ public class DungeonGenerator : MonoBehaviour
         // Remember the color of the starting room for placing the chess pieces
         // (Oh god, what if the room is too small for your team?!)
         Debug.Log("start room color " + start.color);
-        m_StartRoomColor = start.color;
+        m_StartRoomColor = new Color(0.6f, 0.6f, 0.6f);
 
         Room toConnect = start;
         while (toConnect != null)
