@@ -437,13 +437,13 @@ public class MainManager : MonoBehaviour {
 
 
         TempMessage = ""; //reset message
-        // Calculate notation for the squares
+                          // Calculate notation for the squares
 
-        string startRank = (OriginPosition.position.y).ToString();
+        string startRank = Mathf.FloorToInt(OriginPosition.position.y).ToString();
         int startFileIndex = Mathf.FloorToInt(OriginPosition.position.x);
         string startFile = files[startFileIndex];
 
-        string destRank = (tile.transform.position.y).ToString();
+        string destRank = Mathf.FloorToInt(tile.transform.position.y).ToString();
         int destFileIndex = Mathf.FloorToInt(tile.transform.position.x);
         string destFile = files[destFileIndex];
         //Debug.Log("Moved piece's NewQueen is " + CurrentActivePiece.NewQueen + ", type is " + CurrentActivePiece.PieceType);
