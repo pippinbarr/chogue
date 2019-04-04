@@ -298,10 +298,18 @@ public class MainManager : MonoBehaviour {
                     bestpiece = piece;
                 }
                 //if equal, move the highest ranking piece
-                else if((piece.BestMove == bestmove)&&(piece.MaxHP>bestpiece.MaxHP))
+                else if((piece.BestMove == bestmove))
                 {
-                    bestmove = piece.BestMove;
-                    bestpiece = piece;
+                    if (bestpiece != null)
+                    {
+                        if (piece.MaxHP > bestpiece.MaxHP)
+                        {
+                            bestmove = piece.BestMove;
+                            bestpiece = piece;
+                        }
+
+                    }
+                    
                 }
                // piece.SetActive(false);
                 // break;
