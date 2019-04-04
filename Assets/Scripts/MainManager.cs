@@ -249,8 +249,9 @@ public class MainManager : MonoBehaviour {
         foreach (Piece piece in PieceList)
         {
             piece.threatened = false;
-            piece.covered = false;
+            piece.protecting = 0;
             piece.guarding = false;
+            piece.guarded = false;
            // piece.SetActive(true);
             
            // piece.SetActive(false);
@@ -296,11 +297,17 @@ public class MainManager : MonoBehaviour {
                     bestmove = piece.BestMove;
                     bestpiece = piece;
                 }
+                //if equal, move the highest ranking piece
+                else if((piece.BestMove == bestmove)&&(piece.MaxHP>bestpiece.MaxHP))
+                {
+                    bestmove = piece.BestMove;
+                    bestpiece = piece;
+                }
                // piece.SetActive(false);
                 // break;
             }
         }
-        //Debug.Log("best move is " + bestmove);
+        Debug.Log("best move is " + bestmove);
         //we can only move, select the one that can move closest to king
 
         if (bestmove < 2)
@@ -328,20 +335,20 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-        Debug.Log("best move level:" + bestmove);
+       // Debug.Log("best move level:" + bestmove);
         if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
         if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
 
         if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null))
         {
-            Debug.Log("let's move");
+            //Debug.Log("let's move");
             CurrentActivePiece = bestpiece;
             CurrentActivePiece.MakeMove();
 
         }
         else
         {
-            Debug.Log("Haven'T found any good move");
+           // Debug.Log("Haven'T found any good move");
             ChangeTurn();
         }
                 
@@ -392,7 +399,7 @@ public class MainManager : MonoBehaviour {
             GetComponent<AudioSource>().Play();
         }
        // CurrentActivePiece.SetActive(true);
-        Debug.Log("About to get moving");
+        //Debug.Log("About to get moving");
         while (( Vector3.Distance(destination, CurrentActivePiece.transform.position)>0.2f))
         {
             //Debug.Log("distance: "+Vector3.Distance(destination, CurrentActivePiece.transform.position));
@@ -400,7 +407,7 @@ public class MainManager : MonoBehaviour {
             yield return new WaitForSeconds(0.01f);
             //UpdateVisibility();
         }
-        Debug.Log("finished moving");
+       //    Debug.Log("finished moving");
         //yield return new WaitForSeconds(0.01f);
         GetComponent<AudioSource>().clip = putdown;
         GetComponent<AudioSource>().Play();

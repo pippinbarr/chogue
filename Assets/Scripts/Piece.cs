@@ -23,11 +23,13 @@ public class Piece : MonoBehaviour {
     public Transform BestMoveTarget; //
     public float LeastDistanceToKing = 1000000000;//
     public Color CurrentTileRoomColor;
-    public bool threatened = false;
-    public bool covered = false;
-    public bool guarding = false;
+    public bool threatened = false; // piece is in the line of enemy piece
+    //public bool covered = false; //
+    public bool guarding = false; //piece could recapture 
     public bool check = false; //Does this piece have the king in check?
     public bool eaten = false;
+    public bool guarded = false; //a friendly piece can recapture if eaten
+    public int protecting = 0; //the point value of a piece that would be threatened if I moved
 
     private MainManager MM;
 
@@ -98,7 +100,8 @@ public class Piece : MonoBehaviour {
     public void FindAvailableDestinations()
     {
         check = false;
-        guarding = false;
+    //    guarding = false;
+     //   guarded = false;
        // threatened = false;
        // covered = false;
         //le pion est vraiment un cas spécial
@@ -148,50 +151,73 @@ public class Piece : MonoBehaviour {
                 TempTileList = TempTileList.OrderBy(tile => tile.DistanceToPiece).ToList();
 
                 //then add tiles to main list until you find a wall
-                guarding = false;
-                bool BreakOnNextTile = false;
+
+                bool LookingForProtectedPiece = false;
+                Piece PossiblyProtectingPiece = this;
+                //int tilenum = 0;
                 foreach (TileType tile in TempTileList)
                 {
 
+                  //  Debug.Log("tile number: " + tilenum);
+                 //   tilenum++;
                     if ((tile.transform.tag == "wall")|| ((tile.Type == 3)&&(PieceColor=="black")&&(PieceType!="king")))
                     {
                         break;
                     }
                     else if ((tile.transform.tag == "piece"))
                     {
-                        if (PieceColor == "white")
-                        {
-                            tile.GetComponent<Piece>().threatened = true;
-                            tile.threatened = true;
-                        }
+
                         
                         if ((tile.GetComponent<Piece>().human != human))
                         {
-                            TileList.Add(tile);
-                            if (tile.GetComponent<Piece>().PieceType == "king")
+                            if (!LookingForProtectedPiece)
                             {
-                                Debug.Log("king in check");
-                                check = true;
+                                TileList.Add(tile);
+                                tile.GetComponent<Piece>().threatened = true;
+                                PossiblyProtectingPiece = tile.GetComponent<Piece>();
+                                Debug.Log("protecting piece tyoe = " + PossiblyProtectingPiece.PieceType);
+                                tile.threatened = true;
+                                if (tile.GetComponent<Piece>().PieceType == "king")
+                                {
+                                    Debug.Log("king in check");
+                                    check = true;
+                                }
                             }
-                            //did we add the tile underneath the piece?
+                            else
+                            {
+                                if(PossiblyProtectingPiece!= tile.GetComponent<Piece>())
+                                {
+                                    PossiblyProtectingPiece.protecting = tile.GetComponent<Piece>().MaxHP;
+                                    Debug.Log("protected piece type = " + tile.GetComponent<Piece>().PieceType);
+                                    break;
+                                }
+                                
+                            }
+
 
                         }
-                        if ((tile.GetComponent<Piece>().human == human)|| tile.GetComponent<Piece>().PieceColor=="red")
+                        else 
                         {
+                            if (PossiblyProtectingPiece)
+                            {
+                                break;
+                            }                              
+                            tile.GetComponent<Piece>().guarded = true;
                             guarding = true;
                         }
+
                         if (TileList.Contains(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>()))
                         {
                             TileList.Remove(tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>());
                         }
-                        //BreakOnNextTile = true;
-                        break;
+                        LookingForProtectedPiece = true;
+                       // break;
 
                     }
                     else if (tile.transform.tag == "tile")
                     {
-                       // if (!BreakOnNextTile)
-                       // {
+                        if (!LookingForProtectedPiece)
+                        {
                             TileList.Add(tile);
                             //if we are white, set visibility around
                             if (PieceColor == "white")
@@ -206,7 +232,7 @@ public class Piece : MonoBehaviour {
                                 }
                                 tile.threatened = true;
                             }
-                       // }
+                        }
                        /*
                         else 
                         {
@@ -391,11 +417,14 @@ public class Piece : MonoBehaviour {
                 if (tile.GetComponent<Piece>().human != human)
                 {
                     TileList.Add(tile);
+                    tile.GetComponent<Piece>().threatened = true;
                 }
-                if (PieceColor == "white")
+                else
                 {
-                    tile.threatened = true;
+                    tile.GetComponent<Piece>().guarded = true;
+                    guarding = true;
                 }
+
 
                
             }
@@ -498,15 +527,19 @@ public class Piece : MonoBehaviour {
                 if (tile.GetComponent<Piece>().human)
                 {
                     //if I'm king and the piece I'm looking at is threatened, can't eat it
-                    if (!((PieceType == "king") && (tile.GetComponent<Piece>().threatened)))
+                    if (!((PieceType == "king") && (tile.GetComponent<Piece>().guarded)))
                     {
-                        BestMove = 3;
-                        BestMoveTarget = tile.transform;
-                        if ((tile.GetComponent<Piece>().PieceType == "king")||((PieceType=="king")&&threatened))
-                        {
-                            BestMove = 5;
-                            return;
+                        //if the piece is protected and worth less than me, don't do that
+                        if ((tile.GetComponent<Piece>().MaxHP > MaxHP)|| (!tile.GetComponent<Piece>().guarded)){
+                            BestMove = 3;
+                            BestMoveTarget = tile.transform;
+                            if ((tile.GetComponent<Piece>().PieceType == "king") || ((PieceType == "king") && threatened))
+                            {
+                                BestMove = 5;
+                                return;
+                            }
                         }
+
                     }                   
                     
                 }
@@ -520,9 +553,12 @@ public class Piece : MonoBehaviour {
 
         }
         //am I threatened and uncovered?
-        threatened = CurrentTile.GetComponent<TileType>().threatened;
-        covered = CurrentTile.GetComponent<TileType>().covered;
-        if ( (PieceType!="king")&&(BestMove == 0)&&(threatened))
+       // threatened = CurrentTile.GetComponent<TileType>().threatened;
+       // covered = CurrentTile.GetComponent<TileType>().covered;
+       //was this useful?
+       //todo: move if threatened (unless guarded and attacking piece is higher)
+       //todo: know whether I am blocking a piece
+        if ( (PieceType!="king")&&(BestMove == 0)&&(threatened)&&(protecting<MaxHP))
         {
            
             //Debug.Log("I'm threatened");
