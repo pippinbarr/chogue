@@ -6,6 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class MainManager : MonoBehaviour {
 
+    //Titles
+    public Text title;
+    public Text subtitle;
+    bool firstmove = false;
+
     //The current active piece, currently manually assigned
     public Piece CurrentActivePiece;
     private Piece LastSelectedPiece;
@@ -47,6 +52,10 @@ public class MainManager : MonoBehaviour {
     private string[] hits = new string[] { "hits", "swings and hits", "has injured", "scored an excellent hit on" };
     private string[] misses = new string[] { "misses", "swings and misses", "barely misses", "doesn't hit" };
 
+    //camera stuff
+    public bool MovingCamera = false;
+    //public Vector3 InitialMousePosition;
+
 	// Use this for initialization
 	void Start () {
         Debug.Log(SceneManager.GetActiveScene().name);
@@ -84,8 +93,29 @@ public class MainManager : MonoBehaviour {
         }
         if (!firstscene)
         {
-            
-    
+
+            if (PlayerPrefs.GetInt("level") > 0)
+            {
+                if (title != null)
+                {
+                    title.text = "Level " + PlayerPrefs.GetInt("level");
+                }
+                if (subtitle != null)
+                {
+                    if (PlayerPrefs.GetInt("level") == 2)
+                    {
+                        subtitle.text = "Protect your king!";
+                    }
+                    else if (PlayerPrefs.GetInt("level") == 3)
+                    {
+                        subtitle.text = "The king of Yendor is hiding in the lower levels";
+                    }
+                    else
+                    {
+                        subtitle.text = "";
+                    }
+                }
+            }
 
             //create a level
             GetComponent<MapMaker>().CreateLevel();
@@ -108,7 +138,8 @@ public class MainManager : MonoBehaviour {
         WaitingForPlayerMove = true;
         WaitingForCPUMove = false;
 
-       // Debug.Log("player's turn");
+        // Debug.Log("player's turn");
+        StartCoroutine(InitialStuff());
         
     }
 	
@@ -123,7 +154,9 @@ public class MainManager : MonoBehaviour {
         if (dothisonce)
         {
 
+            UpdateThreats();
             UpdateVisibility();
+
             dothisonce = false;
             UpdateStatus();
         }
@@ -152,7 +185,7 @@ public class MainManager : MonoBehaviour {
                     UpdateStatus();
                 }
             }
-
+            
             if (Input.GetMouseButtonDown(0))
             {
                 DisplayMsg("");
@@ -161,13 +194,14 @@ public class MainManager : MonoBehaviour {
                 RaycastHit hit;
 
                 int layerMask = LayerMask.GetMask("mouse");
-                Debug.Log("Using layerMask of " + layerMask);
-
+                //  Debug.Log("Using layerMask of " + layerMask);
+                
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
                 {
+
                     Transform selection = hit.collider.transform;
 
-                    Debug.Log("Hit " + selection.name + " on layer " + selection.gameObject.layer);
+                   // Debug.Log("Hit " + selection.name + " on layer " + selection.gameObject.layer);
 
                     // Transform gototile = (selection.parent ? selection.parent : selection);
                     Transform gototile = selection.parent;
@@ -190,7 +224,20 @@ public class MainManager : MonoBehaviour {
                             Debug.Log("going to a piece");
                         }
                         StartCoroutine(MoveToTile(gototile.GetComponent<TileType>()));
-                        
+
+                        //clear titles on first move
+                        if (!firstmove)
+                        {
+                            if (title != null)
+                            {
+                                title.enabled = false;
+                            }
+                            if (subtitle != null)
+                            {
+                                subtitle.enabled = false;
+                            }
+                        }
+
                         //WaitingForPlayerMove = false;
                         //UpdateVisibility();
                         
@@ -223,6 +270,7 @@ public class MainManager : MonoBehaviour {
                     }
 
                 }
+
             }
         }
         else if((!WaitingForCPUMove)&&(!WaitingForMove))
@@ -1033,6 +1081,24 @@ public class MainManager : MonoBehaviour {
             PlayBlack();
         }
 
+
+    }
+    IEnumerator InitialStuff()
+    {
+        foreach (Piece piece in PieceList)
+        {
+            piece.SetActive(true);
+        }
+        yield return new WaitForSeconds(0.1f);
+
+
+        UpdateThreats();
+
+        UpdateVisibility();
+        foreach (Piece piece in PieceList)
+        {
+            piece.SetActive(false);
+        }
 
     }
 }
