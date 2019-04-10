@@ -535,8 +535,8 @@ public class Piece : MonoBehaviour {
                             BestMoveTarget = tile.transform;
                             if ((tile.GetComponent<Piece>().PieceType == "king") || ((PieceType == "king") && threatened))
                             {
-                                //BestMove = 5;
-                                //return;
+                                BestMove = 5;
+                                return;
                             }
                         }
 
@@ -545,11 +545,11 @@ public class Piece : MonoBehaviour {
                 }
             }
             //special case for ennemy king, looking for an exit
-            /*else if ((PieceType == "king") && (tile.Type == 3))
+            else if ((PieceType == "king") && (tile.Type == 3))
             {
                 BestMove = 5;
                 BestMoveTarget = tile.transform;
-            }*/
+            }
 
         }
         //am I threatened and uncovered?

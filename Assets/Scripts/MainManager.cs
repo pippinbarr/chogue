@@ -10,6 +10,7 @@ public class MainManager : MonoBehaviour {
     public Text title;
     public Text subtitle;
     bool firstmove = false;
+    public Text resignbutton;
 
     //The current active piece, currently manually assigned
     public Piece CurrentActivePiece;
@@ -85,7 +86,7 @@ public class MainManager : MonoBehaviour {
         }
         if (firstscene)
         {
-            PlayerPrefs.SetInt("level", 0);
+            PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("taken", 0);
             PlayerPrefs.SetInt("gold", 0);
@@ -94,7 +95,7 @@ public class MainManager : MonoBehaviour {
         if (!firstscene)
         {
 
-            if (PlayerPrefs.GetInt("level") > 0)
+            if (PlayerPrefs.GetInt("level") > 1)
             {
                 if (title != null)
                 {
@@ -108,7 +109,7 @@ public class MainManager : MonoBehaviour {
                     }
                     else if (PlayerPrefs.GetInt("level") == 3)
                     {
-                        subtitle.text = "The king of Yendor is hiding in the lower levels";
+                        subtitle.text = "Capture the cowardly king of Yendor!";
                     }
                     else
                     {
@@ -1103,7 +1104,15 @@ public class MainManager : MonoBehaviour {
     }
     public void Resign()
     {
-        PlayerPrefs.SetString("Executor", "resigned");
-        SceneManager.LoadScene("GameOver");
+        if (resignbutton.text == "[Resign]")
+        {
+            resignbutton.text = "[Tap to confirm resignation]";
+        }
+        else
+        {
+            PlayerPrefs.SetString("Executor", "resigned");
+            SceneManager.LoadScene("GameOver");
+        }
+
     }
 }
