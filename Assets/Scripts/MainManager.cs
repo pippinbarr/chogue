@@ -103,7 +103,14 @@ public class MainManager : MonoBehaviour {
                 }
                 if (subtitle != null)
                 {
-                    if (PlayerPrefs.GetInt("level") == 2)
+                    if (PlayerPrefs.GetInt("continued")==1)
+                    {
+                        if (PlayerPrefs.GetInt("level") == PlayerPrefs.GetInt("KingLevel") - 1)
+                        {
+                            subtitle.text = "Now that you've captured the King, go back to the surface!";
+                        }
+                    }
+                    else if (PlayerPrefs.GetInt("level") == 2)
                     {
                         subtitle.text = "Protect your king!";
                     }
@@ -1003,18 +1010,18 @@ public class MainManager : MonoBehaviour {
         //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
         PlayerPrefs.SetInt("continued", 1);
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
-        // msgline.color = new Color(1f, 1f, 0x55/255);
-        DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
+         msgline.color = new Color(1f, 1f, 0x55/255);
+        DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? ");
         WaitingForPlayerMove = false;
         WaitingForCPUMove = true;
-        while (!Input.GetKeyDown(KeyCode.Space))
+        /*while (!Input.GetKeyDown(KeyCode.Space))
         {
-            DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? [press space to continue]");
+            DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
             yield return new WaitForSeconds(0.01f);
-        }
+        }*/
         gameover = false;
-        // msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
-        yield return new WaitForSeconds(0.01f);
+         msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
+        yield return new WaitForSeconds(2.01f);
         DisplayMsg("");
         WaitingForPlayerMove = true;
         WaitingForCPUMove = false;
