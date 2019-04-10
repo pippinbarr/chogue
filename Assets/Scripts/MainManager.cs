@@ -1101,4 +1101,9 @@ public class MainManager : MonoBehaviour {
         }
 
     }
+    public void Resign()
+    {
+        PlayerPrefs.SetString("Executor", "resigned");
+        SceneManager.LoadScene("GameOver");
+    }
 }
