@@ -266,10 +266,10 @@ public class MainManager : MonoBehaviour {
                         CurrentActivePiece.ShowDestinations();
                         LastSelectedPiece = CurrentActivePiece;
                         PieceSelected = true;
-                        if (CurrentActivePiece.PieceType == "king")
+                        /*if (CurrentActivePiece.PieceType == "king")
                         {
                             DisplayMsg("Press [R] to resign");
-                        }
+                        }*/
                         UpdateStatus();
                         foreach (Piece piece in PieceList)
                         {
