@@ -8,6 +8,7 @@ public class MapMaker : MonoBehaviour {
     public Texture2D ManualLevel;
     public bool manual = false;
     public int KingArrivesAtLevel = 1;
+    public int KingFarFromStairsAtLevel =5;
     public Transform TilePrefab;
     public Transform WallPrefab;
     public Transform StairsPrefab;
@@ -274,10 +275,17 @@ public class MapMaker : MonoBehaviour {
             if (stairstile != null)
             {
                 //find a tile that is between 2 and 3 units away and doesn't have a a piece on it
+                float mindist = 1.9f;
+                float maxdist = 2.6f;
+                if (PlayerPrefs.GetInt("level") < KingFarFromStairsAtLevel)
+                {
+                    mindist = .9f;
+                    maxdist = 1.1f;
+                }
                 foreach(TileType tile in mm.TileList)
                 {
                     float dist = Vector3.Distance(tile.transform.position, stairstile.transform.position);
-                    if ((dist < 2.6f) && (dist > 1.9f)&&!tile.corridor)
+                    if ((dist < maxdist) && (dist > mindist)&&!tile.corridor)
                     {
                         bool notgood = false;
                         foreach (Piece piece in mm.PieceList)

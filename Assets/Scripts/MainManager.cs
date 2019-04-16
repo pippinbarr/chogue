@@ -1011,18 +1011,21 @@ public class MainManager : MonoBehaviour {
         PlayerPrefs.SetInt("continued", 1);
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
          msgline.color = new Color(1f, 1f, 0x55/255);
-        DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? ");
+       // DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? ");
         WaitingForPlayerMove = false;
         WaitingForCPUMove = true;
-        /*while (!Input.GetKeyDown(KeyCode.Space))
+        float endtime = Time.time+5;
+        
+        while (Time.time<endtime)
         {
             DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
             yield return new WaitForSeconds(0.01f);
-        }*/
+        }
         gameover = false;
-         msgline.color = new Color(0xaa/255, 0xaa/255, 0xaa/255);
-        yield return new WaitForSeconds(2.01f);
-        DisplayMsg("");
+        
+        
+        msgline.color = new Color(0xaa / 255, 0xaa / 255, 0xaa / 255);
+        // DisplayMsg("");
         WaitingForPlayerMove = true;
         WaitingForCPUMove = false;
         ChangeTurn();
