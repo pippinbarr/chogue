@@ -535,8 +535,12 @@ public class Piece : MonoBehaviour {
                             BestMoveTarget = tile.transform;
                             if ((tile.GetComponent<Piece>().PieceType == "king") || ((PieceType == "king") && threatened))
                             {
-                                BestMove = 5;
-                                return;
+                                if (BestMove < 6)
+                                {
+                                    BestMove = 5;
+                                }
+                                
+                                //return;
                             }
                         }
 
@@ -549,6 +553,7 @@ public class Piece : MonoBehaviour {
             {
                 BestMove = 6;
                 BestMoveTarget = tile.transform;
+                return;
             }
 
         }

@@ -164,7 +164,7 @@ public class MapMaker : MonoBehaviour {
                     }
 
                     //Here we add the ennemies0
-                    float enemythreshold = 0.1f + (((float)PlayerPrefs.GetInt("level")) / 100f);
+                    float enemythreshold = 0.025f + (((float)PlayerPrefs.GetInt("level")) / 100f);
                     if ((Random.value < enemythreshold) && (!(difcolor < 0.01)) && (Level.GetPixel(posx, posy) != Color.red) && (!stairs) && (mm.PieceList.Count<50))
                     {
                         Transform TempPiece;

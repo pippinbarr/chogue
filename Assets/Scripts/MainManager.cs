@@ -55,6 +55,7 @@ public class MainManager : MonoBehaviour {
 
     //camera stuff
     public bool MovingCamera = false;
+    private float touchbegan = 0f;
     //public Vector3 InitialMousePosition;
 
 	// Use this for initialization
@@ -193,18 +194,32 @@ public class MainManager : MonoBehaviour {
                     UpdateStatus();
                 }
             }
-            
-            if (Input.GetMouseButtonDown(0))
+            bool tapped = false;
+            if (Input.touchCount == 1)
             {
-                DisplayMsg("");
+                if (Input.GetTouch(0).phase == TouchPhase.Began)
+                {
+                    touchbegan = Time.time;
+                }
+                if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    if ((Time.time - touchbegan) < 0.5f)
+                    {
+                        tapped = true;
+                    }
+                }
+            }
+            if (tapped)
+            {
+                //DisplayMsg("");
 
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
 
                 int layerMask = LayerMask.GetMask("mouse");
                 //  Debug.Log("Using layerMask of " + layerMask);
-                
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+
+                if( (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask)))
                 {
 
                     Transform selection = hit.collider.transform;
@@ -399,7 +414,7 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-       // Debug.Log("best move level:" + bestmove);
+        Debug.Log("best move level:" + bestmove);
         if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
         if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
 
