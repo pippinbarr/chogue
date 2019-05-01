@@ -530,7 +530,7 @@ public class Piece : MonoBehaviour {
                     if (!((PieceType == "king") && (tile.GetComponent<Piece>().guarded)))
                     {
                         //if the piece is protected and worth less than me, don't do that
-                        if ((tile.GetComponent<Piece>().MaxHP > MaxHP)|| (!tile.GetComponent<Piece>().guarded)){
+                       // if ((tile.GetComponent<Piece>().MaxHP > MaxHP)|| (!tile.GetComponent<Piece>().guarded)){
                             BestMove = 3;
                             BestMoveTarget = tile.transform;
                             if ((tile.GetComponent<Piece>().PieceType == "king") || ((PieceType == "king") && threatened))
@@ -542,7 +542,7 @@ public class Piece : MonoBehaviour {
                                 
                                 //return;
                             }
-                        }
+                       // }
 
                     }                   
                     
