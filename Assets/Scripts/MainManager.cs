@@ -106,10 +106,8 @@ public class MainManager : MonoBehaviour {
                 {
                     if (PlayerPrefs.GetInt("continued")==1)
                     {
-                        if (PlayerPrefs.GetInt("level") == PlayerPrefs.GetInt("KingLevel") - 1)
-                        {
-                            subtitle.text = "Now that you've captured the King, go back to the surface!";
-                        }
+                        subtitle.text = "Go back to the surface!";
+
                     }
                     else if (PlayerPrefs.GetInt("level") == 2)
                     {
