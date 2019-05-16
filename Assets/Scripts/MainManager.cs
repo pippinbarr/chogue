@@ -40,6 +40,7 @@ public class MainManager : MonoBehaviour {
     public bool restartgame = false;
     public bool HitPointVersion = false;
     private bool changinglevel = false;
+    private Vector3 touchStartPos;
 
 
     // Message and notation vars
@@ -193,15 +194,19 @@ public class MainManager : MonoBehaviour {
                 }
             }
             bool tapped = false;
+
             if (Input.touchCount == 1)
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Began)
                 {
                     touchbegan = Time.time;
+                    touchStartPos = Input.GetTouch(0).position;
                 }
                 if (Input.GetTouch(0).phase == TouchPhase.Ended)
                 {
-                    if ((Time.time - touchbegan) < 0.5f)
+                    float dist = Vector3.Distance(touchStartPos,Input.GetTouch(0).position);
+                    Debug.Log(dist);
+                    if ((Time.time - touchbegan) < 0.5f && dist < 10)
                     {
                         tapped = true;
                     }
