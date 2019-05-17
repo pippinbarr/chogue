@@ -59,8 +59,24 @@ public class MainManager : MonoBehaviour {
     private float touchbegan = 0f;
     //public Vector3 InitialMousePosition;
 
-	// Use this for initialization
-	void Start () {
+    //high score stuff
+    private LeaderboardNames[] allLeaderboards;
+
+
+    // Use this for initialization
+    void Start () {
+
+        //login to google game center
+        GameServices.Instance.LogIn(LoginComplete);
+
+        //make a list of all leaderboards
+        int nrOfLeaderboards = System.Enum.GetValues(typeof(LeaderboardNames)).Length;
+        allLeaderboards = new LeaderboardNames[nrOfLeaderboards];
+        for (int i = 0; i < nrOfLeaderboards; i++)
+        {
+            allLeaderboards[i] = ((LeaderboardNames)i);
+        }
+
         Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
@@ -83,6 +99,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("continued", 0);
+            PlayerPrefs.SetInt("Choguelo", 0);
             //knight is chevalier to distinguish and rook is tour
 
         }
@@ -93,6 +110,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("taken", 0);
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("continued", 0);
+            PlayerPrefs.SetInt("Choguelo", 0);
         }
         if (!firstscene)
         {
@@ -838,9 +856,10 @@ public class MainManager : MonoBehaviour {
                 }
                 else
                 {
-                    int gold = (int)(Random.value * 50);
+                    int gold = (int)(Random.value * 10);
                     TempMessage = "You found " + gold + " gold!";
                     PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold") + gold);
+                    PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + gold);
                     PieceList.Remove(piece);
                     Destroy(piece.gameObject);
 
@@ -856,10 +875,11 @@ public class MainManager : MonoBehaviour {
             }
             else if (piece.human != CurrentActivePiece.human)
             {
-
-              /*  int gold = (int)(Random.value * 50);
-                TempMessage = "You found " + gold + " gold !";
-                PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);*/
+                if(CurrentActivePiece.human)
+                    PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + piece.HP);
+                /*  int gold = (int)(Random.value * 50);
+                  TempMessage = "You found " + gold + " gold !";
+                  PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);*/
 
                 PieceList.Remove(piece);
                 Destroy(piece.gameObject);
@@ -868,6 +888,7 @@ public class MainManager : MonoBehaviour {
             }
             if (CurrentActivePiece.human)
             {
+                
                 PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
                 if (PlayerPrefs.GetInt("taken") > PlayerPrefs.GetInt("maxtaken"))
                 {
@@ -1008,9 +1029,12 @@ public class MainManager : MonoBehaviour {
     private void ChangeLevel()
     {
 
+        PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 50);
         PrepareNextLevel();
         if (PlayerPrefs.GetInt("level") == 0)
         {
+            //player actually won
+            PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
             SceneManager.LoadScene("LastLevel");
         }
         else
@@ -1018,8 +1042,11 @@ public class MainManager : MonoBehaviour {
             SceneManager.LoadScene("LevelGen");
         }
     }
+
     public IEnumerator GameOver()
     {
+        
+        
         /*yield return new WaitForSeconds(0.2f);
         GetComponent<AudioSource>().clip = endchord;
         GetComponent<AudioSource>().Play();*/
@@ -1032,6 +1059,7 @@ public class MainManager : MonoBehaviour {
     IEnumerator  Win()
     {
         //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
+        PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
         PlayerPrefs.SetInt("continued", 1);
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
          msgline.color = new Color(1f, 1f, 0x55/255);
@@ -1148,5 +1176,38 @@ public class MainManager : MonoBehaviour {
             SceneManager.LoadScene("GameOver");
         }
 
+    }
+    private void LoginComplete(bool success)
+    {
+        if (success == true)
+        {
+            //Login was succesful
+        }
+        else
+        {
+            //Login failed
+        }
+        Debug.Log("Login success: " + success);
+        GleyGameServices.ScreenWriter.Write("Login success: " + success);
+    }
+    public void SubmitChoguelo()
+    {
+        long choguelo = (long)PlayerPrefs.GetInt("Choguelo");
+        GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
+    }
+    //Automatically called when a score was submitted 
+    private void ScoreSubmitted(bool success, GameServicesError error)
+    {
+        if (success)
+        {
+            //score successfully submitted
+        }
+        else
+        {
+            //an error occurred
+            Debug.LogError("Score failed to submit: " + error);
+        }
+        Debug.Log("Submit score result: " + success + " message:" + error);
+        GleyGameServices.ScreenWriter.Write("Submit score result: " + success + " message:" + error);
     }
 }
