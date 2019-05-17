@@ -62,7 +62,7 @@ public class PinchZoom : MonoBehaviour
                 Camera.current.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
 
                 // Make sure the orthographic size never drops below zero.
-                Camera.current.orthographicSize = Mathf.Max(GetComponent<Camera>().orthographicSize, 0.1f);
+                Camera.current.orthographicSize = Mathf.Min(Mathf.Max(GetComponent<Camera>().orthographicSize, 8.0f),25.0f);
 
                 Debug.Log(Camera.current.orthographicSize);
             }
