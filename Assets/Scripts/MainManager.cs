@@ -206,7 +206,7 @@ public class MainManager : MonoBehaviour {
                 {
                     float dist = Vector3.Distance(touchStartPos,Input.GetTouch(0).position);
                     Debug.Log(dist);
-                    if ((Time.time - touchbegan) < 0.5f && dist < 10)
+                    if ((Time.time - touchbegan) < 0.5f && dist < 50)
                     {
                         tapped = true;
                     }
@@ -623,6 +623,11 @@ public class MainManager : MonoBehaviour {
         if (CurrentActivePiece.check)
         {
             InCheck = "+";
+            msgline.color = new Color(255f / 255, 0 / 255, 0 / 255);
+        }
+        else
+        {
+            msgline.color = new Color(0.66f, 0.66f, 0.66f);
         }
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
@@ -1018,6 +1023,7 @@ public class MainManager : MonoBehaviour {
         /*yield return new WaitForSeconds(0.2f);
         GetComponent<AudioSource>().clip = endchord;
         GetComponent<AudioSource>().Play();*/
+        GameObject.Find("MainCamera").GetComponent<CameraMove>().CenterOnKing();
         yield return new WaitForSeconds(4f);
         PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         SceneManager.LoadScene("GameOver");

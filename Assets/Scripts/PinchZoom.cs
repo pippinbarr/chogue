@@ -8,47 +8,34 @@ public class PinchZoom : MonoBehaviour
     private float startingOrthographicSize = 12.5f;
 
     private bool dragging = false;
+    private bool zooming = false;
     private Vector3 prevDragPosition;
 
     void Update()
     {
-        if(Input.GetMouseButton(0)) 
-        {
-            if (!dragging)
-            {
-                dragging = true;
-                prevDragPosition = Input.mousePosition;
-            }
-            Vector3 move = prevDragPosition - Input.mousePosition;
-            Vector3 worldMove = Camera.main.ScreenToViewportPoint(move);
-            float orthoRatio = Camera.main.orthographicSize / startingOrthographicSize;
-            Camera.main.transform.Translate(worldMove.x * 10f * orthoRatio,worldMove.y * 20f * orthoRatio,0);
-            prevDragPosition = Input.mousePosition;
-        }
-        else
-        {
-            dragging = false;
-        }
+       
 
         //if there is one touch on the device
-        if(Input.touchCount == 1)
+        if (Input.touchCount == 1)
         {
             if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
             {
-                Vector3 touchPosition = new Vector3(Input.GetTouch(0).position.x,Input.GetTouch(0).position.y,0);
-                if (!dragging) 
+                Vector3 touchPosition = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 0);
+
+                if ((!dragging)||(zooming))
                 {
                     dragging = true;
                     prevDragPosition = touchPosition;
+                    zooming = false;
                 }
-            Vector3 move = prevDragPosition - touchPosition;
-            Vector3 worldMove = Camera.main.ScreenToViewportPoint(move);
-            float orthoRatio = Camera.main.orthographicSize / startingOrthographicSize;
-            Camera.main.transform.Translate(worldMove.x * 10f * orthoRatio,worldMove.y * 20f * orthoRatio,0);
-            prevDragPosition = touchPosition;
+                Vector3 move = prevDragPosition - touchPosition;
+                Vector3 worldMove = Camera.main.ScreenToViewportPoint(move);
+                float orthoRatio = Camera.main.orthographicSize / startingOrthographicSize;
+                Camera.main.transform.Translate(worldMove.x * 10f * orthoRatio, worldMove.y * 20f * orthoRatio, 0);
+                prevDragPosition = touchPosition;
             }
         }
-        
+
         // If there are two touches on the device...
         if (Input.touchCount == 2)
         {
@@ -87,7 +74,13 @@ public class PinchZoom : MonoBehaviour
                 // Clamp the field of view to make sure it's between 0 and 180.
                 GetComponent<Camera>().fieldOfView = Mathf.Clamp(GetComponent<Camera>().fieldOfView, 0.1f, 179.9f);
             }
-            
+            zooming = true;
+
+        }
+        if (Input.touchCount == 0)
+        {
+            zooming = false;
+            dragging = false;
         }
     }
 }

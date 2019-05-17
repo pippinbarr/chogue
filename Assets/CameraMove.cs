@@ -11,7 +11,7 @@ public class CameraMove : MonoBehaviour {
     public float ReferenceScreenHeight = 1600;
     public float touchslowfactor = 0.01f;
 
-
+    
     // Use this for initialization
     void Start () {
         MM = GameObject.Find("MainManager").GetComponent<MainManager>();
@@ -19,18 +19,27 @@ public class CameraMove : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
+    public void CenterOnKing()
+    {
+        foreach (Piece piece in MM.PieceList)
+        {
+            if ((piece.PieceType == "king") && (piece.human))
+            {
+                Debug.Log("found human king");
+                transform.position = new Vector3(piece.transform.position.x, piece.transform.position.y , transform.position.z);
+                centered = true;
+            }
+        }
+    }
+
 	void Update () {
         if (!centered)
         {
-            foreach (Piece piece in MM.PieceList)
-            {
-                if ((piece.PieceType == "king") && (piece.human))
-                {
-                    Debug.Log("found human king");
-                    transform.position = new Vector3(piece.transform.position.x, piece.transform.position.y+7, transform.position.z);
-                    centered = true;
-                }
-            }
+            CenterOnKing();
+            
+            transform.Translate(new Vector3(0, 7, 0));
+            
+            
         }
        /* if (MM.MovingCamera)
         {
