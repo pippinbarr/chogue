@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-<!-- Internal library dependency generated at build time. 
+  <!-- Internal library dependency generated at build time. 
     It also defines the transitive dependencies on play-services
 -->
   <androidPackages>
