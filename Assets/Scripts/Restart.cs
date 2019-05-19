@@ -72,6 +72,13 @@ public class Restart : MonoBehaviour {
             //CurLevel.text = "Level reached: " + PlayerPrefs.GetInt("level");
             //BestLevel.text = "Highest level reached: " + PlayerPrefs.GetInt("maxlevel");
 
+            Epitaph.text = Epitaph.text + "\nGold: " + PlayerPrefs.GetInt("gold");
+            Epitaph.text = Epitaph.text + "\nCaptured HP: " + PlayerPrefs.GetInt("hptaken");
+            Epitaph.text = Epitaph.text + "\nLevels cleared: " + (PlayerPrefs.GetInt("level")-1);
+            Epitaph.text = Epitaph.text + "\nCaptured king: " + PlayerPrefs.GetInt("continued");
+
+
+
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("continued", 0);

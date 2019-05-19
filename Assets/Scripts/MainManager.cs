@@ -80,6 +80,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("maxlevel", 1);
             PlayerPrefs.SetInt("maxgold", 0);
             PlayerPrefs.SetInt("maxtaken", 0);
+            PlayerPrefs.SetInt("hptaken", 0);
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
@@ -92,6 +93,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("taken", 0);
+            PlayerPrefs.SetInt("hptaken", 0);
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("continued", 0);
         }
@@ -872,6 +874,10 @@ public class MainManager : MonoBehaviour {
             }
             if (CurrentActivePiece.human)
             {
+                if (piece.PieceColor == "black")
+                {
+                    PlayerPrefs.SetInt("hptaken", PlayerPrefs.GetInt("hptaken") + piece.MaxHP);
+                }
                 PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
                 if (PlayerPrefs.GetInt("taken") > PlayerPrefs.GetInt("maxtaken"))
                 {
