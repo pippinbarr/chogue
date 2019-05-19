@@ -61,6 +61,7 @@ public class MainManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
         Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
@@ -105,23 +106,24 @@ public class MainManager : MonoBehaviour {
                 }
                 if (subtitle != null)
                 {
-                    if (PlayerPrefs.GetInt("continued")==1)
-                    {
-                        subtitle.text = "Go back to the surface!";
+                    //if (PlayerPrefs.GetInt("continued")==1)
+                    //{
+                    //    subtitle.text = "Go back to the surface!";
 
-                    }
-                    else if (PlayerPrefs.GetInt("level") == 2)
-                    {
-                        subtitle.text = "Protect your king!";
-                    }
-                    else if (PlayerPrefs.GetInt("level") == 3)
-                    {
-                        subtitle.text = "Capture the cowardly king of Yendor!";
-                    }
-                    else
-                    {
-                        subtitle.text = "";
-                    }
+                    //}
+                    //else if (PlayerPrefs.GetInt("level") == 2)
+                    //{
+                    //    subtitle.text = "Protect your king!";
+                    //}
+                    //else if (PlayerPrefs.GetInt("level") == 3)
+                    //{
+                    //    subtitle.text = "Capture the cowardly king of Yendor!";
+                    //}
+                    //else
+                    //{
+                    //    subtitle.text = "";
+                    //}
+                    subtitle.text = LevelNameGenerator.GetName();
                 }
             }
 
@@ -153,6 +155,8 @@ public class MainManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        Debug.Log(LevelNameGenerator.GetName());
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
