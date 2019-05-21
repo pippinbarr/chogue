@@ -126,6 +126,9 @@ public class MainManager : MonoBehaviour {
                     //    subtitle.text = "";
                     //}
                     subtitle.text = LevelNameGenerator.GetName();
+                    subtitle.text += "\nGold: " + PlayerPrefs.GetInt("gold");
+                    subtitle.text += "\nHP Captured: " + PlayerPrefs.GetInt("hptaken");
+                    subtitle.text += "\nKing Captured: " + PlayerPrefs.GetInt("continued");
                 }
             }
 
@@ -158,7 +161,7 @@ public class MainManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        Debug.Log(LevelNameGenerator.GetName());
+        //Debug.Log(LevelNameGenerator.GetName());
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -217,6 +220,10 @@ public class MainManager : MonoBehaviour {
                         tapped = true;
                     }
                 }
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                tapped = true;
             }
             if (tapped)
             {
