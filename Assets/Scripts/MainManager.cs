@@ -11,6 +11,7 @@ public class MainManager : MonoBehaviour {
     public Text subtitle;
     bool firstmove = false;
     public Text resignbutton;
+    public Transform Popup;
 
     //The current active piece, currently manually assigned
     public Piece CurrentActivePiece;
@@ -744,7 +745,7 @@ public class MainManager : MonoBehaviour {
         if (WaitingForMoveBack)
         {
             WaitingForMove = true;
-            Debug.Log("going back to where I came from");
+           // Debug.Log("going back to where I came from");
 
             WaitingForMoveBack = false;
             TileType temptile = FindTileByPosition(Origin);
@@ -753,7 +754,7 @@ public class MainManager : MonoBehaviour {
                 temptile = OriginPosition.GetComponent<TileType>();
             }
             StartCoroutine(MoveToTile(temptile, true));
-            Debug.Log("waiting to get back");
+           // Debug.Log("waiting to get back");
             yield break;
            /* while (WaitingForMove==true)
             {
@@ -763,7 +764,7 @@ public class MainManager : MonoBehaviour {
 
             }*/
 
-            Debug.Log("got back, finish move function");
+           // Debug.Log("got back, finish move function");
         }
         WaitingForMove = false;
         UpdateVisibility();
@@ -854,16 +855,17 @@ public class MainManager : MonoBehaviour {
             //was it the player's king?
             if ((piece.human) && (piece.PieceType == "king"))
             {
-                Debug.Log("game over");
+                //Debug.Log("game over");
                 gameover = true;
 
                 StartCoroutine(GameOver());
             }
             if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor != "red"))
             {
-                Debug.Log("game over");
+               // Debug.Log("game over");
                 gameover = true;
-                StartCoroutine(Win());
+                Popup.gameObject.SetActive(true);
+                
             }
             //Debug.Log("I am human? : " + CurrentActivePiece.human);
             // Debug.Log("Eaten piece is human ?: " + piece.human);
@@ -1090,31 +1092,33 @@ public class MainManager : MonoBehaviour {
         SceneManager.LoadScene("GameOver");
 
     }
-    IEnumerator  Win()
+    public void  Win()
     {
         //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
         PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
         PlayerPrefs.SetInt("continued", 1); //this means we got the king?
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
         GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
-        msgline.color = new Color(1f, 1f, 0x55/255);
+
+        //Popup.gameObject.SetActive(true);
+
        // DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? ");
-        WaitingForPlayerMove = false;
+       /* WaitingForPlayerMove = false;
         WaitingForCPUMove = true;
-        float endtime = Time.time+5;
+        float endtime = Time.time+5;*/
         
-        while (Time.time<endtime)
+        /*while (Time.time<endtime)
         {
             DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
             yield return new WaitForSeconds(0.01f);
-        }
+        }*/
         gameover = false;
         
         
-        msgline.color = new Color(0xaa / 255, 0xaa / 255, 0xaa / 255);
+       // msgline.color = new Color(0xaa / 255, 0xaa / 255, 0xaa / 255);
         // DisplayMsg("");
-        WaitingForPlayerMove = true;
-        WaitingForCPUMove = false;
+      /*  WaitingForPlayerMove = true;
+        WaitingForCPUMove = false;*/
         ChangeTurn();
         //PrepareNextLevel();
         //PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
@@ -1148,16 +1152,16 @@ public class MainManager : MonoBehaviour {
     TileType FindTileByPosition(Vector3 tilepos)
 
     {
-        Debug.Log("find tile by position");
+       // Debug.Log("find tile by position");
         foreach(TileType tile in TileList)
         {
             if (tile.transform.position == tilepos)
             {
-                Debug.Log("found tile");
+              //  Debug.Log("found tile");
                 return tile;
             }
         }
-        Debug.Log("tile not found");
+       // Debug.Log("tile not found");
         return null;
     }
     void ChangeTurn()

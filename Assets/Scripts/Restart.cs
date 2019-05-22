@@ -79,13 +79,14 @@ public class Restart : MonoBehaviour {
 
 
 
-           /* PlayerPrefs.SetInt("maxlevel", 1);
-            PlayerPrefs.SetInt("hptaken", 0);
-            PlayerPrefs.SetInt("gold", 0);
+            /* PlayerPrefs.SetInt("maxlevel", 1);
+             PlayerPrefs.SetInt("hptaken", 0);
+             PlayerPrefs.SetInt("gold", 0);
+             PlayerPrefs.SetInt("level", 1);
+             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
+             PlayerPrefs.SetInt("continued", 0);
+             PlayerPrefs.SetInt("Choguelo", 0);*/
             PlayerPrefs.SetInt("level", 1);
-            PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
-            PlayerPrefs.SetInt("continued", 0);
-            PlayerPrefs.SetInt("Choguelo", 0);*/
         }
         else
         {

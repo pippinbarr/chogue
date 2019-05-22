@@ -522,7 +522,14 @@ public class Piece : MonoBehaviour {
         //If I'm king I want to go to the stairs
         foreach(TileType tile in TileList)
         {
-            if (tile.transform.tag == "piece")
+            //special case for ennemy king, looking for an exit
+            if ((PieceType == "king") && (threatened) && (tile.Type == 3))
+            {
+                BestMove = 6;
+                BestMoveTarget = tile.transform;
+                return;
+            }
+            else if (tile.transform.tag == "piece")
             {
                 if (tile.GetComponent<Piece>().human)
                 {
@@ -548,13 +555,7 @@ public class Piece : MonoBehaviour {
                     
                 }
             }
-            //special case for ennemy king, looking for an exit
-            else if ((PieceType == "king") && (threatened)&&(tile.Type == 3))
-            {
-                BestMove = 6;
-                BestMoveTarget = tile.transform;
-                return;
-            }
+
 
         }
         //am I threatened and uncovered?
