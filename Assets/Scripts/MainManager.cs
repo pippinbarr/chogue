@@ -61,13 +61,18 @@ public class MainManager : MonoBehaviour {
 
     //high score stuff
     private LeaderboardNames[] allLeaderboards;
+    private AchievementNames[] allAchievements;
+    private int indexNumberAchievements;
 
 
     // Use this for initialization
     void Start () {
 
         //login to google game center
-        GameServices.Instance.LogIn(LoginComplete);
+        if (!GameServices.Instance.IsLoggedIn())
+        {
+            GameServices.Instance.LogIn(LoginComplete);
+        }
 
         //make a list of all leaderboards
         int nrOfLeaderboards = System.Enum.GetValues(typeof(LeaderboardNames)).Length;
@@ -75,6 +80,14 @@ public class MainManager : MonoBehaviour {
         for (int i = 0; i < nrOfLeaderboards; i++)
         {
             allLeaderboards[i] = ((LeaderboardNames)i);
+        }
+
+        //make a list of all achievements
+        int nrOfAchievements = System.Enum.GetValues(typeof(AchievementNames)).Length;
+        allAchievements = new AchievementNames[nrOfAchievements];
+        for (int i = 0; i < nrOfAchievements; i++)
+        {
+            allAchievements[i] = ((AchievementNames)i);
         }
 
         Debug.Log(SceneManager.GetActiveScene().name);
@@ -1035,6 +1048,7 @@ public class MainManager : MonoBehaviour {
         {
             //player actually won
             PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
+            GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
             SceneManager.LoadScene("LastLevel");
         }
         else
@@ -1062,7 +1076,8 @@ public class MainManager : MonoBehaviour {
         PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
         PlayerPrefs.SetInt("continued", 1);
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
-         msgline.color = new Color(1f, 1f, 0x55/255);
+        GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
+        msgline.color = new Color(1f, 1f, 0x55/255);
        // DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? ");
         WaitingForPlayerMove = false;
         WaitingForCPUMove = true;
@@ -1187,27 +1202,24 @@ public class MainManager : MonoBehaviour {
         {
             //Login failed
         }
-        Debug.Log("Login success: " + success);
+       // Debug.Log("Login success: " + success);
         GleyGameServices.ScreenWriter.Write("Login success: " + success);
     }
-    public void SubmitChoguelo()
-    {
-        long choguelo = (long)PlayerPrefs.GetInt("Choguelo");
-        GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
-    }
-    //Automatically called when a score was submitted 
-    private void ScoreSubmitted(bool success, GameServicesError error)
+    private void AchievementSUbmitted(bool success, GameServicesError error)
     {
         if (success)
         {
-            //score successfully submitted
+            //achievement was submitted
         }
         else
         {
             //an error occurred
-            Debug.LogError("Score failed to submit: " + error);
+           // Debug.LogError("Achivement failed to submit: " + error);
+
         }
-        Debug.Log("Submit score result: " + success + " message:" + error);
-        GleyGameServices.ScreenWriter.Write("Submit score result: " + success + " message:" + error);
+        //Debug.Log("Submit achievement result: " + success + " message:" + error);
+        GleyGameServices.ScreenWriter.Write("Submit achievement result: " + success + " message:" + error);
     }
+
+
 }
