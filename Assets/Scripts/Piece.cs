@@ -175,11 +175,11 @@ public class Piece : MonoBehaviour {
                                 TileList.Add(tile);
                                 tile.GetComponent<Piece>().threatened = true;
                                 PossiblyProtectingPiece = tile.GetComponent<Piece>();
-                                Debug.Log("protecting piece tyoe = " + PossiblyProtectingPiece.PieceType);
+                                //Debug.Log("protecting piece tyoe = " + PossiblyProtectingPiece.PieceType);
                                 tile.threatened = true;
                                 if (tile.GetComponent<Piece>().PieceType == "king")
                                 {
-                                    Debug.Log("king in check");
+                                   // Debug.Log("king in check");
                                     check = true;
                                 }
                             }
@@ -487,10 +487,10 @@ public class Piece : MonoBehaviour {
     }
    public void MakeMove()
     {
-        Debug.Log("is bestmovetarget null?");
+        //Debug.Log("is bestmovetarget null?");
         if (BestMoveTarget != null)
         {
-            Debug.Log("Moving to bestmovetarget");
+            //Debug.Log("Moving to bestmovetarget");
             StartCoroutine(GameObject.Find("MainManager").GetComponent<MainManager>().MoveToTile(BestMoveTarget.GetComponent<TileType>()));
         }
         

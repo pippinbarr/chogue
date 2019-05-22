@@ -176,7 +176,7 @@ public class DungeonGenerator : MonoBehaviour
                     room.AddNeighbour(tempRoomGrid[col + 1][row]);
                 }
 
-                Debug.Log("Added " + room.neighbours.Count + " neighbours for room " + room.row + "," + room.col);
+                //Debug.Log("Added " + room.neighbours.Count + " neighbours for room " + room.row + "," + room.col);
             }
         }
     }
@@ -359,7 +359,7 @@ public class DungeonGenerator : MonoBehaviour
 
     void DrawHall(Room from, Room to)
     {
-        Debug.Log("Drawing hall from " + from.row + "," + from.col + " to " + to.row + "," + to.col);
+        //Debug.Log("Drawing hall from " + from.row + "," + from.col + " to " + to.row + "," + to.col);
 
         // Note that the rooms are connected (for the algorithm later on)
         from.connections.Add(to);
@@ -558,12 +558,12 @@ class Room
     {
         if (room != null)
         {
-            Debug.Log("Adding " + room.row + "," + room.col + " as neighbour of " + row + "," + col);
+            //Debug.Log("Adding " + room.row + "," + room.col + " as neighbour of " + row + "," + col);
             neighbours.Add(room);
         }
         else
         {
-            Debug.Log("NOT adding null room as neighbour of " + row + "," + col);
+            //Debug.Log("NOT adding null room as neighbour of " + row + "," + col);
         }
     }
 }

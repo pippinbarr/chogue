@@ -40,6 +40,7 @@ public class LeaderBoard : MonoBehaviour
     public void SubmitChoguelo()
     {
         //PlayerPrefs.SetInt("Choguelo", 1450);
+        Debug.Log("choguelo:" + PlayerPrefs.GetInt("Choguelo"));
         long choguelo = PlayerPrefs.GetInt("Choguelo");
         Debug.Log("choguelo:" + choguelo);
         GleyGameServices.ScreenWriter.Write("choguelo score: " + choguelo);

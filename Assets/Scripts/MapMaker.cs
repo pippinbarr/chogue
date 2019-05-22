@@ -50,7 +50,7 @@ public class MapMaker : MonoBehaviour {
             sizeY = GetComponent<DungeonGenerator>().m_DungeonHeight;
         }
 
-        Debug.Log("size X " + sizeX);
+       // Debug.Log("size X " + sizeX);
 
         bool blacktile = true; //used to alternate colors
 
@@ -122,7 +122,7 @@ public class MapMaker : MonoBehaviour {
                    // Debug.Log("color difference : " + difcolor);
                     if ((incomingpieces!="")&&(difcolor<0.01))
                     {
-                        Debug.Log("incoming pieces : " + incomingpieces);
+                        //Debug.Log("incoming pieces : " + incomingpieces);
                         Transform TempPiece;
                         if (incomingpieces[0].ToString() == "k")
                         {
@@ -159,7 +159,7 @@ public class MapMaker : MonoBehaviour {
                         TempPiece.GetComponent<Piece>().human = true;
                         mm.PieceList.Add(TempPiece.GetComponent<Piece>());
                         incomingpieces = incomingpieces.Substring(1,(incomingpieces.Length-1));
-                        Debug.Log("incoming pieces : " + incomingpieces);
+                        //Debug.Log("incoming pieces : " + incomingpieces);
                        // PlayerPrefs.SetString("IncomingPieces", incomingpieces);
                     }
 
@@ -173,9 +173,9 @@ public class MapMaker : MonoBehaviour {
                        // Debug.Log("random1 : " + random);
                         random += (float)PlayerPrefs.GetInt("level") / 50f;
                         //Debug.Log("random2 : " + random);
-                        Debug.Log("continued? " + PlayerPrefs.GetInt("continued"));
-                        Debug.Log("LEvel? " + (PlayerPrefs.GetInt("level")));
-                        Debug.Log("king should arrive at " + KingArrivesAtLevel);
+                        //Debug.Log("continued? " + PlayerPrefs.GetInt("continued"));
+                       // Debug.Log("LEvel? " + (PlayerPrefs.GetInt("level")));
+                       // Debug.Log("king should arrive at " + KingArrivesAtLevel);
                         if ((PlayerPrefs.GetInt("level")>=KingArrivesAtLevel) && (!AIKingCreated)&&(PlayerPrefs.GetInt("continued")!=1))
                         {
 

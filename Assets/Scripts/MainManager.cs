@@ -92,7 +92,7 @@ public class MainManager : MonoBehaviour {
         }
 
 
-        Debug.Log(SceneManager.GetActiveScene().name);
+        //Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
             
@@ -119,7 +119,7 @@ public class MainManager : MonoBehaviour {
             //knight is chevalier to distinguish and rook is tour
 
         }
-        if (firstscene)
+        if ((PlayerPrefs.GetInt("level") == 1))
         {
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
@@ -128,6 +128,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("continued", 0);
             PlayerPrefs.SetInt("Choguelo", 0);
+            Debug.Log("choguelo:"+ PlayerPrefs.GetInt("Choguelo"));
         }
         if (!firstscene)
         {
@@ -282,17 +283,17 @@ public class MainManager : MonoBehaviour {
                     {
                         if (gototile.GetComponent<TileType>().CurrentPiece != null)
                         {
-                            Debug.Log("going to piece instead of tile");
+                            //Debug.Log("going to piece instead of tile");
                             gototile = gototile.GetComponent<TileType>().CurrentPiece;
 
                         }
                         if(gototile.tag=="tile")
                         {
-                            Debug.Log("going to a tile");
+                           // Debug.Log("going to a tile");
                         }
                         else if (gototile.tag == "piece")
                         {
-                            Debug.Log("going to a piece");
+                           // Debug.Log("going to a piece");
                         }
                         StartCoroutine(MoveToTile(gototile.GetComponent<TileType>()));
 
@@ -434,7 +435,7 @@ public class MainManager : MonoBehaviour {
                 // break;
             }
         }
-        Debug.Log("best move is " + bestmove);
+        //Debug.Log("best move is " + bestmove);
         //we can only move, select the one that can move closest to king
 
         if (bestmove < 2)
@@ -462,9 +463,9 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-        Debug.Log("best move level:" + bestmove);
-        if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
-        if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
+       // Debug.Log("best move level:" + bestmove);
+       // if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
+        //if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
 
         if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null))
         {
@@ -596,7 +597,7 @@ public class MainManager : MonoBehaviour {
                
             ActionSymbol = EatPiece(tile.GetComponent<Piece>()); // SETS TempMessage with Attack Flavour
 
-            Debug.Log("eat piece at destination");
+            //Debug.Log("eat piece at destination");
             DestinationPiece = tile.GetComponent<Piece>().PieceType;
         }
         WaitingForMove = false;
@@ -608,10 +609,10 @@ public class MainManager : MonoBehaviour {
         // MOVED Pawn promotion above check calculation between a P promoting to Q can put the K in check, so should
         // calculate its possible attacks based on that.
         //will not do the queening if the pawn was eaten
-        Debug.Log("is this new queen?");
+        //Debug.Log("is this new queen?");
         if ((CurrentActivePiece.NewQueen) && (!CurrentActivePiece.eaten) && (ActionSymbol != ".") && (ActionSymbol != "*"))
         {
-            Debug.Log("yes");
+           // Debug.Log("yes");
             CurrentActivePiece.Queen();
             CurrentActivePiece = PieceList[0];
             //CurrentActivePiece.SetActive(true);
@@ -786,7 +787,7 @@ public class MainManager : MonoBehaviour {
 
         //Calculate damage (0 to MaxHP)
         int DMG = (int)(Random.Range(0, CurrentActivePiece.MaxHP+1));
-        Debug.Log("damage:" + DMG);
+       // Debug.Log("damage:" + DMG);
 
         //If this is the clean take version, just add tons of damage
         if (!HitPointVersion)
@@ -800,8 +801,7 @@ public class MainManager : MonoBehaviour {
         string attackerName = (CurrentActivePiece.PieceType == "king" && CurrentActivePiece.PieceColor == "black") ? "King of Yendor" : CurrentActivePiece.PieceType;
         string attackedName = (piece.PieceType == "king" && piece.PieceColor == "black") ? "King of Yendor" : piece.PieceType;
 
-        Debug.Log("Attacker name: " + attackerName);
-        Debug.Log("Attacked name: " + attackedName);
+
 
         //Dead?
         if ((piece.HP < 1)||(piece.PieceColor=="red"))
@@ -885,8 +885,10 @@ public class MainManager : MonoBehaviour {
                 {
                     int gold = (int)(Random.value * 10);
                     TempMessage = "You found " + gold + " gold!";
+                    Debug.Log("choguelo : " + PlayerPrefs.GetInt("Choguelo"));
                     PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold") + gold);
                     PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + gold);
+                    Debug.Log("choguelo : " + PlayerPrefs.GetInt("Choguelo"));
                     PieceList.Remove(piece);
                     Destroy(piece.gameObject);
 
@@ -903,7 +905,7 @@ public class MainManager : MonoBehaviour {
             else if (piece.human != CurrentActivePiece.human)
             {
                 if(CurrentActivePiece.human)
-                    PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + piece.HP);
+                    PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + piece.MaxHP);
                 /*  int gold = (int)(Random.value * 50);
                   TempMessage = "You found " + gold + " gold !";
                   PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);*/
@@ -1092,7 +1094,7 @@ public class MainManager : MonoBehaviour {
     {
         //DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day?");
         PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
-        PlayerPrefs.SetInt("continued", 1);
+        PlayerPrefs.SetInt("continued", 1); //this means we got the king?
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
         GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
         msgline.color = new Color(1f, 1f, 0x55/255);
