@@ -59,6 +59,7 @@ public class MainManager : MonoBehaviour {
     private float touchbegan = 0f;
     //public Vector3 InitialMousePosition;
 
+
     //high score stuff
     private LeaderboardNames[] allLeaderboards;
     private AchievementNames[] allAchievements;
@@ -90,6 +91,7 @@ public class MainManager : MonoBehaviour {
             allAchievements[i] = ((AchievementNames)i);
         }
 
+
         Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
@@ -108,6 +110,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("maxlevel", 1);
             PlayerPrefs.SetInt("maxgold", 0);
             PlayerPrefs.SetInt("maxtaken", 0);
+            PlayerPrefs.SetInt("hptaken", 0);
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
@@ -121,6 +124,7 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
             PlayerPrefs.SetInt("taken", 0);
+            PlayerPrefs.SetInt("hptaken", 0);
             PlayerPrefs.SetInt("gold", 0);
             PlayerPrefs.SetInt("continued", 0);
             PlayerPrefs.SetInt("Choguelo", 0);
@@ -136,23 +140,27 @@ public class MainManager : MonoBehaviour {
                 }
                 if (subtitle != null)
                 {
-                    if (PlayerPrefs.GetInt("continued")==1)
-                    {
-                        subtitle.text = "Go back to the surface!";
+                    //if (PlayerPrefs.GetInt("continued")==1)
+                    //{
+                    //    subtitle.text = "Go back to the surface!";
 
-                    }
-                    else if (PlayerPrefs.GetInt("level") == 2)
-                    {
-                        subtitle.text = "Protect your king!";
-                    }
-                    else if (PlayerPrefs.GetInt("level") == 3)
-                    {
-                        subtitle.text = "Capture the cowardly king of Yendor!";
-                    }
-                    else
-                    {
-                        subtitle.text = "";
-                    }
+                    //}
+                    //else if (PlayerPrefs.GetInt("level") == 2)
+                    //{
+                    //    subtitle.text = "Protect your king!";
+                    //}
+                    //else if (PlayerPrefs.GetInt("level") == 3)
+                    //{
+                    //    subtitle.text = "Capture the cowardly king of Yendor!";
+                    //}
+                    //else
+                    //{
+                    //    subtitle.text = "";
+                    //}
+                    subtitle.text = LevelNameGenerator.GetName();
+                    subtitle.text += "\nGold: " + PlayerPrefs.GetInt("gold");
+                    subtitle.text += "\nHP Captured: " + PlayerPrefs.GetInt("hptaken");
+                    subtitle.text += "\nKing Captured: " + PlayerPrefs.GetInt("continued");
                 }
             }
 
@@ -184,6 +192,8 @@ public class MainManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        //Debug.Log(LevelNameGenerator.GetName());
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -242,6 +252,10 @@ public class MainManager : MonoBehaviour {
                         tapped = true;
                     }
                 }
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                tapped = true;
             }
             if (tapped)
             {
@@ -901,7 +915,11 @@ public class MainManager : MonoBehaviour {
             }
             if (CurrentActivePiece.human)
             {
-                
+                if (piece.PieceColor == "black")
+                {
+                    PlayerPrefs.SetInt("hptaken", PlayerPrefs.GetInt("hptaken") + piece.MaxHP);
+                }
+
                 PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
                 if (PlayerPrefs.GetInt("taken") > PlayerPrefs.GetInt("maxtaken"))
                 {
