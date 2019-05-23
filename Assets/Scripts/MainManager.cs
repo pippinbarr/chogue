@@ -1227,7 +1227,7 @@ public class MainManager : MonoBehaviour {
             //Login failed
         }
        // Debug.Log("Login success: " + success);
-        GleyGameServices.ScreenWriter.Write("Login success: " + success);
+       // GleyGameServices.ScreenWriter.Write("Login success: " + success);
     }
     private void AchievementSUbmitted(bool success, GameServicesError error)
     {
@@ -1242,7 +1242,7 @@ public class MainManager : MonoBehaviour {
 
         }
         //Debug.Log("Submit achievement result: " + success + " message:" + error);
-        GleyGameServices.ScreenWriter.Write("Submit achievement result: " + success + " message:" + error);
+        //GleyGameServices.ScreenWriter.Write("Submit achievement result: " + success + " message:" + error);
     }
 
 

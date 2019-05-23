@@ -43,7 +43,7 @@ public class LeaderBoard : MonoBehaviour
         Debug.Log("choguelo:" + PlayerPrefs.GetInt("Choguelo"));
         long choguelo = PlayerPrefs.GetInt("Choguelo");
         Debug.Log("choguelo:" + choguelo);
-        GleyGameServices.ScreenWriter.Write("choguelo score: " + choguelo);
+       // GleyGameServices.ScreenWriter.Write("choguelo score: " + choguelo);
         GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
     }
     private void LoginComplete(bool success)
@@ -57,7 +57,7 @@ public class LeaderBoard : MonoBehaviour
             //Login failed
         }
        // Debug.Log("Login success: " + success);
-        GleyGameServices.ScreenWriter.Write("Login success: " + success);
+        //GleyGameServices.ScreenWriter.Write("Login success: " + success);
     }
     //Automatically called when a score was submitted 
     private void ScoreSubmitted(bool success, GameServicesError error)
@@ -72,6 +72,6 @@ public class LeaderBoard : MonoBehaviour
             //Debug.LogError("Score failed to submit: " + error);
         }
         //Debug.Log("Submit score result: " + success + " message:" + error);
-        GleyGameServices.ScreenWriter.Write("Submit score result: " + success + " message:" + error);
+        //GleyGameServices.ScreenWriter.Write("Submit score result: " + success + " message:" + error);
     }
 }
