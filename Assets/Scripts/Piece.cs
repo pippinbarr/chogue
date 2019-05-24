@@ -523,11 +523,20 @@ public class Piece : MonoBehaviour {
         foreach(TileType tile in TileList)
         {
             //special case for ennemy king, looking for an exit
-            if ((PieceType == "king") && (threatened) && (tile.Type == 3))
+            if ((PieceType == "king")  && (tile.Type == 3))
             {
-                BestMove = 6;
-                BestMoveTarget = tile.transform;
-                return;
+                if (threatened)
+                {
+                    BestMove = 6;
+                    BestMoveTarget = tile.transform;
+                    return;
+                }
+                else
+                {
+                    BestMove = 1;
+                    BestMoveTarget = tile.transform;
+                }
+
             }
             else if (tile.transform.tag == "piece")
             {
