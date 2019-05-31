@@ -40,11 +40,16 @@ public class LeaderBoard : MonoBehaviour
     public void SubmitChoguelo()
     {
         //PlayerPrefs.SetInt("Choguelo", 1450);
-        Debug.Log("choguelo:" + PlayerPrefs.GetInt("Choguelo"));
+        //Debug.Log("choguelo:" + PlayerPrefs.GetInt("Choguelo"));
         long choguelo = PlayerPrefs.GetInt("Choguelo");
-        Debug.Log("choguelo:" + choguelo);
-       // GleyGameServices.ScreenWriter.Write("choguelo score: " + choguelo);
+        //Debug.Log("choguelo:" + choguelo);
+        //GleyGameServices.ScreenWriter.Write("Submitting score: " + choguelo);
         GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
+        if (PlayerPrefs.GetInt("level") == 0)
+        {
+            // Grandmaster
+            GameServices.Instance.SubmitScore(choguelo, allLeaderboards[1], ScoreSubmitted);
+        }
     }
     private void LoginComplete(bool success)
     {

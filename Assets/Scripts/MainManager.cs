@@ -1221,13 +1221,23 @@ public class MainManager : MonoBehaviour {
         if (success == true)
         {
             //Login was succesful
+
+            //GleyGameServices.ScreenWriter.Write("Login success: " + success);
+            //// TESTING MASTER ACHIEVEMENT
+            //GleyGameServices.ScreenWriter.Write("Submitting Master achievement...");
+            //GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
+            //// TESTING GRANDMASTER ACHIEVEMENT
+            //GleyGameServices.ScreenWriter.Write("Submitting Grandmaster achievement...");
+            //GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
+            //// TESTING GRANDMASTER SCORE
+            //GleyGameServices.ScreenWriter.Write("Submitting Grandmaster score...");
+            //GameServices.Instance.SubmitScore(1800, allLeaderboards[1], ScoreSubmitted);
         }
         else
         {
             //Login failed
         }
        // Debug.Log("Login success: " + success);
-       // GleyGameServices.ScreenWriter.Write("Login success: " + success);
     }
     private void AchievementSUbmitted(bool success, GameServicesError error)
     {
@@ -1243,6 +1253,11 @@ public class MainManager : MonoBehaviour {
         }
         //Debug.Log("Submit achievement result: " + success + " message:" + error);
         //GleyGameServices.ScreenWriter.Write("Submit achievement result: " + success + " message:" + error);
+    }
+
+    private void ScoreSubmitted(bool success, GameServicesError error)
+    {
+        //GleyGameServices.ScreenWriter.Write("Submit score result: " + success + " message:" + error);
     }
 
 
