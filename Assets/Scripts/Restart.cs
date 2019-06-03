@@ -15,39 +15,38 @@ public class Restart : MonoBehaviour {
     {
         if (SceneManager.GetActiveScene().name == "GameOver")
         {
+            Epitaph.text = "WHITE KING\n";
+
             if (PlayerPrefs.GetString("Executor") == "resigned")
             {
-                Epitaph.text = "White King\nResigned";
+                Epitaph.text = Epitaph.text + "Resigned";
             }
             else
             {
-                Epitaph.text = "White King\nCaptured by a\n" + PlayerPrefs.GetString("Executor").ToUpper() ;
+                Epitaph.text = Epitaph.text + "Captured by a " + PlayerPrefs.GetString("Executor").ToUpper() ;
             }
+
+            Epitaph.text = Epitaph.text + "\n\n" + System.DateTime.Today.ToShortDateString();
+
+            Epitaph.text = Epitaph.text + "\n\n";
+
 
             if (PlayerPrefs.GetInt("continued") == 1)
             {
-                Epitaph.text = Epitaph.text + "\n\nCaptured the king of Yendor\nand ";
+                Epitaph.text = Epitaph.text + "Captured the king of Yendor and reached level " + PlayerPrefs.GetInt("level");
             }
             else
-            {
-                Epitaph.text = Epitaph.text + "\n\n";
+            {           
+                Epitaph.text = Epitaph.text + "Reached level " + PlayerPrefs.GetInt("level");
             }
 
-            if (PlayerPrefs.GetInt("level") == 0)
-            {
-                Epitaph.text = Epitaph.text + "on the chess board";
-            }
-            else
-            {
-                Epitaph.text = Epitaph.text + "reached level " + PlayerPrefs.GetInt("level");
-            }
 
 
             if (PlayerPrefs.GetInt("continued") == 0)
             {
                 if (PlayerPrefs.GetInt("level") >= PlayerPrefs.GetInt("maxlevel"))
                 {
-                    Epitaph.text = Epitaph.text + " (new record!)";
+                    //Epitaph.text = Epitaph.text + " (new record!)";
                     PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
                 }
             }
@@ -56,26 +55,34 @@ public class Restart : MonoBehaviour {
                 int kinglevel = PlayerPrefs.GetInt("kinglevel");
                 if (kinglevel + (kinglevel - (PlayerPrefs.GetInt("level"))) >= PlayerPrefs.GetInt("maxlevel"))
                 {
-                    Epitaph.text = Epitaph.text + " (new record!)";
+                    //Epitaph.text = Epitaph.text + " (new record!)";
                     PlayerPrefs.SetInt("maxlevel", PlayerPrefs.GetInt("level"));
                 }
             }
 
 
-            Epitaph.text = Epitaph.text + "\nwith " + PlayerPrefs.GetInt("gold") + " gold";
+            //Epitaph.text = Epitaph.text + "\nwith " + PlayerPrefs.GetInt("gold") + " gold";
             if (PlayerPrefs.GetInt("gold") > PlayerPrefs.GetInt("maxgold"))
             {
-                Epitaph.text = Epitaph.text + " (new record!)";
+                //Epitaph.text = Epitaph.text + " (new record!)";
                 PlayerPrefs.SetInt("maxgold", PlayerPrefs.GetInt("gold"));
             }
-            Epitaph.text = Epitaph.text + "\n\n"+ System.DateTime.Today.ToShortDateString();
+
+
+
+            Epitaph.text = Epitaph.text + " with " + PlayerPrefs.GetInt("gold") + " gold, ";
+            Epitaph.text = Epitaph.text + PlayerPrefs.GetInt("taken") + " captures, and ";
+            Epitaph.text = Epitaph.text + "a rating of " + PlayerPrefs.GetInt("Choguelo", 0);
+            if (PlayerPrefs.GetInt("Choguelo", 0) > PlayerPrefs.GetInt("MaxChoguelo", 0))
+            {
+                PlayerPrefs.SetInt("MaxChoguelo", PlayerPrefs.GetInt("Choguelo", 0));
+                Epitaph.text = Epitaph.text + " (new record!)";
+            }
+
+
             //CurLevel.text = "Level reached: " + PlayerPrefs.GetInt("level");
             //BestLevel.text = "Highest level reached: " + PlayerPrefs.GetInt("maxlevel");
 
-            Epitaph.text = Epitaph.text + "\nGold: " + PlayerPrefs.GetInt("gold");
-            Epitaph.text = Epitaph.text + "\nCaptured HP: " + PlayerPrefs.GetInt("hptaken");
-            Epitaph.text = Epitaph.text + "\nLevels cleared: " + (PlayerPrefs.GetInt("level")-1);
-            Epitaph.text = Epitaph.text + "\nCaptured king: " + PlayerPrefs.GetInt("continued");
 
 
 

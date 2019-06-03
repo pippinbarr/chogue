@@ -104,12 +104,14 @@ public class MainManager : MonoBehaviour {
         {
             PlayerPrefs.DeleteAll();
         }
+
         //if this is the first time, setup basic vars if not load them from playerprefs
         if ((PlayerPrefs.GetInt("maxlevel",0) == 0))
         {
             Debug.Log("new game");
             PlayerPrefs.SetInt("maxlevel", 1);
             PlayerPrefs.SetInt("maxgold", 0);
+            PlayerPrefs.SetInt("taken", 0);
             PlayerPrefs.SetInt("maxtaken", 0);
             PlayerPrefs.SetInt("hptaken", 0);
             PlayerPrefs.SetInt("gold", 0);
@@ -160,9 +162,9 @@ public class MainManager : MonoBehaviour {
                     //    subtitle.text = "";
                     //}
                     subtitle.text = LevelNameGenerator.GetName();
-                    subtitle.text += "\nGold: " + PlayerPrefs.GetInt("gold");
-                    subtitle.text += "\nHP Captured: " + PlayerPrefs.GetInt("hptaken");
-                    subtitle.text += "\nKing Captured: " + PlayerPrefs.GetInt("continued");
+                    subtitle.text += "\n\nGold: " + PlayerPrefs.GetInt("gold");
+                    subtitle.text += "\nCaptures: " + PlayerPrefs.GetInt("taken");
+                    subtitle.text += "\nCurrent rating: " + PlayerPrefs.GetInt("Choguelo");
                 }
             }
 
@@ -885,7 +887,7 @@ public class MainManager : MonoBehaviour {
                 }
                 else
                 {
-                    int gold = (int)(Random.value * 10);
+                    int gold = (int)(Random.value * 9) + 1;
                     TempMessage = "You found " + gold + " gold!";
                     Debug.Log("choguelo : " + PlayerPrefs.GetInt("Choguelo"));
                     PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold") + gold);
@@ -922,13 +924,14 @@ public class MainManager : MonoBehaviour {
                 if (piece.PieceColor == "black")
                 {
                     PlayerPrefs.SetInt("hptaken", PlayerPrefs.GetInt("hptaken") + piece.MaxHP);
+                    PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
+                    if (PlayerPrefs.GetInt("taken") > PlayerPrefs.GetInt("maxtaken"))
+                    {
+                        PlayerPrefs.SetInt("maxtaken", PlayerPrefs.GetInt("taken"));
+                    }
                 }
 
-                PlayerPrefs.SetInt("taken", PlayerPrefs.GetInt("taken") + 1);
-                if (PlayerPrefs.GetInt("taken") > PlayerPrefs.GetInt("maxtaken"))
-                {
-                    PlayerPrefs.SetInt("maxtaken", PlayerPrefs.GetInt("taken"));
-                }
+
             }
 
             return "x"; //will return * if partial hit in the HP branch
@@ -1069,8 +1072,13 @@ public class MainManager : MonoBehaviour {
         if (PlayerPrefs.GetInt("level") == 0)
         {
             //player actually won
+            // Remember that
+            PlayerPrefs.SetInt("grandmaster", 1);
+            // Update their rating
             PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
+            // Submit their achievement
             GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
+            // Load the victory scene (which will submit the score itself)
             SceneManager.LoadScene("LastLevel");
         }
         else
