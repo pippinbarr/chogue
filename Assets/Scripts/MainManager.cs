@@ -122,7 +122,7 @@ public class MainManager : MonoBehaviour {
             //knight is chevalier to distinguish and rook is tour
 
         }
-        if ((PlayerPrefs.GetInt("level") == 1))
+        if ((PlayerPrefs.GetInt("level") == 1)&&(PlayerPrefs.GetInt("continued")==0))
         {
             PlayerPrefs.SetInt("level", 1);
             PlayerPrefs.SetString("IncomingPieces", "tcbkqbctpppppppp");
@@ -136,7 +136,7 @@ public class MainManager : MonoBehaviour {
         if (!firstscene)
         {
 
-            if (PlayerPrefs.GetInt("level") > 1)
+            if ((PlayerPrefs.GetInt("level") > 1)||(PlayerPrefs.GetInt("continued")==1))
             {
                 if (title != null)
                 {
@@ -144,23 +144,7 @@ public class MainManager : MonoBehaviour {
                 }
                 if (subtitle != null)
                 {
-                    //if (PlayerPrefs.GetInt("continued")==1)
-                    //{
-                    //    subtitle.text = "Go back to the surface!";
 
-                    //}
-                    //else if (PlayerPrefs.GetInt("level") == 2)
-                    //{
-                    //    subtitle.text = "Protect your king!";
-                    //}
-                    //else if (PlayerPrefs.GetInt("level") == 3)
-                    //{
-                    //    subtitle.text = "Capture the cowardly king of Yendor!";
-                    //}
-                    //else
-                    //{
-                    //    subtitle.text = "";
-                    //}
                     subtitle.text = LevelNameGenerator.GetName();
                     subtitle.text += "\n\nGold: " + PlayerPrefs.GetInt("gold");
                     subtitle.text += "\nCaptures: " + PlayerPrefs.GetInt("taken");

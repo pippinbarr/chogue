@@ -214,7 +214,7 @@ public class MapMaker : MonoBehaviour {
                         int cappedlevel = PlayerPrefs.GetInt("level");
                         if (cappedlevel > 13)
                         {
-                            cappedlevel = 13;
+                            cappedlevel -= (cappedlevel-13);
                         }
                         if ((Random.value < (0.08f + (float)cappedlevel / 50f))&&(TempPiece.GetComponent<Piece>().PieceType!="king"))
                         {

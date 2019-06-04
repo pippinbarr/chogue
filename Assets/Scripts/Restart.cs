@@ -94,6 +94,7 @@ public class Restart : MonoBehaviour {
              PlayerPrefs.SetInt("continued", 0);
              PlayerPrefs.SetInt("Choguelo", 0);*/
             PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetInt("continued", 0);
         }
         else
         {

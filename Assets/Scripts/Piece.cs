@@ -547,7 +547,7 @@ public class Piece : MonoBehaviour {
                     {
                         //if the piece is protected and worth less than me, don't do that
                        // if ((tile.GetComponent<Piece>().MaxHP > MaxHP)|| (!tile.GetComponent<Piece>().guarded)){
-                       if(!(PieceType == "king") && (GameObject.FindObjectOfType<MapMaker>().KingFarFromStairsAtLevel > PlayerPrefs.GetInt("level")))
+                       if(!((PieceType == "king") && (GameObject.FindObjectOfType<MapMaker>().KingFarFromStairsAtLevel > PlayerPrefs.GetInt("level"))))
                         {
                             BestMove = 3;
                             BestMoveTarget = tile.transform;
