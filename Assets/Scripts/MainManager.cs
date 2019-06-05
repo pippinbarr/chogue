@@ -34,6 +34,7 @@ public class MainManager : MonoBehaviour {
     public AudioClip winchord;
     public Text statusline;
     public Text msgline;
+    public Text congratulationsText;
     public bool firstscene = false;
 
 
@@ -96,9 +97,22 @@ public class MainManager : MonoBehaviour {
         //Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
-            
-           // GetComponent<AudioSource>().clip = winchord;
+
+            // GetComponent<AudioSource>().clip = winchord;
             //GetComponent<AudioSource>().Play();
+            int rating = PlayerPrefs.GetInt("Choguelo",0);
+
+            // SET CUSTOM CONGRATULATIONS TEXT
+            congratulationsText.text = "You have captured the King of Yendor. You journey home, sell your loot at a great profit and ";
+            if (PlayerPrefs.GetInt("grandmaster",0) == 0)
+            {
+                congratulationsText.text += "are admitted to the Grandmasters Guild with a rating of " + rating + ".";
+            }
+            else
+            {
+                congratulationsText.text = "are celebrated at the Grandmasters Guild for your rating of " + rating + ".";
+            }
+
         }
         if (restartgame)
         {
