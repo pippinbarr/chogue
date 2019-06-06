@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class Restart : MonoBehaviour {
 
-    public Text CurLevel;
-    public Text BestLevel;
     public Text Epitaph;
     // Use this for initialization
 
