@@ -110,14 +110,16 @@ public class MainManager : MonoBehaviour {
             }
             else
             {
-                congratulationsText.text = "are celebrated at the Grandmasters Guild for your rating of " + rating + ".";
+                congratulationsText.text += "are celebrated at the Grandmasters Guild for your rating of " + rating + ".";
             }
+            PlayerPrefs.SetInt("continued", 0);
 
         }
         if (restartgame)
         {
             PlayerPrefs.DeleteAll();
         }
+
 
         //if this is the first time, setup basic vars if not load them from playerprefs
         if ((PlayerPrefs.GetInt("maxlevel",0) == 0))
