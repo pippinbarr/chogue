@@ -857,6 +857,7 @@ public class MainManager : MonoBehaviour {
             //was it the player's king?
             if ((piece.human) && (piece.PieceType == "king"))
             {
+                 ;
                 //Debug.Log("game over");
                 gameover = true;
 
@@ -908,8 +909,12 @@ public class MainManager : MonoBehaviour {
             }
             else if (piece.human != CurrentActivePiece.human)
             {
-                if(CurrentActivePiece.human)
+                if (CurrentActivePiece.human)
+                {
                     PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + piece.MaxHP);
+                   
+                }
+                    
                 /*  int gold = (int)(Random.value * 50);
                   TempMessage = "You found " + gold + " gold !";
                   PlayerPrefs.SetInt("gold", PlayerPrefs.GetInt("gold")+gold);*/
@@ -918,6 +923,7 @@ public class MainManager : MonoBehaviour {
                 Destroy(piece.gameObject);
                 GetComponent<AudioSource>().clip = gulp;
                 GetComponent<AudioSource>().Play();
+                SavePartyState();
             }
             if (CurrentActivePiece.human)
             {
@@ -1015,7 +1021,7 @@ public class MainManager : MonoBehaviour {
         }
     }
 
-    private void PrepareNextLevel()
+    private void SavePartyState()
     {
         string outgoingpieces = "";
         foreach (Piece piece in PieceList)
@@ -1050,6 +1056,12 @@ public class MainManager : MonoBehaviour {
 
         }
         PlayerPrefs.SetString("IncomingPieces", outgoingpieces);
+    }
+
+    private void PrepareNextLevel()
+    {
+        SavePartyState();
+
         if (PlayerPrefs.GetInt("continued") != 1)
         {
             PlayerPrefs.SetInt("level", PlayerPrefs.GetInt("level") + 1);
