@@ -31,6 +31,22 @@ public class CameraMove : MonoBehaviour {
             }
         }
     }
+    public IEnumerator MoveToKing()
+    {
+        foreach (Piece piece in MM.PieceList)
+        {
+            if ((piece.PieceType == "king") && (piece.human))
+            {
+                Vector3 destination = piece.transform.position;
+                Vector3 movestep = (destination - transform.position) / 200;
+                while (Vector3.Distance(destination,transform.position) > 0.1f){
+                    transform.Translate(movestep);
+                    yield return new WaitForSeconds(0.05f);
+                }
+                centered = true;
+            }
+        }
+    } 
 
 	void Update () {
         if (!centered)

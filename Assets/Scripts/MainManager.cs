@@ -290,14 +290,8 @@ public class MainManager : MonoBehaviour {
                             gototile = gototile.GetComponent<TileType>().CurrentPiece;
 
                         }
-                        if(gototile.tag=="tile")
-                        {
-                           // Debug.Log("going to a tile");
-                        }
-                        else if (gototile.tag == "piece")
-                        {
-                           // Debug.Log("going to a piece");
-                        }
+
+                        
                         StartCoroutine(MoveToTile(gototile.GetComponent<TileType>()));
 
                         //clear titles on first move
@@ -504,6 +498,27 @@ public class MainManager : MonoBehaviour {
     //make this a coroutine with actual movement, will collide with tiles and make them visible (maybe?!)
     public IEnumerator MoveToTile(TileType tile, bool nomessage = false)
     {
+        //are we attacking the white king?
+        if ((tile.GetComponent<Piece>() != null)&&(!CurrentActivePiece.human))
+        {
+            if (tile.GetComponent<Piece>().PieceType == "king"){
+                Debug.Log("move to king");
+                foreach (Piece piece in PieceList)
+                {
+                    if ((piece.PieceType == "king") && (piece.human))
+                    {
+                        Vector3 dest = new Vector3(piece.transform.position.x,piece.transform.position.y,Camera.main.transform.position.z);
+                        Vector3 move = (dest - Camera.main.transform.position) / 200;
+                        while (Vector3.Distance(dest, Camera.main.transform.position) > 1f)
+                        {
+                            Camera.main.transform.Translate((dest-Camera.main.transform.position)/50);
+                            yield return new WaitForSeconds(0.01f);
+                        }
+                    }
+                }
+            }
+        }
+        
         //UpdateThreats();
         //Am I going to a tile that has a piece?
         if ((tile.CurrentPiece != null)&&(!nomessage))
@@ -1106,7 +1121,7 @@ public class MainManager : MonoBehaviour {
         /*yield return new WaitForSeconds(0.2f);
         GetComponent<AudioSource>().clip = endchord;
         GetComponent<AudioSource>().Play();*/
-        GameObject.Find("MainCamera").GetComponent<CameraMove>().CenterOnKing();
+        //GameObject.Find("MainCamera").GetComponent<CameraMove>().CenterOnKing();
         yield return new WaitForSeconds(4f);
         PlayerPrefs.SetString("Executor", CurrentActivePiece.PieceType);
         SceneManager.LoadScene("GameOver");
