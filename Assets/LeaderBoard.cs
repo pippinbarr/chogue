@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+
 
 public class LeaderBoard : MonoBehaviour
 {
@@ -46,17 +48,38 @@ public class LeaderBoard : MonoBehaviour
         //Debug.Log("choguelo:" + choguelo);
         //GleyGameServices.ScreenWriter.Write("Submitting score: " + choguelo);
         GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
-        if (PlayerPrefs.GetInt("grandmaster", 0) == 1)
-        {
-            // Grandmaster
-            GameServices.Instance.SubmitScore(choguelo, allLeaderboards[1], ScoreSubmitted);
-        }
+
+        Social.LoadAchievements(achievements => {
+            if (achievements.Length > 0)
+            {
+                foreach (IAchievement achievement in achievements)
+                {
+                    if (achievement.id == "com.pippinbarr.chogue.achievement.grandmaster" || achievement.id == "CgkIoNP6vo8GEAIQAw")
+                    {
+                        PlayerPrefs.SetInt("grandmaster", 1);
+                    }
+
+                    else
+                    {
+                        Debug.Log("No achievements returned");
+                    }
+                }
+            }
+            if (PlayerPrefs.GetInt("grandmaster", 0) == 1)
+            {
+                // Grandmaster
+                GameServices.Instance.SubmitScore(choguelo, allLeaderboards[1], ScoreSubmitted);
+            }
+        });
+
+
     }
     private void LoginComplete(bool success)
     {
         if (success == true)
         {
             //Login was succesful
+
         }
         else
         {
@@ -80,4 +103,5 @@ public class LeaderBoard : MonoBehaviour
         //Debug.Log("Submit score result: " + success + " message:" + error);
         //GleyGameServices.ScreenWriter.Write("Submit score result: " + success + " message:" + error);
     }
+
 }

@@ -71,6 +71,9 @@ public class Restart : MonoBehaviour {
             Epitaph.text = Epitaph.text + " with " + PlayerPrefs.GetInt("gold") + " gold, ";
             Epitaph.text = Epitaph.text + PlayerPrefs.GetInt("taken") + " captures, and ";
             Epitaph.text = Epitaph.text + "a rating of " + PlayerPrefs.GetInt("Choguelo", 0);
+
+
+
             if (PlayerPrefs.GetInt("Choguelo", 0) > PlayerPrefs.GetInt("MaxChoguelo", 0))
             {
                 PlayerPrefs.SetInt("MaxChoguelo", PlayerPrefs.GetInt("Choguelo", 0));

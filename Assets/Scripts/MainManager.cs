@@ -680,18 +680,18 @@ public class MainManager : MonoBehaviour {
         {
             piece.SetActive(false);
         }
- 
 
 
+
+        msgline.color = new Color(0.66f, 0.66f, 0.66f);
 
         if (CurrentActivePiece.check)
         {
             InCheck = "+";
-            msgline.color = new Color(255f / 255, 0 / 255, 0 / 255);
+            //msgline.color = new Color(255f / 255, 0 / 255, 0 / 255);
         }
         else
         {
-            msgline.color = new Color(0.66f, 0.66f, 0.66f);
         }
         // The eating/attacking message is defined in TempMessage by the EatPiece() function
         //Now building the full notation
@@ -708,6 +708,11 @@ public class MainManager : MonoBehaviour {
 
         string MoveNotation = PieceSymbol + ActionSymbol + destFile + destRank + Promotion + InCheck;
 
+        if (CurrentActivePiece.check)
+        {
+            MoveNotation = "<color=red>" + MoveNotation + "</color>";
+         }
+
         //Now assembling complete message
         string FullMoveMessage;
         if (!nomessage)
@@ -715,12 +720,14 @@ public class MainManager : MonoBehaviour {
             if (CurrentActivePiece.human)
             {
                 Turn++;
+
                 FullMoveMessage = Turn.ToString() + ". " + MoveNotation;
                 string AttackFlavour = TempMessage;
                 if (AttackFlavour != "")
                 {
                     FullMoveMessage += " (" + AttackFlavour + ")";
                 }
+
 
                 WhiteMoveMessage = FullMoveMessage; //keeping it for black's turn
             }
