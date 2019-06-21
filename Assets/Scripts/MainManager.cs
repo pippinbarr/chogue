@@ -1250,14 +1250,21 @@ public class MainManager : MonoBehaviour {
         if (resignbutton.text == "[Resign]")
         {
             resignbutton.text = "[Tap to confirm resignation]";
+            StartCoroutine(ResetResignation());
         }
         else
         {
             PlayerPrefs.SetString("Executor", "resigned");
             SceneManager.LoadScene("GameOver");
         }
-
     }
+
+    private IEnumerator ResetResignation()
+    {
+        yield return new WaitForSeconds(3f);
+        resignbutton.text = "[Resign]";
+    }
+
     private void LoginComplete(bool success)
     {
         if (success == true)
