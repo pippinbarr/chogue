@@ -50,7 +50,7 @@ public class LeaderBoard : MonoBehaviour
         GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
 
         Social.LoadAchievements(achievements => {
-            if (achievements.Length > 0)
+            if ((achievements!=null)&&(achievements.Length > 0))
             {
                 foreach (IAchievement achievement in achievements)
                 {
