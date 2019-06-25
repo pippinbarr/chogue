@@ -71,6 +71,9 @@ public class MainManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+        //Debug.Log("MainManager.Start()");
+        //Debug.Log("grandmaster is " + PlayerPrefs.GetInt("grandmaster", 0));
+
         //login to google game center
         if (!GameServices.Instance.IsLoggedIn())
         {
@@ -97,6 +100,11 @@ public class MainManager : MonoBehaviour {
         //Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
+            // Update their rating
+            PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
+            // Submit their achievement
+            GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
+            // Load the victory scene (which will submit the score itself)
 
             // GetComponent<AudioSource>().clip = winchord;
             //GetComponent<AudioSource>().Play();
@@ -112,6 +120,9 @@ public class MainManager : MonoBehaviour {
             {
                 congratulationsText.text += "are celebrated at the Grandmasters Guild for your rating of " + rating + ".";
             }
+
+            // They won! They are a grandmaster!
+            PlayerPrefs.SetInt("grandmaster", 1);
             PlayerPrefs.SetInt("continued", 0);
 
         }
@@ -1107,12 +1118,13 @@ public class MainManager : MonoBehaviour {
         {
             //player actually won
             // Remember that
-            PlayerPrefs.SetInt("grandmaster", 1);
-            // Update their rating
-            PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
-            // Submit their achievement
-            GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
-            // Load the victory scene (which will submit the score itself)
+            //Debug.Log("MainManager.ChangeLevel() setting grandmaster to 1");
+            //PlayerPrefs.SetInt("grandmaster", 1);
+            //// Update their rating
+            //PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
+            //// Submit their achievement
+            //GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
+            //// Load the victory scene (which will submit the score itself)
             SceneManager.LoadScene("LastLevel");
         }
         else

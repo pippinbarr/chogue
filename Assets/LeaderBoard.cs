@@ -56,7 +56,11 @@ public class LeaderBoard : MonoBehaviour
                 {
                     if (achievement.id == "com.pippinbarr.chogue.achievement.grandmaster" || achievement.id == "CgkIoNP6vo8GEAIQAw")
                     {
-                        PlayerPrefs.SetInt("grandmaster", 1);
+                        if (achievement.completed)
+                        {
+                            //Debug.Log("LeaderBoard.SubmitChoguelo setting grandmaster to 1");
+                            PlayerPrefs.SetInt("grandmaster", 1);
+                        }
                     }
 
                     else
