@@ -4,6 +4,12 @@ _Look! Up in the sky! It's a Chess Rogue-like! It's a Rogue Chess-like! No! It's
 
 ---
 
+#### [Get on the Google Play Store for Android devices](https://play.google.com/store/apps/details?id=com.BarrLessard.Chogue)
+#### [Get on the App Store for iPhone and iPad](https://apps.apple.com/app/chogue/id1464358271)
+#### [Play Online](https://jonathanlessard.net/chogue/) (desktop browsers only)
+#### [Download for Mac OS X](https://github.com/pippinbarr/chogue/releases/download/v1.0/chogue-mac.zip)
+#### [Download for Windows](https://github.com/pippinbarr/chogue/releases/download/v1.0/chogue-win.zip)
+
 _Chogue_ is a hybrid game created out of two masterpieces, chess and _Rogue_, by [Jonathan Lessard](http://jonathanlessard.net/) and [Pippin Barr](http://pippinbarr.com/). Throughout its design and development we followed the (fairly) strict rule of making decisions that meant _Chogue_ corresponded either to chess or to _Rogue_ in each of its elements, from its spatial layout (_Rogue_) to its movement style (chess) to its combat system (chess) to its overall gameplay structure (_Rogue_). The result is a game that is as least as good as _Rogue_ and chess put together. If not better than that.
 
 #### [Play Online](https://jonathanlessard.net/chogue/) (desktop browsers only)
