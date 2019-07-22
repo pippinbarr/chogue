@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms;
+
 
 public class MainManager : MonoBehaviour {
 
@@ -103,7 +105,10 @@ public class MainManager : MonoBehaviour {
             // Update their rating
             PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
             // Submit their achievement
-            GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
+            if (GameServices.Instance.IsLoggedIn())
+            {
+                GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
+            }
             // Load the victory scene (which will submit the score itself)
 
             // GetComponent<AudioSource>().clip = winchord;
@@ -1152,8 +1157,11 @@ public class MainManager : MonoBehaviour {
         PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
         PlayerPrefs.SetInt("continued", 1); //this means we got the king?
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
-        GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
 
+        if (GameServices.Instance.IsLoggedIn())
+        {
+            GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
+        }
         //Popup.gameObject.SetActive(true);
 
        // DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? ");
@@ -1293,6 +1301,9 @@ public class MainManager : MonoBehaviour {
             //// TESTING GRANDMASTER SCORE
             //GleyGameServices.ScreenWriter.Write("Submitting Grandmaster score...");
             //GameServices.Instance.SubmitScore(1800, allLeaderboards[1], ScoreSubmitted);
+
+            // Check GM flag and set in PlayPrefs if it's true...
+        
         }
         else
         {

@@ -11,11 +11,6 @@ public class LeaderBoard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //login to google game center
-        if (!GameServices.Instance.IsLoggedIn())
-        {
-            GameServices.Instance.LogIn(LoginComplete);
-        }
         //make a list of all leaderboards
         int nrOfLeaderboards = System.Enum.GetValues(typeof(LeaderboardNames)).Length;
         allLeaderboards = new LeaderboardNames[nrOfLeaderboards];
@@ -24,9 +19,17 @@ public class LeaderBoard : MonoBehaviour
             allLeaderboards[i] = ((LeaderboardNames)i);
         }
 
-        //if this script exists, this means this is the end of the game, we can submit the choguelo
-        SubmitChoguelo();
-
+        // Check for login to the game services in question
+        if (!GameServices.Instance.IsLoggedIn())
+        {
+            // If not already logged in, try now (and then submit after success)
+            GameServices.Instance.LogIn(LoginComplete);
+        }
+        else
+        {
+            // If we're already logged in we can just submit the score
+            SubmitChoguelo();
+        }
     }
 
     public void ShowLeaderBoard()
@@ -39,6 +42,22 @@ public class LeaderBoard : MonoBehaviour
         GameServices.Instance.ShowAchievementsUI();
     }
 
+
+    private void LoginComplete(bool success)
+    {
+        if (success == true)
+        {
+            // If the login was successful, we submit the score
+            SubmitChoguelo();
+        }
+        else
+        {
+            // If the login failed, we can't submit the score
+            // So we just do... well, nothing.
+        }
+        //GleyGameServices.ScreenWriter.Write("Login success: " + success);
+    }
+
     public void SubmitChoguelo()
     {
         //PlayerPrefs.SetInt("Choguelo", 1450);
@@ -48,50 +67,13 @@ public class LeaderBoard : MonoBehaviour
         //Debug.Log("choguelo:" + choguelo);
         //GleyGameServices.ScreenWriter.Write("Submitting score: " + choguelo);
         GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
-
-        Social.LoadAchievements(achievements => {
-            if ((achievements!=null)&&(achievements.Length > 0))
-            {
-                foreach (IAchievement achievement in achievements)
-                {
-                    if (achievement.id == "com.pippinbarr.chogue.achievement.grandmaster" || achievement.id == "CgkIoNP6vo8GEAIQAw")
-                    {
-                        if (achievement.completed)
-                        {
-                            //Debug.Log("LeaderBoard.SubmitChoguelo setting grandmaster to 1");
-                            PlayerPrefs.SetInt("grandmaster", 1);
-                        }
-                    }
-
-                    else
-                    {
-                        Debug.Log("No achievements returned");
-                    }
-                }
-            }
-            if (PlayerPrefs.GetInt("grandmaster", 0) == 1)
-            {
-                // Grandmaster
-                GameServices.Instance.SubmitScore(choguelo, allLeaderboards[1], ScoreSubmitted);
-            }
-        });
-
-
-    }
-    private void LoginComplete(bool success)
-    {
-        if (success == true)
+        if (PlayerPrefs.GetInt("grandmaster", 0) == 1)
         {
-            //Login was succesful
-
+            // Grandmaster
+            GameServices.Instance.SubmitScore(choguelo, allLeaderboards[1], ScoreSubmitted);
         }
-        else
-        {
-            //Login failed
-        }
-       // Debug.Log("Login success: " + success);
-        //GleyGameServices.ScreenWriter.Write("Login success: " + success);
     }
+
     //Automatically called when a score was submitted 
     private void ScoreSubmitted(bool success, GameServicesError error)
     {
