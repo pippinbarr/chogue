@@ -67,6 +67,7 @@ public class LeaderBoard : MonoBehaviour
         //Debug.Log("choguelo:" + choguelo);
         //GleyGameServices.ScreenWriter.Write("Submitting score: " + choguelo);
         GameServices.Instance.SubmitScore(choguelo, allLeaderboards[0], ScoreSubmitted);
+
         if (PlayerPrefs.GetInt("grandmaster", 0) == 1)
         {
             // Grandmaster

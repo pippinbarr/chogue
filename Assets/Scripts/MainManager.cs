@@ -102,8 +102,6 @@ public class MainManager : MonoBehaviour {
         //Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
-            // Update their rating
-            PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
             // Submit their achievement
             if (GameServices.Instance.IsLoggedIn())
             {
@@ -117,7 +115,7 @@ public class MainManager : MonoBehaviour {
 
             // SET CUSTOM CONGRATULATIONS TEXT
             congratulationsText.text = "You have captured the King of Yendor. You journey home, sell your loot at a great profit and ";
-            if (PlayerPrefs.GetInt("grandmaster",0) == 0)
+            if (PlayerPrefs.GetInt("newgrandmaster",0) == 1)
             {
                 congratulationsText.text += "are admitted to the Grandmasters Guild with a rating of " + rating + ".";
             }
@@ -125,9 +123,8 @@ public class MainManager : MonoBehaviour {
             {
                 congratulationsText.text += "are celebrated at the Grandmasters Guild for your rating of " + rating + ".";
             }
+            PlayerPrefs.SetInt("newgrandmaster", 0);
 
-            // They won! They are a grandmaster!
-            PlayerPrefs.SetInt("grandmaster", 1);
             PlayerPrefs.SetInt("continued", 0);
 
         }
@@ -1130,6 +1127,13 @@ public class MainManager : MonoBehaviour {
             //// Submit their achievement
             //GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
             //// Load the victory scene (which will submit the score itself)
+            /// 
+            PlayerPrefs.SetInt("Choguelo", PlayerPrefs.GetInt("Choguelo") + 500);
+            if (PlayerPrefs.GetInt("grandmaster") == 0)
+            {
+                PlayerPrefs.SetInt("newgrandmaster", 1);
+            }
+            PlayerPrefs.SetInt("grandmaster", 1);
             SceneManager.LoadScene("LastLevel");
         }
         else
