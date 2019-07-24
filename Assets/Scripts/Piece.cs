@@ -564,6 +564,10 @@ public class Piece : MonoBehaviour {
                         }
                        // }
 
+                    }
+                    else
+                    {
+                        BestMove = -10;
                     }                   
                     
                 }
