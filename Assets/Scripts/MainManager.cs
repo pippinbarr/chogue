@@ -270,7 +270,7 @@ public class MainManager : MonoBehaviour {
                     }
                 }
             }
-            if ((GameObject.FindObjectOfType<PinchZoom>().useMouse)&&(Input.GetMouseButtonDown(0)))
+            if (Input.GetMouseButtonDown(0))
             {
                 tapped = true;
             }
