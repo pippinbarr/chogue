@@ -168,7 +168,7 @@ public class Piece : MonoBehaviour {
                     {
 
                         
-                        if ((tile.GetComponent<Piece>().human != human))
+                        if ((tile.GetComponent<Piece>().PieceColor != PieceColor))
                         {
                             if (!LookingForProtectedPiece)
                             {
@@ -176,7 +176,7 @@ public class Piece : MonoBehaviour {
                                 tile.GetComponent<Piece>().threatened = true;
                                 PossiblyProtectingPiece = tile.GetComponent<Piece>();
                                 //Debug.Log("protecting piece tyoe = " + PossiblyProtectingPiece.PieceType);
-                                tile.threatened = true;
+                                tile.threatened = PieceColor;
                                 if (tile.GetComponent<Piece>().PieceType == "king")
                                 {
                                    // Debug.Log("king in check");
@@ -230,8 +230,9 @@ public class Piece : MonoBehaviour {
                                     tile.SetVisibility();
 
                                 }
-                                tile.threatened = true;
+                                
                             }
+                            tile.threatened = PieceColor;
                         }
                        /*
                         else 
@@ -252,26 +253,18 @@ public class Piece : MonoBehaviour {
             //update covered and threatened
             foreach(TileType tile in TileList)
             {
-                if (PieceColor == "white")
+
+                tile.threatened = PieceColor;
+                if (tile.GetComponent<Piece>() != null)
                 {
-                    tile.threatened = true;
-                    if (tile.GetComponent<Piece>() != null)
-                    {
-                        tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().threatened = true;
-                    }
-                    if (tile.CurrentPiece != null)
-                    {
-                        tile.CurrentPiece.GetComponent<Piece>().threatened = true;
-                    }
+                    tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().threatened = PieceColor;
                 }
-                else
+                if ((tile.CurrentPiece != null)&&(tile.CurrentPiece.GetComponent<Piece>().PieceColor!=PieceColor))
                 {
-                    tile.covered = true;
-                    if (tile.GetComponent<Piece>() != null)
-                    {
-                        tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().covered = true;
-                    }
+                    tile.CurrentPiece.GetComponent<Piece>().threatened = true;
                 }
+
+
             }
         }
     }
@@ -414,7 +407,7 @@ public class Piece : MonoBehaviour {
             
            if ((tile!=null)&&(tile.transform.tag == "piece"))
             {
-                if (tile.GetComponent<Piece>().human != human)
+                if (tile.GetComponent<Piece>().PieceColor != PieceColor)
                 {
                     TileList.Add(tile);
                     tile.GetComponent<Piece>().threatened = true;
@@ -510,16 +503,15 @@ public class Piece : MonoBehaviour {
         else
         {
             //if I'm king and I am threatened, this means I'm checkmated
-            if (threatened)
+            if ((PieceType=="king")&&(threatened))
             {
                // MM.Win();
-                Debug.Log("Checkmate");
+                Debug.Log(PieceColor+" is checkmated");
             }
             BestMove = -1;
             LeastDistanceToKing = 10000000;
         }
-        //See if the human is there 
-        //If I'm king I want to go to the stairs
+        Debug.Log(PieceType + " has " + TileList.Count + " possible moves");
         foreach(TileType tile in TileList)
         {
             //special case for ennemy king, looking for an exit
@@ -540,7 +532,7 @@ public class Piece : MonoBehaviour {
             }
             else if (tile.transform.tag == "piece")
             {
-                if (tile.GetComponent<Piece>().human)
+                if (tile.GetComponent<Piece>().PieceColor!=PieceColor)
                 {
                     //if I'm king and the piece I'm looking at is threatened, can't eat it
                     if (!((PieceType == "king") && (tile.GetComponent<Piece>().guarded)))
@@ -584,7 +576,7 @@ public class Piece : MonoBehaviour {
             //can I find a place where I'll be protected?
             foreach(TileType tile in TileList)
             {
-                if (!tile.threatened)
+                if ((tile.threatened==PieceColor)||(tile.threatened=="none"))
                 {
                     //Debug.Log("not threatened");
                     BestMove = 2;   
@@ -606,7 +598,7 @@ public class Piece : MonoBehaviour {
             Debug.Log("I'm king and threatened");
             foreach(TileType tile in TileList)
             {
-                if (!tile.threatened)
+                if ((tile.threatened == PieceColor)|| (tile.threatened == "none"))
                 {
                     BestMove = 4;
                     BestMoveTarget = tile.transform;
@@ -620,36 +612,26 @@ public class Piece : MonoBehaviour {
             }
         }
 
-        //if we haven't found a piece to eat, find closest place
+        //if we haven't found a piece to eat, find closest place to enemy king
         if ((BestMove == 0))
         {
-            //Get the human coordinates
-            Piece HumanKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
+            //Get the other side king's coordinates
+            Piece OtherKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
 
-            bool foundpiece = false;
-            while (!foundpiece)
+            foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
             {
-                int randompiece = (int)(Random.value * MM.PieceList.Count);
-                if (MM.PieceList[randompiece].human)
-                {
-                    foundpiece = true;
-                    HumanKing = MM.PieceList[randompiece];
+                if ((piece.PieceType == "king")&& (piece.PieceColor != PieceColor)){
+                    //Debug.Log("Found " + piece.PieceColor + " king");
+                    OtherKing = piece;
                 }
             }
 
-           /* foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
-            {
-                if (piece.human )
-                {
-                    HumanKing = piece;
-                }
-            }*/
-            
+          
 
             //Find distance of all available tiles to human
             foreach (TileType tile in TileList)
             {
-                tile.GetDistanceTo(HumanKing.transform);
+                tile.GetDistanceTo(OtherKing.transform);
             }
 
 
@@ -663,20 +645,11 @@ public class Piece : MonoBehaviour {
                 LeastDistanceToKing = 1000000000;
                 foreach (TileType tile in TileList)
                 {
-                    if (!tile.threatened)
+                    if ((tile.threatened==PieceColor)||(tile.threatened=="none"))
                     {
-                        if (PieceType == "pawn")
-                        {
-                            BestMove = -2;
-                        }
-                        else
-                        {
-                            BestMove = 1;
-
-                        }
-                        
+                        BestMove = 1;                        
                         BestMoveTarget = tile.transform;
-                        LeastDistanceToKing = TileList[0].DistanceToPiece;
+                        LeastDistanceToKing = tile.DistanceToPiece;
                         break;
                     }
 
@@ -703,19 +676,7 @@ public class Piece : MonoBehaviour {
 
             }
         }
-        if ((BestMoveTarget!=null)&&(BestMove==1)){
-            if (BestMoveTarget.GetComponent<TileType>().threatened)
-            {
-                BestMove = -2;
-            }
-            if (BestMoveTarget.GetComponent<Piece>() != null)
-            {
-                if (BestMoveTarget.GetComponent<Piece>().threatened)
-                {
-                    BestMove = -2;
-                }
-            }
-        }
+
         
         
     }

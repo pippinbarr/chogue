@@ -28,6 +28,7 @@ public class MainManager : MonoBehaviour {
     int CurrentPieceIndex = 0;
     bool gameover = false;
     public bool HumanTurn = false;
+    public bool Automated = false;
     public AudioClip gulp;
     public AudioClip sliding;
     public AudioClip putdown;
@@ -198,9 +199,12 @@ public class MainManager : MonoBehaviour {
 
         //update visibility manually
 
-        
+
         WaitingForPlayerMove = true;
         WaitingForCPUMove = false;
+
+
+        
 
         // Debug.Log("player's turn");
         StartCoroutine(InitialStuff());
@@ -211,6 +215,10 @@ public class MainManager : MonoBehaviour {
 	void Update () {
 
         //Debug.Log(LevelNameGenerator.GetName());
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ChangeTurn();
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -237,6 +245,13 @@ public class MainManager : MonoBehaviour {
         //Get click on destination (only if in "move" mode)
         if ((WaitingForPlayerMove)&&(!WaitingForMove))
         {
+            if (Automated)
+            {
+                CPUPlay("white");
+                WaitingForPlayerMove = false;
+                
+                return;
+            }
             if (!PieceSelected)
             {
                 
@@ -355,15 +370,15 @@ public class MainManager : MonoBehaviour {
 
             }
         }
-        else if((!WaitingForCPUMove)&&(!WaitingForMove))
+        /*else if((!WaitingForCPUMove)&&(!WaitingForMove))
         {
             // Debug.Log("calling play black");
             UpdateStatus();
-            PlayBlack();
+            CPUPlay("black");
            
 
 
-        }
+        }*/
 
     }
 
@@ -373,7 +388,7 @@ public class MainManager : MonoBehaviour {
         foreach (TileType tile in TileList)
         {
             tile.covered = false;
-            tile.threatened = false;
+            tile.threatened = "none";
         }
         //first, find available destinations for all pieces to updated "protected" and "covered" statuses
         foreach (Piece piece in PieceList)
@@ -400,8 +415,9 @@ public class MainManager : MonoBehaviour {
         }
     }
 
-    void  PlayBlack()
+    void  CPUPlay(string side)
     {
+        Debug.Log("Deciding move for " + side);
         //give a few seconds
         //yield return new WaitForSeconds(0.5f);
         //select a black piece to move
@@ -417,7 +433,7 @@ public class MainManager : MonoBehaviour {
         foreach (Piece piece in PieceList)
         {
             //if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
-            if (piece.PieceColor == "black")
+            if (piece.PieceColor == side)
              {
                 //piece.SetActive(true);
                 //UpdateThreats();
@@ -445,7 +461,7 @@ public class MainManager : MonoBehaviour {
                 // break;
             }
         }
-        //Debug.Log("best move is " + bestmove);
+        Debug.Log("best move is " + bestmove);
         //we can only move, select the one that can move closest to king
 
         if (bestmove < 2)
@@ -456,11 +472,11 @@ public class MainManager : MonoBehaviour {
            // Debug.Log("Can only move, get closest to king");
             foreach (Piece piece in PieceList)
             {
-                if (!piece.human)
+                if (piece.PieceColor==side)
                 {
                     if ((piece.LeastDistanceToKing < leastdist))
                     {
-                        if((piece.BestMoveTarget!=null)&& (!piece.BestMoveTarget.GetComponent<TileType>().threatened)&&(piece.BestMoveTarget!=piece.CurrentTile)&&(piece.PieceType!="king"))
+                        if((piece.BestMoveTarget!=null)&&(piece.BestMoveTarget!=piece.CurrentTile)&&(piece.PieceType!="king"))
                         {
                             leastdist = piece.LeastDistanceToKing;
                             //Debug.Log("Least distance is " + leastdist);
@@ -473,22 +489,18 @@ public class MainManager : MonoBehaviour {
             }
         }
 
-       // Debug.Log("best move level:" + bestmove);
+        Debug.Log("best move level:" + bestmove);
        // if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
         //if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
 
         if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null))
         {
-            //Debug.Log("let's move");
+            Debug.Log("let's move");
             CurrentActivePiece = bestpiece;
             CurrentActivePiece.MakeMove();
 
         }
-        else
-        {
-           // Debug.Log("Haven'T found any good move");
-            ChangeTurn();
-        }
+
                 
 
 
@@ -550,7 +562,7 @@ public class MainManager : MonoBehaviour {
         CurrentActivePiece.turn++;
         Vector3 destination = new Vector3(tile.transform.position.x, tile.transform.position.y, CurrentActivePiece.transform.position.z);
         CurrentActivePiece.HideDestinations();
-        Vector3 movestep = (destination - CurrentActivePiece.transform.position) / (Vector3.Distance(destination, CurrentActivePiece.transform.position)*3);
+        Vector3 movestep = (destination - CurrentActivePiece.transform.position) / (Vector3.Distance(destination, CurrentActivePiece.transform.position)*10);
         
         if(Vector3.Distance(destination, CurrentActivePiece.transform.position) > 4)
         {
@@ -810,7 +822,7 @@ public class MainManager : MonoBehaviour {
         if ((!changinglevel)&&(!gameover))
         {
             
-            ChangeTurn();
+            //ChangeTurn();
         }
         
 
@@ -902,7 +914,7 @@ public class MainManager : MonoBehaviour {
             {
                // Debug.Log("game over");
                 gameover = true;
-                Popup.gameObject.SetActive(true);
+                //Popup.gameObject.SetActive(true);
                 
             }
             //Debug.Log("I am human? : " + CurrentActivePiece.human);
@@ -1246,7 +1258,7 @@ public class MainManager : MonoBehaviour {
             WaitingForCPUMove = true;
            
             WaitingForPlayerMove = false;
-            PlayBlack();
+            CPUPlay("black");
         }
 
 
@@ -1267,6 +1279,8 @@ public class MainManager : MonoBehaviour {
         {
             piece.SetActive(false);
         }
+
+
 
     }
     public void Resign()

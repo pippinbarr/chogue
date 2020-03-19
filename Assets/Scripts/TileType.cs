@@ -17,7 +17,7 @@ public class TileType : MonoBehaviour {
     public bool visited = false;
     public bool corridor = false;
     public Color RoomColor;
-    public bool threatened = false;
+    public string threatened = "none";
     public bool covered = false;
     public Transform CurrentPiece;
 
