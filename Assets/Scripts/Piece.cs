@@ -166,17 +166,28 @@ public class Piece : MonoBehaviour {
                     }
                     else if ((tile.transform.tag == "piece"))
                     {
+                        if (tile.GetComponent<Piece>().CurrentTile != null)
+                        {
 
-                        
+                            //let's only deal with actual tiles
+                            TileType temptile = tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>();
+                            if (temptile.threatened == "none")
+                                temptile.threatened = PieceColor;
+                            else if (temptile.threatened != PieceColor)
+                            {
+                                temptile.threatened = "both";
+                            }
+                        }
+
                         if ((tile.GetComponent<Piece>().PieceColor != PieceColor))
                         {
                             if (!LookingForProtectedPiece)
                             {
                                 TileList.Add(tile);
-                                tile.GetComponent<Piece>().threatened = true;
                                 PossiblyProtectingPiece = tile.GetComponent<Piece>();
+
                                 //Debug.Log("protecting piece tyoe = " + PossiblyProtectingPiece.PieceType);
-                                tile.threatened = PieceColor;
+
                                 if (tile.GetComponent<Piece>().PieceType == "king")
                                 {
                                    // Debug.Log("king in check");
@@ -185,6 +196,7 @@ public class Piece : MonoBehaviour {
                             }
                             else
                             {
+
                                 if(PossiblyProtectingPiece!= tile.GetComponent<Piece>())
                                 {
                                     PossiblyProtectingPiece.protecting = tile.GetComponent<Piece>().MaxHP;
@@ -202,7 +214,6 @@ public class Piece : MonoBehaviour {
                             {
                                 break;
                             }                              
-                            tile.GetComponent<Piece>().guarded = true;
                             guarding = true;
                         }
 
@@ -232,41 +243,72 @@ public class Piece : MonoBehaviour {
                                 }
                                 
                             }
-                            tile.threatened = PieceColor;
+                            if (tile.threatened == "none")
+                                tile.threatened = PieceColor;
+                            else if (tile.threatened != PieceColor)
+                            {
+                                tile.threatened = "both";
+                            }
                         }
-                       /*
-                        else 
-                        {
-                            tile.threatened = true;
 
-                            //break;
-                        }
-                        */
                     }
 
                 }
 
             }
         }
+        
         if (TileList.Count > 0)
         {
             //update covered and threatened
             foreach(TileType tile in TileList)
             {
+                if (tile.CurrentPiece != null)
+                {
+                    Piece piece = tile.CurrentPiece.GetComponent<Piece>();
+                    if (tile.threatened != "none")
+                    {
+                        if ((tile.threatened != piece.PieceColor) || (tile.threatened == "both"))
+                        {
+                            piece.threatened = true;
+                        }
+                        if ((tile.threatened == piece.PieceColor) || (tile.threatened == "both"))
+                        {
+                            piece.guarded = true;
+                        }
+                    }
 
-                tile.threatened = PieceColor;
-                if (tile.GetComponent<Piece>() != null)
-                {
-                    tile.GetComponent<Piece>().CurrentTile.GetComponent<TileType>().threatened = PieceColor;
-                }
-                if ((tile.CurrentPiece != null)&&(tile.CurrentPiece.GetComponent<Piece>().PieceColor!=PieceColor))
-                {
-                    tile.CurrentPiece.GetComponent<Piece>().threatened = true;
                 }
 
 
             }
         }
+        //check own status
+        TileType tilee = CurrentTile.GetComponent<TileType>();
+        if (tilee.threatened != "none")
+        {
+            if ((tilee.threatened != PieceColor) || (tilee.threatened == "both"))
+            {
+                threatened = true;
+            }
+            if ((tilee.threatened == PieceColor) || (tilee.threatened == "both"))
+            {
+                guarded = true;
+            }
+        }
+        tilee = GetComponent<TileType>();
+        if (tilee.threatened != "none")
+        {
+            if ((tilee.threatened != PieceColor) || (tilee.threatened == "both"))
+            {
+                threatened = true;
+            }
+            if ((tilee.threatened == PieceColor) || (tilee.threatened == "both"))
+            {
+                guarded = true;
+            }
+        }
+
     }
 
     public void FindAvailableDestinationsForPawn()
@@ -396,32 +438,25 @@ public class Piece : MonoBehaviour {
         foreach(TileType tile in Colliders[1].transform.GetComponent<GetCollidingThings>().CollidingTileList)
         {
             TempTileList.Add(tile);
+            if (tile.threatened == "none")
+                tile.threatened = PieceColor;
+            else if (tile.threatened != PieceColor)
+            {
+                tile.threatened = "both";
+            }
         }
         foreach (TileType tile in Colliders[2].transform.GetComponent<GetCollidingThings>().CollidingTileList)
         {
             TempTileList.Add(tile);
-        }
-        
-        foreach (TileType tile in TempTileList)
-        {
-            
-           if ((tile!=null)&&(tile.transform.tag == "piece"))
+            if (tile.threatened == "none")
+                tile.threatened = PieceColor;
+            else if (tile.threatened != PieceColor)
             {
-                if (tile.GetComponent<Piece>().PieceColor != PieceColor)
-                {
-                    TileList.Add(tile);
-                    tile.GetComponent<Piece>().threatened = true;
-                }
-                else
-                {
-                    tile.GetComponent<Piece>().guarded = true;
-                    guarding = true;
-                }
-
-
-               
+                tile.threatened = "both";
             }
         }
+        
+
 
     }
     public void Queen()
@@ -676,7 +711,14 @@ public class Piece : MonoBehaviour {
 
             }
         }
+        //what's this? Checking if move target is threatened? semems I checked this before
+        if ((BestMoveTarget!=null)&&(BestMove==1)){
+            if (BestMoveTarget.GetComponent<TileType>().threatened!=PieceColor)
+            {
+                BestMove = -2;
+            }
 
+        }
         
         
     }

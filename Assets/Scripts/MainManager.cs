@@ -397,9 +397,11 @@ public class MainManager : MonoBehaviour {
             piece.protecting = 0;
             piece.guarding = false;
             piece.guarded = false;
-           // piece.SetActive(true);
-            
-           // piece.SetActive(false);
+            piece.GetComponent<TileType>().threatened = "none";
+            piece.GetComponent<TileType>().covered = false;
+            // piece.SetActive(true);
+
+            // piece.SetActive(false);
         }
         foreach (Piece piece in PieceList)
         {
@@ -693,7 +695,7 @@ public class MainManager : MonoBehaviour {
                 //CurrentActivePiece = PieceList[0];
             }
         }
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
 
 
 
@@ -817,7 +819,7 @@ public class MainManager : MonoBehaviour {
         }
         WaitingForMove = false;
         UpdateVisibility();
-        //UpdateThreats();
+        UpdateThreats();
 
         if ((!changinglevel)&&(!gameover))
         {
