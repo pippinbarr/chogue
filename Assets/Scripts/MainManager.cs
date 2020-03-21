@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms;
+using System.Linq;
 
 
 public class MainManager : MonoBehaviour {
@@ -420,91 +421,93 @@ public class MainManager : MonoBehaviour {
     void  CPUPlay(string side)
     {
         Debug.Log("Deciding move for " + side);
-        //give a few seconds
-        //yield return new WaitForSeconds(0.5f);
-        //select a black piece to move
- 
-       // Debug.Log("finished waiting");
+
+        List<Move> AllMoves = new List<Move>();
+
+        //Collect moves from all pieces
+        foreach(Piece piece in PieceList)
+        {
+            if (piece.PieceColor == side)
+            {
+                piece.DecideMove();
+                foreach (Move move in piece.PossibleMoves)
+                {
+                    //Debug.Log("adding move of value " + move.Value);
+                    AllMoves.Add(move);
+                }
+            }
+
+
+        }
+        AllMoves = AllMoves.OrderByDescending(move => move.Value).ToList();
 
         
-        //UpdateVisibility();
+        Debug.Log(AllMoves.Count + " possibles moves and best move value is "+AllMoves[0].Value);
+        int BestValue = AllMoves[0].Value;
 
-        //first ask every piece what is its best move
-        int bestmove = 0;
-        Piece bestpiece = null;
-        foreach (Piece piece in PieceList)
+        Move ChosenMove = AllMoves[0];
+
+        //if best value is zero, sort by distance to enemy king
+        if (BestValue == 0)
         {
-            //if ((piece.PieceColor=="black")&&(piece.CurrentTile.GetComponent<TileType>().visible))
-            if (piece.PieceColor == side)
-             {
-                //piece.SetActive(true);
-                //UpdateThreats();
-                piece.DecideMove();
-                if (piece.BestMove > bestmove)
-                {
-                    bestmove = piece.BestMove;
-                    bestpiece = piece;
-                }
-                //if equal, move the highest ranking piece
-                else if((piece.BestMove == bestmove))
-                {
-                    if (bestpiece != null)
-                    {
-                        if (piece.MaxHP > bestpiece.MaxHP)
-                        {
-                            bestmove = piece.BestMove;
-                            bestpiece = piece;
-                        }
-
-                    }
-                    
-                }
-               // piece.SetActive(false);
-                // break;
-            }
-        }
-        Debug.Log("best move is " + bestmove);
-        //we can only move, select the one that can move closest to king
-
-        if (bestmove < 2)
-
-        {
-            float leastdist = 1000000;
-
-           // Debug.Log("Can only move, get closest to king");
+            //first find king
+            Piece OtherKing = PieceList[0];
             foreach (Piece piece in PieceList)
             {
-                if (piece.PieceColor==side)
+                if ((piece.PieceType == "king") && (piece.PieceColor != side))
                 {
-                    if ((piece.LeastDistanceToKing < leastdist))
+                    //Debug.Log("Found " + piece.PieceColor + " king");
+                    OtherKing = piece;
+                }
+            }
+            float lowestdistance = 10000000;
+            foreach(Move move in AllMoves)
+            {
+                if(move.Value == 0)
+                {
+                    move.DestinationTile.GetDistanceTo(OtherKing.transform);
+                    move.piece.CurrentTile.GetComponent<TileType>().GetDistanceTo(OtherKing.transform);
+                    float currentdist = move.piece.CurrentTile.GetComponent<TileType>().DistanceToPiece;
+                    //we don't want to backtrack
+                    if(currentdist> move.DestinationTile.DistanceToPiece)
                     {
-                        if((piece.BestMoveTarget!=null)&&(piece.BestMoveTarget!=piece.CurrentTile)&&(piece.PieceType!="king"))
+                        if (move.DestinationTile.DistanceToPiece < lowestdistance)
                         {
-                            leastdist = piece.LeastDistanceToKing;
-                            //Debug.Log("Least distance is " + leastdist);
-                            bestpiece = piece;
+                            ChosenMove = move;
+                            lowestdistance = move.DestinationTile.DistanceToPiece;
                         }
+                        else if (move.DestinationTile.DistanceToPiece == lowestdistance)
+                        {
+                            if (Random.value > 0.5f)
+                            {
+                                ChosenMove = move;
+                                lowestdistance = move.DestinationTile.DistanceToPiece;
+                            }
 
+                        }
                     }
-                    // break;
+
                 }
             }
         }
-
-        Debug.Log("best move level:" + bestmove);
-       // if (bestpiece != null) Debug.Log("best piece:" + bestpiece);
-        //if (bestpiece != null && bestpiece.BestMoveTarget != null) Debug.Log("best destination:" + bestpiece.BestMoveTarget);
-
-        if ((bestpiece!=null)&&(bestpiece.BestMoveTarget!=null))
+        else
         {
-            Debug.Log("let's move");
-            CurrentActivePiece = bestpiece;
-            CurrentActivePiece.MakeMove();
-
+            //collect all moves of similar best value and choose randomly
+            List<Move> MoveList = new List<Move>();
+            foreach (Move move in AllMoves)
+            {
+                if (move.Value == BestValue)
+                {
+                    MoveList.Add(move);
+                }
+            }
+            System.Random rnd = new System.Random();
+            int RandomIndex = rnd.Next(0, MoveList.Count);
+            ChosenMove = MoveList[RandomIndex];
         }
 
-                
-
+        CurrentActivePiece = ChosenMove.piece;
+        ChosenMove.piece.MakeMove(ChosenMove);
 
     }
 

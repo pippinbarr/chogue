@@ -31,6 +31,8 @@ public class Piece : MonoBehaviour {
     public bool guarded = false; //a friendly piece can recapture if eaten
     public int protecting = 0; //the point value of a piece that would be threatened if I moved
 
+    public List<Move> PossibleMoves = new List<Move>();
+
     private MainManager MM;
 
 
@@ -513,9 +515,10 @@ public class Piece : MonoBehaviour {
 
         }
     }
-   public void MakeMove()
+   public void MakeMove(Move move)
     {
         //Debug.Log("is bestmovetarget null?");
+        BestMoveTarget = move.DestinationTile.transform;
         if (BestMoveTarget != null)
         {
             //Debug.Log("Moving to bestmovetarget");
@@ -527,200 +530,103 @@ public class Piece : MonoBehaviour {
    public void DecideMove()
     {
 
+        //move ranking
+        //-3 : Move piece to threatened and unguarded position
+        //-2 : Move piece to threatened but guarded position
+        //-1 : Take guarded piece of lower value
+        //0 : Move close to king to unthreatened or guarded from higher value piece
+        //1 : If threatened and unguarded by lower HP piece, move to unthreatened situation
+        //2 : Take guarded piece of higher value
+        //3 : Take unguarded piece 
+        //4 : Move threatened king to unthreatened position
+        //5 : Take king
+
+        PossibleMoves.Clear();
 
         //Find available destinations
         FindAvailableDestinations();
-        
-        if (TileList.Count > 0)
-        {
-            BestMove = 0;
-        }
-        else
-        {
-            //if I'm king and I am threatened, this means I'm checkmated
-            if ((PieceType=="king")&&(threatened))
-            {
-               // MM.Win();
-                Debug.Log(PieceColor+" is checkmated");
-            }
-            BestMove = -1;
-            LeastDistanceToKing = 10000000;
-        }
-        Debug.Log(PieceType + " has " + TileList.Count + " possible moves");
-        foreach(TileType tile in TileList)
-        {
-            //special case for ennemy king, looking for an exit
-            if ((PieceType == "king")  && (tile.Type == 3))
-            {
-                if (threatened)
-                {
-                    BestMove = 6;
-                    BestMoveTarget = tile.transform;
-                    return;
-                }
-                else
-                {
-                    BestMove = 1;
-                    BestMoveTarget = tile.transform;
-                }
 
-            }
-            else if (tile.transform.tag == "piece")
+        foreach (TileType tile in TileList)
+        {
+            int MoveValue = -10;
+            if (tile.transform.tag == "piece")
             {
-                if (tile.GetComponent<Piece>().PieceColor!=PieceColor)
+                Piece piece = tile.GetComponent<Piece>();
+                if (piece.PieceColor != PieceColor)
                 {
-                    //if I'm king and the piece I'm looking at is threatened, can't eat it
-                    if (!((PieceType == "king") && (tile.GetComponent<Piece>().guarded)))
+                    //we can take a piece
+                    if (piece.MaxHP >= MaxHP)
                     {
-                        //if the piece is protected and worth less than me, don't do that
-                       // if ((tile.GetComponent<Piece>().MaxHP > MaxHP)|| (!tile.GetComponent<Piece>().guarded)){
-                       if(!((PieceType == "king") && (GameObject.FindObjectOfType<MapMaker>().KingFarFromStairsAtLevel > PlayerPrefs.GetInt("level"))))
+                        //we can take a piece of higher valuer
+                        if (piece.PieceType == "king")
                         {
-                            BestMove = 3;
-                            BestMoveTarget = tile.transform;
+                            MoveValue = 5;
                         }
-
-                        if ((tile.GetComponent<Piece>().PieceType == "king") || ((PieceType == "king") && threatened))
+                        else if (piece.guarded)
                         {
-                            if (BestMove < 6)
-                            {
-                                BestMove = 5;
-                            }
-                                
-                            //return;
+                            MoveValue = -1;
                         }
-                       // }
-
-                    }                   
-                    
-                }
-            }
-
-
-        }
-        //am I threatened and uncovered?
-       // threatened = CurrentTile.GetComponent<TileType>().threatened;
-       // covered = CurrentTile.GetComponent<TileType>().covered;
-       //was this useful?
-       //todo: move if threatened (unless guarded and attacking piece is higher)
-       //todo: know whether I am blocking a piece
-        if ( (PieceType!="king")&&(BestMove == 0)&&(threatened)&&(protecting<MaxHP))
-        {
-           
-            //Debug.Log("I'm threatened");
-            //can I find a place where I'll be protected?
-            foreach(TileType tile in TileList)
-            {
-                if ((tile.threatened==PieceColor)||(tile.threatened=="none"))
-                {
-                    //Debug.Log("not threatened");
-                    BestMove = 2;   
-                    BestMoveTarget = tile.transform;
-                    break;
-                }
-                /*else if(tile.covered)
-                {
-                    //Debug.Log("covered ");
-                    BestMove = 1;
-                    BestMoveTarget = tile.transform;
-                }*/
-
-            }
-        }
-        //If I'm king I absolutely want to be not threatened.
-        if ((PieceType == "king") && (threatened) && (BestMove < 5))
-        {
-            Debug.Log("I'm king and threatened");
-            foreach(TileType tile in TileList)
-            {
-                if ((tile.threatened == PieceColor)|| (tile.threatened == "none"))
-                {
-                    BestMove = 4;
-                    BestMoveTarget = tile.transform;
-                }
-            }
-            //if I haven't found anything, I'm checkmate
-            if (BestMove < 4)
-            {
-                //MM.Win();
-                Debug.Log("checkmate");
-            }
-        }
-
-        //if we haven't found a piece to eat, find closest place to enemy king
-        if ((BestMove == 0))
-        {
-            //Get the other side king's coordinates
-            Piece OtherKing  = GameObject.Find("MainManager").GetComponent<MainManager>().PieceList[0];
-
-            foreach(Piece piece in GameObject.Find("MainManager").GetComponent<MainManager>().PieceList)
-            {
-                if ((piece.PieceType == "king")&& (piece.PieceColor != PieceColor)){
-                    //Debug.Log("Found " + piece.PieceColor + " king");
-                    OtherKing = piece;
-                }
-            }
-
-          
-
-            //Find distance of all available tiles to human
-            foreach (TileType tile in TileList)
-            {
-                tile.GetDistanceTo(OtherKing.transform);
-            }
-
-
-            //Sort them
-            TileList = TileList.OrderBy(tile => tile.DistanceToPiece).ToList();
-
-            //try to find a tile that isn't threatened
-            if ((TileList.Count > 0))
-            {
-                //BestMove = 0;
-                LeastDistanceToKing = 1000000000;
-                foreach (TileType tile in TileList)
-                {
-                    if ((tile.threatened==PieceColor)||(tile.threatened=="none"))
-                    {
-                        BestMove = 1;                        
-                        BestMoveTarget = tile.transform;
-                        LeastDistanceToKing = tile.DistanceToPiece;
-                        break;
+                        else
+                        {
+                            MoveValue = 3;
+                        }
                     }
-
+                    else
+                    {
+                        //we can take a piece of lower valuer
+                        if (piece.guarded)
+                        {
+                            MoveValue = -1;
+                        }
+                        else
+                        {
+                            MoveValue = 3;
+                        }
+                    }
                 }
-                
             }
             else
             {
-                BestMove = 0;
-                LeastDistanceToKing = 1000000000;
+                
+                //threatened tile?
+                if (tile.threatened == "none")
+                {
+                    MoveValue = 0;
+                }
+                else if (tile.threatened == "both")
+                {
+                    MoveValue = -2;
+                }
+                else if (tile.threatened == PieceColor)
+                {
+                    MoveValue = 0;
+                }
+                else
+                {
+                    MoveValue = -3;
+                }
+                //if threatened and can move, that's even better
+                if ((threatened) && (PieceType == "king") && (MoveValue > 0))
+                {
+                    MoveValue = 4;
+                }
+                if ((threatened) && (MoveValue == 0))
+                {
+                    MoveValue = 1;
+                }
+
             }
 
-        }
-       /* if ((BestMove == 1) && (threatened))
-        {
-            BestMove = -1;
-        }*/
-        if (PieceColor == "red")
-        {
-            if (TileList.Count > 0)
+            if (MoveValue != -10)
             {
-                BestMove = 5;
-                BestMoveTarget = TileList[0].transform;
 
+                PossibleMoves.Add(new Move(this, tile, MoveValue));
             }
+            
+            
         }
-        //what's this? Checking if move target is threatened? semems I checked this before
-        if ((BestMoveTarget!=null)&&(BestMove==1)){
-            if (BestMoveTarget.GetComponent<TileType>().threatened!=PieceColor)
-            {
-                BestMove = -2;
-            }
 
-        }
-        
-        
+        PossibleMoves = PossibleMoves.OrderBy(move => move.Value).ToList();
     }
 
     public void SetActive(bool active)
