@@ -457,8 +457,21 @@ public class Piece : MonoBehaviour {
                 tile.threatened = "both";
             }
         }
-        
-
+        //Add possible destination from diagonals if opponent pieces
+        foreach(TileType tile in TempTileList)
+        {
+            if ((tile.transform.tag == "piece") && (tile.GetComponent<Piece>().PieceColor != PieceColor))
+            {
+                TileList.Add(tile);
+            }
+            else if (tile.CurrentPiece != null)
+            {
+                if (tile.CurrentPiece.GetComponent<Piece>().PieceColor != PieceColor)
+                {
+                    TileList.Add(tile);
+                }
+            }
+        }
 
     }
     public void Queen()
@@ -549,9 +562,19 @@ public class Piece : MonoBehaviour {
         foreach (TileType tile in TileList)
         {
             int MoveValue = -10;
-            if (tile.transform.tag == "piece")
+
+            if ((tile.transform.tag == "piece")||(tile.CurrentPiece != null))
             {
-                Piece piece = tile.GetComponent<Piece>();
+                Piece piece = new Piece();
+                if (tile.CurrentPiece != null)
+                {
+                    piece = tile.CurrentPiece.GetComponent<Piece>();   
+                }
+                else
+                {
+                    piece = tile.GetComponent<Piece>();
+                }
+                
                 if (piece.PieceColor != PieceColor)
                 {
                     //we can take a piece
@@ -564,7 +587,15 @@ public class Piece : MonoBehaviour {
                         }
                         else if (piece.guarded)
                         {
-                            MoveValue = -1;
+                            if (PieceType == "pawn")
+                            {
+                                MoveValue = 2;
+                            }
+                            else
+                            {
+                                MoveValue = -1;
+                            }
+                            
                         }
                         else
                         {
@@ -577,6 +608,10 @@ public class Piece : MonoBehaviour {
                         if (piece.guarded)
                         {
                             MoveValue = -1;
+                            if (PieceType == "king")
+                            {
+                                MoveValue = -10;
+                            }
                         }
                         else
                         {
@@ -595,7 +630,15 @@ public class Piece : MonoBehaviour {
                 }
                 else if (tile.threatened == "both")
                 {
-                    MoveValue = -2;
+                    if (PieceType == "pawn")
+                    {
+                        MoveValue = 0;
+                    }
+                    else
+                    {
+                        MoveValue = -2;
+                    }
+                    
                 }
                 else if (tile.threatened == PieceColor)
                 {
@@ -606,11 +649,11 @@ public class Piece : MonoBehaviour {
                     MoveValue = -3;
                 }
                 //if threatened and can move, that's even better
-                if ((threatened) && (PieceType == "king") && (MoveValue > 0))
+                if ((threatened) && (PieceType == "king") && (MoveValue >= 0))
                 {
                     MoveValue = 4;
                 }
-                if ((threatened) && (MoveValue == 0))
+                else if ((threatened) && (MoveValue == 0))
                 {
                     MoveValue = 1;
                 }
