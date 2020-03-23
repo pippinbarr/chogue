@@ -66,10 +66,7 @@ public class MainManager : MonoBehaviour {
     //public Vector3 InitialMousePosition;
 
 
-    //high score stuff
-    private LeaderboardNames[] allLeaderboards;
-    private AchievementNames[] allAchievements;
-    private int indexNumberAchievements;
+
 
 
     // Use this for initialization
@@ -78,37 +75,14 @@ public class MainManager : MonoBehaviour {
         //Debug.Log("MainManager.Start()");
         //Debug.Log("grandmaster is " + PlayerPrefs.GetInt("grandmaster", 0));
 
-        //login to google game center
-        if (!GameServices.Instance.IsLoggedIn())
-        {
-            GameServices.Instance.LogIn(LoginComplete);
-        }
 
-        //make a list of all leaderboards
-        int nrOfLeaderboards = System.Enum.GetValues(typeof(LeaderboardNames)).Length;
-        allLeaderboards = new LeaderboardNames[nrOfLeaderboards];
-        for (int i = 0; i < nrOfLeaderboards; i++)
-        {
-            allLeaderboards[i] = ((LeaderboardNames)i);
-        }
-
-        //make a list of all achievements
-        int nrOfAchievements = System.Enum.GetValues(typeof(AchievementNames)).Length;
-        allAchievements = new AchievementNames[nrOfAchievements];
-        for (int i = 0; i < nrOfAchievements; i++)
-        {
-            allAchievements[i] = ((AchievementNames)i);
-        }
 
 
         //Debug.Log(SceneManager.GetActiveScene().name);
         if (SceneManager.GetActiveScene().name == "LastLevel")
         {
             // Submit their achievement
-            if (GameServices.Instance.IsLoggedIn())
-            {
-                GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
-            }
+    
             // Load the victory scene (which will submit the score itself)
 
             // GetComponent<AudioSource>().clip = winchord;
@@ -499,7 +473,13 @@ public class MainManager : MonoBehaviour {
         }
         System.Random rnd = new System.Random();
         //one chance on 20 to do a completely random move
-        if (rnd.Next(0, 20) < 1)
+
+        if (AllMoves.Count == 0)
+        {
+            gameover = true;
+        }
+
+        else if ((rnd.Next(0, 20) < 1)||(MoveList.Count==0))
         {
             int RandomIndex = rnd.Next(0, AllMoves.Count);
             ChosenMove = AllMoves[RandomIndex];
@@ -831,7 +811,11 @@ public class MainManager : MonoBehaviour {
         yield return new WaitForSeconds(0.01f);
         if(!gameover)
         {
-            //ChangeTurn();
+            ChangeTurn();
+        }
+        else
+        {
+            SceneManager.LoadScene("shatranj");
         }
         
 
@@ -1185,10 +1169,7 @@ public class MainManager : MonoBehaviour {
         PlayerPrefs.SetInt("continued", 1); //this means we got the king?
         PlayerPrefs.SetInt("kinglevel", PlayerPrefs.GetInt("level"));
 
-        if (GameServices.Instance.IsLoggedIn())
-        {
-            GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
-        }
+
         //Popup.gameObject.SetActive(true);
 
        // DisplayMsg("You captured the king of Yendor. Will you make it back to the light of day? ");
@@ -1314,52 +1295,6 @@ public class MainManager : MonoBehaviour {
         resignbutton.text = "[Resign]";
     }
 
-    private void LoginComplete(bool success)
-    {
-        if (success == true)
-        {
-            //Login was succesful
-
-            //GleyGameServices.ScreenWriter.Write("Login success: " + success);
-            //// TESTING MASTER ACHIEVEMENT
-            //GleyGameServices.ScreenWriter.Write("Submitting Master achievement...");
-            //GameServices.Instance.SubmitAchievement(allAchievements[0], AchievementSUbmitted);
-            //// TESTING GRANDMASTER ACHIEVEMENT
-            //GleyGameServices.ScreenWriter.Write("Submitting Grandmaster achievement...");
-            //GameServices.Instance.SubmitAchievement(allAchievements[1], AchievementSUbmitted);
-            //// TESTING GRANDMASTER SCORE
-            //GleyGameServices.ScreenWriter.Write("Submitting Grandmaster score...");
-            //GameServices.Instance.SubmitScore(1800, allLeaderboards[1], ScoreSubmitted);
-
-            // Check GM flag and set in PlayPrefs if it's true...
-        
-        }
-        else
-        {
-            //Login failed
-        }
-       // Debug.Log("Login success: " + success);
-    }
-    private void AchievementSUbmitted(bool success, GameServicesError error)
-    {
-        if (success)
-        {
-            //achievement was submitted
-        }
-        else
-        {
-            //an error occurred
-           // Debug.LogError("Achivement failed to submit: " + error);
-
-        }
-        //Debug.Log("Submit achievement result: " + success + " message:" + error);
-        //GleyGameServices.ScreenWriter.Write("Submit achievement result: " + success + " message:" + error);
-    }
-
-    private void ScoreSubmitted(bool success, GameServicesError error)
-    {
-        //GleyGameServices.ScreenWriter.Write("Submit score result: " + success + " message:" + error);
-    }
-
+ 
 
 }
