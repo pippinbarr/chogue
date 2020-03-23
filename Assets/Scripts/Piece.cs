@@ -202,7 +202,7 @@ public class Piece : MonoBehaviour {
                                 if(PossiblyProtectingPiece!= tile.GetComponent<Piece>())
                                 {
                                     PossiblyProtectingPiece.protecting = tile.GetComponent<Piece>().MaxHP;
-                                    Debug.Log("protected piece type = " + tile.GetComponent<Piece>().PieceType);
+                                    //Debug.Log("protected piece type = " + tile.GetComponent<Piece>().PieceType);
                                     break;
                                 }
                                 
@@ -656,6 +656,10 @@ public class Piece : MonoBehaviour {
                 else if ((threatened) && (MoveValue == 0))
                 {
                     MoveValue = 1;
+                }
+                //if I'm a pawn, I'd like to promote
+                if((PieceType=="pawn")&&((tile.transform.position.y==2)||(tile.transform.position.y == -5))){
+                    MoveValue++;
                 }
 
             }

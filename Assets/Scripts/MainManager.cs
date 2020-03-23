@@ -242,11 +242,16 @@ public class MainManager : MonoBehaviour {
             PlayerPrefs.SetString("Executor", "resigned");
             SceneManager.LoadScene("GameOver");
         }
+        /*if ((Automated)&& (!WaitingForMove))
+        {
+            ChangeTurn();
 
+            return;
+        }*/
         //Get click on destination (only if in "move" mode)
         if ((WaitingForPlayerMove)&&(!WaitingForMove))
         {
-            if (Automated)
+           if (Automated)
             {
                 CPUPlay("white");
                 WaitingForPlayerMove = false;
@@ -448,6 +453,7 @@ public class MainManager : MonoBehaviour {
         Move ChosenMove = AllMoves[0];
 
         //if best value is zero, sort by distance to enemy king
+        List<Move> MoveList = new List<Move>();
         if (BestValue == 0)
         {
             //first find king
@@ -463,7 +469,8 @@ public class MainManager : MonoBehaviour {
             float lowestdistance = 10000000;
             foreach(Move move in AllMoves)
             {
-                if(move.Value == 0)
+                
+                if (move.Value == 0)
                 {
                     move.DestinationTile.GetDistanceTo(OtherKing.transform);
                     move.piece.CurrentTile.GetComponent<TileType>().GetDistanceTo(OtherKing.transform);
@@ -471,20 +478,7 @@ public class MainManager : MonoBehaviour {
                     //we don't want to backtrack
                     if(currentdist> move.DestinationTile.DistanceToPiece)
                     {
-                        if (move.DestinationTile.DistanceToPiece < lowestdistance)
-                        {
-                            ChosenMove = move;
-                            lowestdistance = move.DestinationTile.DistanceToPiece;
-                        }
-                        else if (move.DestinationTile.DistanceToPiece == lowestdistance)
-                        {
-                            if (Random.value > 0.5f)
-                            {
-                                ChosenMove = move;
-                                lowestdistance = move.DestinationTile.DistanceToPiece;
-                            }
-
-                        }
+                        MoveList.Add(move);
                     }
 
                 }
@@ -493,7 +487,7 @@ public class MainManager : MonoBehaviour {
         else
         {
             //collect all moves of similar best value and choose randomly
-            List<Move> MoveList = new List<Move>();
+            
             foreach (Move move in AllMoves)
             {
                 if (move.Value == BestValue)
@@ -501,10 +495,21 @@ public class MainManager : MonoBehaviour {
                     MoveList.Add(move);
                 }
             }
-            System.Random rnd = new System.Random();
+
+        }
+        System.Random rnd = new System.Random();
+        //one chance on 20 to do a completely random move
+        if (rnd.Next(0, 20) < 1)
+        {
+            int RandomIndex = rnd.Next(0, AllMoves.Count);
+            ChosenMove = AllMoves[RandomIndex];
+        }
+        else
+        {
             int RandomIndex = rnd.Next(0, MoveList.Count);
             ChosenMove = MoveList[RandomIndex];
         }
+
 
         CurrentActivePiece = ChosenMove.piece;
         ChosenMove.piece.MakeMove(ChosenMove);
@@ -531,7 +536,7 @@ public class MainManager : MonoBehaviour {
         //are we attacking the white king?
         if ((tile.GetComponent<Piece>() != null)&&(!CurrentActivePiece.human))
         {
-            if (tile.GetComponent<Piece>().PieceType == "king"){
+           /* if (tile.GetComponent<Piece>().PieceType == "king"){
                 Debug.Log("move to king");
                 foreach (Piece piece in PieceList)
                 {
@@ -546,7 +551,7 @@ public class MainManager : MonoBehaviour {
                         }
                     }
                 }
-            }
+            }*/
         }
         
         //UpdateThreats();
@@ -567,7 +572,7 @@ public class MainManager : MonoBehaviour {
         CurrentActivePiece.turn++;
         Vector3 destination = new Vector3(tile.transform.position.x, tile.transform.position.y, CurrentActivePiece.transform.position.z);
         CurrentActivePiece.HideDestinations();
-        Vector3 movestep = (destination - CurrentActivePiece.transform.position) / (Vector3.Distance(destination, CurrentActivePiece.transform.position)*10);
+        Vector3 movestep = (destination - CurrentActivePiece.transform.position) / (Vector3.Distance(destination, CurrentActivePiece.transform.position)*5);
         
         if(Vector3.Distance(destination, CurrentActivePiece.transform.position) > 4)
         {
@@ -698,7 +703,7 @@ public class MainManager : MonoBehaviour {
                 //CurrentActivePiece = PieceList[0];
             }
         }
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.1f);
 
 
 
@@ -823,15 +828,16 @@ public class MainManager : MonoBehaviour {
         WaitingForMove = false;
         UpdateVisibility();
         UpdateThreats();
-
-        if ((!changinglevel)&&(!gameover))
+        yield return new WaitForSeconds(0.01f);
+        if(!gameover)
         {
-            
             //ChangeTurn();
         }
         
 
-        
+
+
+
 
 
     }
@@ -907,21 +913,21 @@ public class MainManager : MonoBehaviour {
 
 
             //was it the player's king?
-            if ((piece.human) && (piece.PieceType == "king"))
+            if ((piece.PieceType == "king"))
             {
-                 ;
+                 
                 //Debug.Log("game over");
                 gameover = true;
 
-                StartCoroutine(GameOver());
+                //StartCoroutine(GameOver());
             }
-            if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor != "red"))
+            /*if ((!piece.human) && (piece.PieceType == "king") && (piece.PieceColor != "red"))
             {
                // Debug.Log("game over");
                 gameover = true;
                 //Popup.gameObject.SetActive(true);
                 
-            }
+            }*/
             //Debug.Log("I am human? : " + CurrentActivePiece.human);
             // Debug.Log("Eaten piece is human ?: " + piece.human);
             if (piece.PieceColor == "red")
