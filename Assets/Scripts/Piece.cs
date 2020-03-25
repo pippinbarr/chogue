@@ -562,6 +562,7 @@ public class Piece : MonoBehaviour {
         foreach (TileType tile in TileList)
         {
             int MoveValue = -10;
+            bool CanTake = false;
 
             if ((tile.transform.tag == "piece")||(tile.CurrentPiece != null))
             {
@@ -577,6 +578,7 @@ public class Piece : MonoBehaviour {
                 
                 if (piece.PieceColor != PieceColor)
                 {
+                    CanTake = true;
                     //we can take a piece
                     if (piece.MaxHP >= MaxHP)
                     {
@@ -661,13 +663,18 @@ public class Piece : MonoBehaviour {
                 if((PieceType=="pawn")&&((tile.transform.position.y==2)||(tile.transform.position.y == -5))){
                     MoveValue++;
                 }
+                //if I'm an unthreatened king and move == 0, rather not move
+                if ((PieceType == "king") && (threatened == false) && (MoveValue == 0))
+                {
+                    MoveValue--;
+                }
 
             }
 
             if (MoveValue != -10)
             {
 
-                PossibleMoves.Add(new Move(this, tile, MoveValue));
+                PossibleMoves.Add(new Move(this, tile, MoveValue,CanTake));
             }
             
             

@@ -418,6 +418,12 @@ public class MainManager : MonoBehaviour {
 
 
         }
+        if (side == "white")
+        {
+            Stats stats = GameObject.FindObjectOfType<Stats>();
+            stats.Moves.Add(AllMoves);
+        }
+
         AllMoves = AllMoves.OrderByDescending(move => move.Value).ToList();
 
         
@@ -815,7 +821,7 @@ public class MainManager : MonoBehaviour {
         }
         else
         {
-            SceneManager.LoadScene("shatranj");
+            GameObject.FindObjectOfType<Stats>().NextGame();
         }
         
 
