@@ -399,7 +399,7 @@ public class MainManager : MonoBehaviour {
 
     void  CPUPlay(string side)
     {
-        Debug.Log("Deciding move for " + side);
+        //Debug.Log("Deciding move for " + side);
 
         List<Move> AllMoves = new List<Move>();
 
@@ -426,8 +426,15 @@ public class MainManager : MonoBehaviour {
 
         AllMoves = AllMoves.OrderByDescending(move => move.Value).ToList();
 
-        
-        Debug.Log(AllMoves.Count + " possibles moves and best move value is "+AllMoves[0].Value);
+
+        //Debug.Log(AllMoves.Count + " possibles moves and best move value is "+AllMoves[0].Value);
+        if (AllMoves.Count == 0)
+        {
+            gameover = true;
+            return;
+        }
+
+
         int BestValue = AllMoves[0].Value;
 
         Move ChosenMove = AllMoves[0];
@@ -467,13 +474,23 @@ public class MainManager : MonoBehaviour {
         else
         {
             //collect all moves of similar best value and choose randomly
-            
+            bool onlyking = true;
             foreach (Move move in AllMoves)
             {
+                if (move.piece.PieceType != "king")
+                {
+                    onlyking = false;
+                }
                 if (move.Value == BestValue)
                 {
                     MoveList.Add(move);
                 }
+            }
+            if (onlyking)
+            {
+                //only the king remains, this is gameover in shatranj
+                gameover = true;
+                return;
             }
 
         }

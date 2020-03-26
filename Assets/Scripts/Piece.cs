@@ -40,7 +40,7 @@ public class Piece : MonoBehaviour {
     public Collider[] Colliders;
 
     Transform PieceModel;
-    public List<TileType> TileList = new List<TileType>();
+    public List<TileType> TileList;
 
 
 	// Use this for initialization
@@ -286,30 +286,34 @@ public class Piece : MonoBehaviour {
             }
         }
         //check own status
-        TileType tilee = CurrentTile.GetComponent<TileType>();
-        if (tilee.threatened != "none")
+        if (CurrentTile != null)
         {
-            if ((tilee.threatened != PieceColor) || (tilee.threatened == "both"))
+            TileType tilee = CurrentTile.GetComponent<TileType>();
+            if (tilee.threatened != "none")
             {
-                threatened = true;
+                if ((tilee.threatened != PieceColor) || (tilee.threatened == "both"))
+                {
+                    threatened = true;
+                }
+                if ((tilee.threatened == PieceColor) || (tilee.threatened == "both"))
+                {
+                    guarded = true;
+                }
             }
-            if ((tilee.threatened == PieceColor) || (tilee.threatened == "both"))
+            tilee = GetComponent<TileType>();
+            if (tilee.threatened != "none")
             {
-                guarded = true;
+                if ((tilee.threatened != PieceColor) || (tilee.threatened == "both"))
+                {
+                    threatened = true;
+                }
+                if ((tilee.threatened == PieceColor) || (tilee.threatened == "both"))
+                {
+                    guarded = true;
+                }
             }
         }
-        tilee = GetComponent<TileType>();
-        if (tilee.threatened != "none")
-        {
-            if ((tilee.threatened != PieceColor) || (tilee.threatened == "both"))
-            {
-                threatened = true;
-            }
-            if ((tilee.threatened == PieceColor) || (tilee.threatened == "both"))
-            {
-                guarded = true;
-            }
-        }
+
 
     }
 
@@ -718,8 +722,8 @@ public class Piece : MonoBehaviour {
         Renderer[] allChildren = GetComponentsInChildren<Renderer>();
         foreach (Renderer child in allChildren)
         {
-            //if (CurrentTile != null)
-          //  {
+            if (CurrentTile != null)
+            {
                 if (CurrentTile.GetComponent<TileType>().visible)
                 {
                     if ((!child.transform.name.Contains("Cube")) && (!child.transform.name.Contains("ollider")))
@@ -732,7 +736,7 @@ public class Piece : MonoBehaviour {
                 {
                     child.enabled = false;
                 }
-           // }
+            }
 
         }
 

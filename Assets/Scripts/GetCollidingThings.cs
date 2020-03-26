@@ -45,7 +45,7 @@ public class GetCollidingThings : MonoBehaviour {
             {
                 if (debug)
                 {
-                 Debug.Log("add tiles");
+                 //Debug.Log("add tiles");
                 }
                 CollidingTileList.Add(other.GetComponent<TileType>());
                 //other.GetComponent<TileType>().threatened = true;
