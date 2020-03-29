@@ -664,7 +664,7 @@ public class Piece : MonoBehaviour {
                     MoveValue = 1;
                 }
                 //if I'm a pawn, I'd like to promote
-                if((PieceType=="pawn")&&((tile.transform.position.y==2)||(tile.transform.position.y == -5))){
+                if((PieceType=="pawn")&&((tile.transform.position.y>=1.99)||(tile.transform.position.y <= -4.99))){
                     MoveValue++;
                 }
                 //if I'm an unthreatened king and move == 0, rather not move
@@ -678,7 +678,7 @@ public class Piece : MonoBehaviour {
             if (MoveValue != -10)
             {
 
-                PossibleMoves.Add(new Move(this, tile, MoveValue,CanTake));
+                PossibleMoves.Add(new Move(this, tile, MoveValue,CanTake,threatened));
             }
             
             

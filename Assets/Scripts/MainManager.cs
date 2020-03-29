@@ -175,6 +175,7 @@ public class MainManager : MonoBehaviour {
         //update visibility manually
 
 
+
         WaitingForPlayerMove = true;
         WaitingForCPUMove = false;
 
@@ -431,7 +432,7 @@ public class MainManager : MonoBehaviour {
         if (AllMoves.Count == 0)
         {
             gameover = true;
-            return;
+            
         }
 
 
@@ -490,7 +491,7 @@ public class MainManager : MonoBehaviour {
             {
                 //only the king remains, this is gameover in shatranj
                 gameover = true;
-                return;
+                
             }
 
         }
@@ -831,7 +832,7 @@ public class MainManager : MonoBehaviour {
         WaitingForMove = false;
         UpdateVisibility();
         UpdateThreats();
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0.1f);
         if(!gameover)
         {
             ChangeTurn();
@@ -1280,11 +1281,12 @@ public class MainManager : MonoBehaviour {
     }
     IEnumerator InitialStuff()
     {
+        
         foreach (Piece piece in PieceList)
         {
             piece.SetActive(true);
         }
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
 
 
         UpdateThreats();
