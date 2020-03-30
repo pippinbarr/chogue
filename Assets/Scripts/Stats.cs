@@ -61,7 +61,8 @@ public class Stats : MonoBehaviour
             float ratio = (float)Moves.Count / NormalizedMoves;
             for(float i = 0; i< NormalizedMoves; i++)
             {
-                line += Moves[Mathf.RoundToInt(ratio*i)].Count + "|";
+                if(Moves[Mathf.RoundToInt(ratio * i)].Count>0)
+                    line += Moves[Mathf.RoundToInt(ratio*i)].Count + "|";
             }
             sw.WriteLine(line);
         }
@@ -129,7 +130,8 @@ public class Stats : MonoBehaviour
                         MovesWithTension++;
                     }
                 }
-                line += MovesWithTension / Moves[Mathf.RoundToInt(ratio * i)].Count + "|";
+                if(Moves[Mathf.RoundToInt(ratio * i)].Count>0)
+                    line += MovesWithTension / Moves[Mathf.RoundToInt(ratio * i)].Count + "|";
             }
 
 
