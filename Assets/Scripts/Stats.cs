@@ -58,34 +58,10 @@ public class Stats : MonoBehaviour
         using (StreamWriter sw = File.AppendText(path))
         {
             string line = NormalizedMoves + "|";
-            float delta = (float)Moves.Count-NormalizedMoves;
-            float step = delta / (float)Moves.Count;
-            float error = 0;
-            foreach (List<Move> moves in Moves)
+            float ratio = (float)Moves.Count / NormalizedMoves;
+            for(float i = 0; i< NormalizedMoves; i++)
             {
-
-                if ((error < 1) && (error > -1)){
-                    line += moves.Count + "|";
-                    error += step;
-                }
-                else if (error <= -1)
-                {
-                    while (error <= -1)
-                    {
-                        line += moves.Count + "|";
-                        error += 1;
-                    }
-                    line += moves.Count + "|";
-                    error += step;
-                }
-                else if (error >= 1)
-                {
-                    error -= 1;
-                    error += step;
-                }
-
-
-                
+                line += Moves[Mathf.RoundToInt(ratio*i)].Count + "|";
             }
             sw.WriteLine(line);
         }
@@ -142,46 +118,21 @@ public class Stats : MonoBehaviour
         using (StreamWriter sw = File.AppendText(path))
         {
             string line = NormalizedMoves + "|";
-            float delta = NormalizedMoves - (float)Moves.Count;
-            float step = delta / NormalizedMoves;
-            float error = 0;
-
-            foreach (List<Move> moves in Moves)
+            float ratio = (float)Moves.Count / NormalizedMoves;
+            for (float i = 0; i < NormalizedMoves; i++)
             {
-                //count moves with tension
                 float MovesWithTension = 0;
-                foreach (Move choice in moves)
+                foreach (Move choice in Moves[Mathf.RoundToInt(ratio * i)])
                 {
                     if ((choice.CanTake) || (choice.Threatened))
                     {
                         MovesWithTension++;
                     }
                 }
-
-                //save here
-
-                if ((error < 1) && (error > -1))
-                {
-                    line += MovesWithTension / moves.Count + "|";
-                    error += step;
-                }
-                else if (error >= 1)
-                {
-                    while (error > 1)
-                    {
-                        line += MovesWithTension / moves.Count + "|";
-                        error = 0;
-                    }
-                   /* line += MovesWithTension / moves.Count + "|";
-                    error += step;*/
-                }
-                else if (error <= -1)
-                {
-                    error = 0;
-                }
-
-                
+                line += MovesWithTension / Moves[Mathf.RoundToInt(ratio * i)].Count + "|";
             }
+
+
             sw.WriteLine(line);
         }
         //save % of choices related to each piece type
