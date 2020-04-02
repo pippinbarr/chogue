@@ -14,7 +14,7 @@ public class Stats : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
-        SceneManager.LoadScene("shatranj");
+        SceneManager.LoadScene("chess");
     }
 
     public void SaveStats()
