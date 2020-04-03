@@ -20,7 +20,7 @@ public class Stats : MonoBehaviour
     public void SaveStats()
     {
         //save stats
-
+        
         string path = @"d:\echecs\numchoices.txt";
 
         if (!File.Exists(path))
@@ -60,9 +60,15 @@ public class Stats : MonoBehaviour
             string line = NormalizedMoves + "|";
             float ratio = (float)Moves.Count / NormalizedMoves;
             for(float i = 0; i< NormalizedMoves; i++)
-            {
-                if(Moves[Mathf.RoundToInt(ratio * i)].Count>0)
-                    line += Moves[Mathf.RoundToInt(ratio*i)].Count + "|";
+            {   
+                int index = Mathf.Abs(Mathf.RoundToInt(ratio * i));
+                if (index < Moves.Count)
+                {
+                    if (Moves[index].Count > 0)
+                        line += Moves[index].Count + "|";
+                }
+
+
             }
             sw.WriteLine(line);
         }
@@ -123,15 +129,20 @@ public class Stats : MonoBehaviour
             for (float i = 0; i < NormalizedMoves; i++)
             {
                 float MovesWithTension = 0;
-                foreach (Move choice in Moves[Mathf.RoundToInt(ratio * i)])
+                int index = Mathf.Abs(Mathf.RoundToInt(ratio * i));
+                if (index > Moves.Count)
                 {
-                    if ((choice.CanTake) || (choice.Threatened))
+                    foreach (Move choice in Moves[index])
                     {
-                        MovesWithTension++;
+                        if ((choice.CanTake) || (choice.Threatened))
+                        {
+                            MovesWithTension++;
+                        }
                     }
+                    if (Moves[index].Count > 0)
+                        line += MovesWithTension / Moves[index].Count + "|";
                 }
-                if(Moves[Mathf.RoundToInt(ratio * i)].Count>0)
-                    line += MovesWithTension / Moves[Mathf.RoundToInt(ratio * i)].Count + "|";
+
             }
 
 
@@ -198,7 +209,7 @@ public class Stats : MonoBehaviour
         Moves.Clear();
 
         CurrentGame++;
-        SceneManager.LoadScene("shatranj");
+        SceneManager.LoadScene("chess");
     }
 
 

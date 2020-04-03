@@ -664,9 +664,9 @@ public class Piece : MonoBehaviour {
                     MoveValue = 1;
                 }
                 //if I'm a pawn, I'd like to promote
-                if((PieceType=="pawn")&&((tile.transform.position.y>=1.99)||(tile.transform.position.y <= -4.99))){
+               /* if((PieceType=="pawn")&&((tile.transform.position.y>=1.99)||(tile.transform.position.y <= -4.99))){
                     MoveValue++;
-                }
+                }*/
                 //if I'm an unthreatened king and move == 0, rather not move
                 if ((PieceType == "king") && (threatened == false) && (MoveValue == 0))
                 {

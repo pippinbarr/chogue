@@ -413,6 +413,8 @@ public class MainManager : MonoBehaviour {
                 foreach (Move move in piece.PossibleMoves)
                 {
                     //Debug.Log("adding move of value " + move.Value);
+                    if(move.piece.PieceColor=="white")
+                         Debug.Log(move.piece.PieceType + "can move to " + move.DestinationTile.transform.position);
                     AllMoves.Add(move);
                 }
             }
@@ -435,7 +437,11 @@ public class MainManager : MonoBehaviour {
             
         }
 
-
+        if (AllMoves.Count == 0)
+        {
+            gameover = true;
+            return;
+        }
         int BestValue = AllMoves[0].Value;
 
         Move ChosenMove = AllMoves[0];
