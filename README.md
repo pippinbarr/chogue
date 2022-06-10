@@ -1,8 +1,8 @@
 # Chogue
 
-_Look! Up in the sky! It's a Chess Rogue-like! It's a Rogue Chess-like! No! It's Chogue! Faster than a Blitz Chess player who just drank a Potion of Haste! More powerful than than a Sicilian Dragon! Able to leap tall buildings in a single bound! It's the Chogue that refreshes!_
+*Look! Up in the sky! It's a Chess Rogue-like! It's a Rogue Chess-like! No! It's Chogue! Faster than a Blitz Chess player who just drank a Potion of Haste! More powerful than than a Sicilian Dragon! Able to leap tall buildings in a single bound! It's the Chogue that refreshes!*
 
----
+![](images/chogue-banner.png)
 
 #### [Get on the Google Play Store for Android devices](https://play.google.com/store/apps/details?id=com.BarrLessard.Chogue)
 #### [Get on the App Store for iPhone and iPad](https://apps.apple.com/app/chogue/id1464358271)
