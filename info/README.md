@@ -6,7 +6,7 @@
 
 or
 
-# [Get it for Android](https://play.google.com/store/apps/details?id=com.BarrLessard.Chogue), [Get it for iOS](https://apps.apple.com/app/chogue/id1464358271), [Get it for Mac](https://github.com/pippinbarr/chogue/releases/download/v1.0/chogue-mac.zip), [Get it for Windows](https://github.com/pippinbarr/chogue/releases/download/v1.0/chogue-win.zip)
+# Get it for [Android](https://play.google.com/store/apps/details?id=com.BarrLessard.Chogue), [iOS](https://apps.apple.com/app/chogue/id1464358271), [Mac](https://github.com/pippinbarr/chogue/releases/download/v1.0/chogue-mac.zip), or [Windows](https://github.com/pippinbarr/chogue/releases/download/v1.0/chogue-win.zip)
 
 ## Description
 
