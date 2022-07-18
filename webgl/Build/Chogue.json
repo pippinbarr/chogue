@@ -1,0 +1,13 @@
+{
+"companyName": "Barr&Lessard",
+"productName": "Chogue",
+"dataUrl": "Chogue.data.unityweb",
+"asmCodeUrl": "Chogue.asm.code.unityweb",
+"asmMemoryUrl": "Chogue.asm.memory.unityweb",
+"asmFrameworkUrl": "Chogue.asm.framework.unityweb",
+"TOTAL_MEMORY": 419430400,
+"graphicsAPI": ["WebGL 2.0", "WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20"
+}
