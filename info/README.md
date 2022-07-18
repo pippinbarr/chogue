@@ -15,7 +15,7 @@ or
 _Chogue_ is a hybrid game created out of two masterpieces, chess and _Rogue_, by [Jonathan Lessard](http://jonathanlessard.net/) and [Pippin Barr](http://pippinbarr.com/). Throughout its design and development we followed the (fairly) strict rule of making decisions that meant _Chogue_ corresponded either to chess or to _Rogue_ in each of its elements, from its spatial layout (_Rogue_) to its movement style (chess) to its combat system (chess) to its overall gameplay structure (_Rogue_). The result is a game that is as least as good as _Rogue_ and chess put together. If not better than that.
 
 ## Press
-Read the [Desktop version press kit](https://github.com/pippinbarr/chogue/wiki/Press-Kit) or the [Mobile version press kit] (https://github.com/pippinbarr/chogue/wiki/Press-Kit-for-Mobile) for press information
+Read the [Desktop version press kit](https://github.com/pippinbarr/chogue/wiki/Press-Kit) or the [Mobile version press kit](https://github.com/pippinbarr/chogue/wiki/Press-Kit-for-Mobile) for press information
 
 ## Process
 
